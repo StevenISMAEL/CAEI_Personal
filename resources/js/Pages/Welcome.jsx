@@ -1,4 +1,5 @@
 import { Link, Head } from '@inertiajs/react';
+import NightMode from "@/Components/NightMode";
 
 export default function Welcome({ auth, laravelVersion, phpVersion }) {
     const handleImageError = () => {
@@ -34,6 +35,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                 </svg>
                             </div>
                             <nav className="-mx-3 flex flex-1 justify-end">
+                                <NightMode />
                                 {auth.user ? (
                                     <Link
                                         href={route('dashboard')}
