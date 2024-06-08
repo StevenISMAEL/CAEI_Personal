@@ -4,11 +4,12 @@
 
 1. Clonar repositorio.
    ```sh
-   git clone https://github.com/Jordi021/Digitell-Project.git Digitell
+   git clone https://github.com/Jordi021/Digitell-Project.git Digitell 
+   cd Digitell
+   code .
 
 2. Backend
     ```sh
-    cd Digitell
     composer install
     cp .env.example .env
     php artisan key:generate
