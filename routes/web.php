@@ -5,6 +5,9 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
+use App\Http\Controllers\ConClientController;
+use App\Http\Controllers\ConCantonController;
+
 Route::get("/", function () {
     return Inertia::render("Welcome", [
         "canLogin" => Route::has("login"),
@@ -32,18 +35,32 @@ Route::middleware("auth")->group(function () {
     );
 });
 
-
 Route::get("/home", function () {
     return view("home", ["nombre" => "Jordan :)"]);
 });
-
 
 Route::get("/app", function () {
     return Inertia::render("App");
 });
 
-Route::get("/clientes", function() {
-    return Inertia::render("CRUD/Cliente");
-})->name("clientes");
+Route::prefix("manage-customers")->group(function () {
+    Route::get("/clients", [ConClientController::class, "index"])->name(
+        "clients"
+    );
+    Route::post("/clients", [ConClientController::class, "store"])->name(
+        "clients.store"
+    );
+
+    Route::get("/phones", [ConClientController::class, "index"])->name(
+        "phones"
+    );
+
+    Route::get("/cantons", [ConCantonController::class, "index"])->name(
+        "cantons"
+    );
+    Route::post("/cantons", [ConCantonController::class, "store"])->name(
+        "cantons.store"
+    );
+});
 
 require __DIR__ . "/auth.php";

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { MdKeyboardArrowLeft } from "react-icons/md";
 import { RiDashboard2Fill } from "react-icons/ri";
 import LinkCustom from "@/Components/LinkCustom";
@@ -7,6 +7,8 @@ import Dropdown from "@/Components/Dropdown";
 import ApplicationLogo from "@/Components/ApplicationLogo";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
 import { IoPeopleCircle } from "react-icons/io5";
+import DarkModeToggle from "@/Components/NightMode";
+import { DarkModeContext } from "@/Components/DarkModeContext";
 
 const Authenticated = ({
     user,
@@ -19,15 +21,8 @@ const Authenticated = ({
         return value === "true" || value === null;
     };
 
+    const { isDarkMode, toggleDarkMode } = useContext(DarkModeContext);
     const [open, setOpen] = useState(getSidebarStatus);
-    const Menus = [
-        { title: "Dashboard", icon: <RiDashboard2Fill />, roles: ["admin"] },
-        {
-            title: "Clientes",
-            icon: <IoPeopleCircle />,
-            roles: ["admin", "gerente"],
-        },
-    ];
 
     useEffect(() => {
         localStorage.setItem("open", open.toString());
@@ -35,6 +30,24 @@ const Authenticated = ({
 
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
+
+    const currentUrl = window.location.pathname;
+
+    const Menus = [
+        {
+            title: "Dashboard",
+            route: "dashboard",
+            icon: <RiDashboard2Fill />,
+            roles: ["admin"],
+        },
+        {
+            title: "Customers",
+            route: "clients",
+            subroute: "/manage-customers/",
+            icon: <IoPeopleCircle />,
+            roles: ["admin", "gerente"],
+        },
+    ];
 
     return (
         <div className="flex min-h-screen  bg-gray-100 dark:bg-gray-900">
@@ -71,10 +84,12 @@ const Authenticated = ({
                     ).map((Menu, index) => (
                         <li key={index} className="px-1">
                             <LinkCustom
-                                href={route(Menu.title.toLowerCase())}
-                                active={route().current(
-                                    Menu.title.toLowerCase(),
-                                )}
+                                href={route(Menu.route)}
+                                active={
+                                    Menu.subroute
+                                        ? (Menu.subroute + route().current() === currentUrl && route().current())
+                                        : route().current(Menu.route)
+                                }
                                 className={`${!open && "justify-center"}`}
                             >
                                 <span className="text-lg">{Menu.icon}</span>
@@ -139,6 +154,10 @@ const Authenticated = ({
                             </div>
 
                             <div className="flex sm:hidden">
+                                <DarkModeToggle
+                                    isDarkMode={isDarkMode}
+                                    toggleDarkMode={toggleDarkMode}
+                                />
                                 <div className="shrink-0 flex items-center">
                                     <Link
                                         href="/"
@@ -154,6 +173,10 @@ const Authenticated = ({
                             </div>
 
                             <div className="hidden sm:flex sm:items-center sm:ms-6">
+                                <DarkModeToggle
+                                    isDarkMode={isDarkMode}
+                                    toggleDarkMode={toggleDarkMode}
+                                />
                                 <div className="ms-3 relative">
                                     <Dropdown>
                                         <Dropdown.Trigger>
@@ -210,10 +233,11 @@ const Authenticated = ({
                             {Menus.map((Menu, index) => (
                                 <li key={index}>
                                     <ResponsiveNavLink
-                                        href={route(Menu.title.toLowerCase())}
-                                        active={route().current(
-                                            Menu.title.toLowerCase(),
-                                        )}
+                                        href={route(Menu.route)}
+                                        active={
+                                            route().current(Menu.route) ||
+                                            route().current(Menu.route + "/*")
+                                        }
                                     >
                                         {Menu.title}
                                     </ResponsiveNavLink>
@@ -248,7 +272,7 @@ const Authenticated = ({
                 </nav>
                 {header && (
                     <header className="bg-white dark:bg-gray-800 shadow">
-                        <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                        <div className="max-w-8xl mx-auto py-6 px-5 sm:px-10 lg:px-14">
                             {header}
                         </div>
                     </header>
