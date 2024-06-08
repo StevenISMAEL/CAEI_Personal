@@ -107,5 +107,5 @@ const Canton = ({ auth, Provinces }) => {
         </Authenticated>
     );
 };
-
+    
 export default Canton;
