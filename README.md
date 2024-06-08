@@ -4,7 +4,7 @@
 
 1. Clonar repositorio.
    ```sh
-   git clone git remote add origin https://github.com/Jordi021/Digitell-Project.git Digitell
+   git clone https://github.com/Jordi021/Digitell-Project.git Digitell
 
 2. Backend
     ```sh
