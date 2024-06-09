@@ -15,8 +15,6 @@ import InputError from "@/Components/InputError";
 import ModalCreate from "@/Components/ModalCreate";
 import Box from "@/Layouts/Box";
 
-import { RiArrowUpDownFill } from "react-icons/ri";
-
 import tabs from "./tabs";
 import Checkbox from "@/Components/Checkbox";
 import DeleteModal from "@/Components/DeleteModal";
@@ -195,7 +193,14 @@ const Canton = ({ auth, Provinces, Cantons }) => {
 export default Canton;
 
 import { CgUnavailable } from "react-icons/cg";
+import {
+    RiArrowUpDownFill,
+    RiArrowUpLine,
+    RiArrowDownLine,
+} from "react-icons/ri";
 import FloatInputText from "@/Components/FloatInputText";
+import { FaArrowDownShortWide } from "react-icons/fa6";
+import { FaArrowUpShortWide } from "react-icons/fa6";
 
 function TableCustom({
     Headers,
@@ -210,6 +215,10 @@ function TableCustom({
         "text-violet-600 shadow-sm focus:ring-violet-500 dark:focus:ring-violet-600";
     const [searchValue, setSearchValue] = useState("");
     const [filteredData, setFilteredData] = useState(Data);
+    const [sortConfig, setSortConfig] = useState({
+        key: null,
+        direction: "asc",
+    });
 
     useEffect(() => {
         setFilteredData(Data);
@@ -225,6 +234,34 @@ function TableCustom({
             });
         });
         setFilteredData(filtered);
+    };
+
+    const handleSort = (columnKey) => {
+        let direction = "asc";
+        if (sortConfig.key === columnKey && sortConfig.direction === "asc") {
+            direction = "desc";
+        }
+        setSortConfig({ key: columnKey, direction });
+        const sortedData = [...filteredData].sort((a, b) => {
+            if (a[columnKey] < b[columnKey]) {
+                return direction === "asc" ? -1 : 1;
+            }
+            if (a[columnKey] > b[columnKey]) {
+                return direction === "asc" ? 1 : -1;
+            }
+            return 0;
+        });
+        setFilteredData(sortedData);
+    };
+
+    const renderSortIcon = (columnKey) => {
+        if (sortConfig.key !== columnKey) {
+            return <RiArrowUpDownFill />;
+        }
+        if (sortConfig.direction === "asc") {
+            return <FaArrowUpShortWide />;
+        }
+        return <FaArrowDownShortWide />;
     };
 
     return (
@@ -274,12 +311,21 @@ function TableCustom({
                                                 scope="col"
                                                 className="px-6 py-3"
                                             >
-                                                <div className="flex items-center">
+                                                <button
+                                                    className="flex items-center gap-2"
+                                                    onClick={() =>
+                                                        handleSort(
+                                                            searchColumns[
+                                                                index
+                                                            ],
+                                                        )
+                                                    }
+                                                >
                                                     {header}
-                                                    <a href="#">
-                                                        <RiArrowUpDownFill />
-                                                    </a>
-                                                </div>
+                                                    {renderSortIcon(
+                                                        searchColumns[index],
+                                                    )}
+                                                </button>
                                             </th>
                                         ))}
                                         <th
