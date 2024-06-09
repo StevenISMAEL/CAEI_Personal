@@ -75,6 +75,16 @@ Route::prefix("manage-customers")
             ConCantonController::class,
             "destroy",
         ])->name("cantons.destroy");
+
+        Route::delete("/cantons/{id}", [
+            ConCantonController::class,
+            "destroy",
+        ])->name("cantons.destroy");
+
+        Route::delete("/cantons", [
+            ConCantonController::class,
+            "destroyMultiple",
+        ])->name("cantons.multiple.destroy");
     })
     ->middleware(["auth", "verified"]);
 

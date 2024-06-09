@@ -23,6 +23,12 @@ class ConCantonController extends Controller {
 
     public function destroy($id) {
         ConCanton::find($id)->delete();
-        return redirect()->route("cantons");
+        return to_route("cantons");
+    }
+
+    public function destroyMultiple(Request $request) {
+        $ids = $request->input("ids");
+        ConCanton::whereIn("canton_id", $ids)->delete();
+        return to_route("cantons");
     }
 }

@@ -33,16 +33,22 @@ const Canton = ({ auth, Provinces, Cantons }) => {
     } = useForm({
         province_id: "",
         canton_name: "",
+        ids: [],
+        numbers: [],
     });
 
     const [showCreate, setShowCreate] = useState(false);
     const [showDelete, setShowDelete] = useState(false);
     const [dataToDelete, setDataToDelete] = useState(null);
+    const [selectedCantons, setSelectedCantons] = useState([]);
 
     const closeModalCreate = () => setShowCreate(false);
     const openCreateModal = () => setShowCreate(true);
 
-    const closeDeleteModal = () => setShowDelete(false);
+    const closeDeleteModal = () => {
+        setShowDelete(false);
+        setDataToDelete(null);
+    };
     const openDeleteModal = (id) => {
         setShowDelete(true);
         setDataToDelete(id);
@@ -60,12 +66,25 @@ const Canton = ({ auth, Provinces, Cantons }) => {
     };
 
     const handleDelete = (id) => {
-        destroy(route("cantons.destroy", { id: id }), {
-            preserveScroll: true,
-            onSuccess: () => closeDeleteModal(),
-            onError: (error) => console.error(error),
-            onFinish: () => reset(),
-        });
+        if (Array.isArray(id)) {
+            data.ids = id;
+            destroy(route("cantons.multiple.destroy"), {
+                preserveScroll: true,
+                onSuccess: () => {
+                    setSelectedCantons([]);
+                    closeDeleteModal();
+                },
+                onError: (error) => console.error(error),
+                onFinish: () => reset(),
+            });
+        } else {
+            destroy(route("cantons.destroy", { id }), {
+                preserveScroll: true,
+                onSuccess: () => closeDeleteModal(),
+                onError: (error) => console.error(error),
+                onFinish: () => reset(),
+            });
+        }
     };
 
     const inputs = [
@@ -95,6 +114,29 @@ const Canton = ({ auth, Provinces, Cantons }) => {
 
     const theaders = ["ID", "Provincia", "Canton"];
 
+    const handleCheckboxChange = (id) => {
+        setSelectedCantons((prevSelected) => {
+            if (prevSelected.includes(id)) {
+                return prevSelected.filter((item) => item !== id);
+            } else {
+                return [...prevSelected, id];
+            }
+        });
+    };
+
+    const handleSelectAll = () => {
+        if (selectedCantons.length === Cantons.length) {
+            setSelectedCantons([]);
+        } else {
+            setSelectedCantons(Cantons.map((canton) => canton.canton_id));
+        }
+    };
+
+    const openDeleteModalForSelected = () => {
+        setShowDelete(true);
+        setDataToDelete(selectedCantons);
+    };
+
     return (
         <Authenticated
             user={auth.user}
@@ -106,7 +148,10 @@ const Canton = ({ auth, Provinces, Cantons }) => {
                     <div className="flex flex-wrap items-center justify-center md:justify-between gap-2">
                         <div className="w-full sm:w-auto flex flex-wrap justify-center gap-2">
                             <AddButton onClick={openCreateModal} />
-                            <DeleteButton disabled={true} />
+                            <DeleteButton
+                                disabled={selectedCantons.length === 0}
+                                onClick={openDeleteModalForSelected}
+                            />
                         </div>
                         <ExportButton disabled={false} />
                     </div>
@@ -132,6 +177,9 @@ const Canton = ({ auth, Provinces, Cantons }) => {
                         Headers={theaders}
                         Data={Cantons}
                         openDeleteModal={openDeleteModal}
+                        selectedCantons={selectedCantons}
+                        handleCheckboxChange={handleCheckboxChange}
+                        handleSelectAll={handleSelectAll}
                     ></TableCustom>
                 </Box>
                 <Box className="mt-3 md:hidden">
@@ -144,7 +192,14 @@ const Canton = ({ auth, Provinces, Cantons }) => {
 
 export default Canton;
 
-function TableCustom({ Headers, Data, openDeleteModal, handleDelete }) {
+function TableCustom({
+    Headers,
+    Data,
+    openDeleteModal,
+    selectedCantons,
+    handleCheckboxChange,
+    handleSelectAll,
+}) {
     const styles =
         "text-violet-600 shadow-sm focus:ring-violet-500 dark:focus:ring-violet-600";
 
@@ -155,7 +210,13 @@ function TableCustom({ Headers, Data, openDeleteModal, handleDelete }) {
                     <tr>
                         <th scope="col" className="p-4">
                             <div className="flex items-center">
-                                <Checkbox className={styles} />
+                                <Checkbox
+                                    className={styles}
+                                    checked={
+                                        selectedCantons.length === Data.length
+                                    }
+                                    onChange={handleSelectAll}
+                                />
                                 <label
                                     htmlFor="checkbox-all"
                                     className="sr-only"
@@ -183,11 +244,23 @@ function TableCustom({ Headers, Data, openDeleteModal, handleDelete }) {
                     {Data.map((data, index) => (
                         <tr
                             key={index}
-                            className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                            className={`border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 ${
+                                selectedCantons.includes(data.canton_id)
+                                    ? "bg-violet-100 dark:bg-violet-900"
+                                    : "bg-white dark:bg-gray-800"
+                            }`}
                         >
                             <td className="w-4 p-4">
                                 <div className="flex items-center">
-                                    <Checkbox className={styles} />
+                                    <Checkbox
+                                        className={styles}
+                                        checked={selectedCantons.includes(
+                                            data.canton_id,
+                                        )}
+                                        onChange={() =>
+                                            handleCheckboxChange(data.canton_id)
+                                        }
+                                    />
                                     <label
                                         htmlFor="checkbox-table-search-1"
                                         className="sr-only"
