@@ -16,7 +16,7 @@
     php artisan migrate --seed
     php artisan serve
 
-3. Fronted
+3. Frontend
     ```sh
     npm install
     npm run dev
