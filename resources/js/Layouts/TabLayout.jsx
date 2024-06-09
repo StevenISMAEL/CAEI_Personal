@@ -3,7 +3,7 @@ const Tab = ({ tabs, children }) => {
     return (
         <>
             <div className="mx-auto max-w-8xl sm:px-6 lg:px-8      py-3">
-                <ul className="inline-flex flex-wrap text-sm font-medium text-center text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                <ul className="inline-flex flex-wrap text-sm font-medium justify-center sm:justify-normal text-center text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                     {tabs.map((tab, index) => (
                         <li key={index} className="me-2">
                             <NavLink
