@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Head, useForm } from "@inertiajs/react";
 import Header from "@/Components/Header";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
@@ -113,6 +113,7 @@ const Canton = ({ auth, Provinces, Cantons }) => {
     ];
 
     const theaders = ["ID", "Provincia", "Canton"];
+    const searchColumns = ["canton_id", "province_name", "canton_name"];
 
     const handleCheckboxChange = (id) => {
         setSelectedCantons((prevSelected) => {
@@ -180,6 +181,7 @@ const Canton = ({ auth, Provinces, Cantons }) => {
                         selectedCantons={selectedCantons}
                         handleCheckboxChange={handleCheckboxChange}
                         handleSelectAll={handleSelectAll}
+                        searchColumns={searchColumns}
                     ></TableCustom>
                 </Box>
                 <Box className="mt-3 md:hidden">
@@ -193,6 +195,7 @@ const Canton = ({ auth, Provinces, Cantons }) => {
 export default Canton;
 
 import { CgUnavailable } from "react-icons/cg";
+import FloatInputText from "@/Components/FloatInputText";
 
 function TableCustom({
     Headers,
@@ -201,113 +204,160 @@ function TableCustom({
     selectedCantons,
     handleCheckboxChange,
     handleSelectAll,
+    searchColumns,
 }) {
     const styles =
         "text-violet-600 shadow-sm focus:ring-violet-500 dark:focus:ring-violet-600";
+    const [searchValue, setSearchValue] = useState("");
+    const [filteredData, setFilteredData] = useState(Data);
+
+    useEffect(() => {
+        setFilteredData(Data);
+    }, [Data]);
+
+    const handleSearch = (event) => {
+        const value = event.target.value.toLowerCase();
+        setSearchValue(value);
+        const filtered = Data.filter((data) => {
+            return searchColumns.some((column) => {
+                const fieldValue = data[column].toString().toLowerCase();
+                return fieldValue.includes(value);
+            });
+        });
+        setFilteredData(filtered);
+    };
+
     return (
         <>
             {Data.length > 0 ? (
-                <div className="relative overflow-x-scroll shadow-md sm:rounded-lg">
-                    <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                            <tr>
-                                <th scope="col" className="p-4">
-                                    <div className="flex items-center">
-                                        <Checkbox
-                                            className={styles}
-                                            checked={
-                                                selectedCantons.length ===
-                                                Data.length
-                                            }
-                                            onChange={handleSelectAll}
-                                        />
-                                        <label
-                                            htmlFor="checkbox-all"
-                                            className="sr-only"
-                                        >
-                                            checkbox
-                                        </label>
-                                    </div>
-                                </th>
-                                {Headers.map((header, index) => (
-                                    <th
-                                        key={index}
-                                        scope="col"
-                                        className="px-6 py-3"
-                                    >
-                                        <div className="flex items-center">
-                                            {header}
-                                            <a href="#">
-                                                <RiArrowUpDownFill />
-                                            </a>
-                                        </div>
-                                    </th>
-                                ))}
-                                <th
-                                    scope="col"
-                                    className="px-6 py-3 items-center"
-                                >
-                                    Actions
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {Data.map((data, index) => (
-                                <tr
-                                    key={index}
-                                    className={`border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 ${
-                                        selectedCantons.includes(data.canton_id)
-                                            ? "bg-violet-100 dark:bg-violet-900"
-                                            : "bg-white dark:bg-gray-800"
-                                    }`}
-                                >
-                                    <td className="w-4 p-4">
-                                        <div className="flex items-center">
-                                            <Checkbox
-                                                className={styles}
-                                                checked={selectedCantons.includes(
-                                                    data.canton_id,
-                                                )}
-                                                onChange={() =>
-                                                    handleCheckboxChange(
-                                                        data.canton_id,
-                                                    )
-                                                }
-                                            />
-                                            <label
-                                                htmlFor="checkbox-table-search-1"
-                                                className="sr-only"
+                <>
+                    <nav className="flex justify-between pb-3">
+                        <div>
+                            <select name="" id="">
+                                <option>5</option>
+                                <option>10</option>
+                                <option>25</option>
+                            </select>
+                        </div>
+                        <FloatInputText
+                            label="Buscar..."
+                            onChange={handleSearch}
+                            value={searchValue}
+                        />
+                    </nav>
+                    {filteredData.length > 0 ? (
+                        <div className="relative overflow-x-scroll shadow-md sm:rounded-lg">
+                            <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                    <tr>
+                                        <th scope="col" className="p-4">
+                                            <div className="flex items-center">
+                                                <Checkbox
+                                                    className={styles}
+                                                    checked={
+                                                        selectedCantons.length ===
+                                                        Data.length
+                                                    }
+                                                    onChange={handleSelectAll}
+                                                />
+                                                <label
+                                                    htmlFor="checkbox-all"
+                                                    className="sr-only"
+                                                >
+                                                    checkbox
+                                                </label>
+                                            </div>
+                                        </th>
+                                        {Headers.map((header, index) => (
+                                            <th
+                                                key={index}
+                                                scope="col"
+                                                className="px-6 py-3"
                                             >
-                                                checkbox
-                                            </label>
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        {data.canton_id}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        {data.province_name}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        {data.canton_name}
-                                    </td>
-                                    <td className="flex items-center px-6 py-4 gap-1">
-                                        <EditCircleButton />
-                                        <DeleteCircleButton
-                                            onClick={() =>
-                                                openDeleteModal(data.canton_id)
-                                            }
-                                        />
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                                                <div className="flex items-center">
+                                                    {header}
+                                                    <a href="#">
+                                                        <RiArrowUpDownFill />
+                                                    </a>
+                                                </div>
+                                            </th>
+                                        ))}
+                                        <th
+                                            scope="col"
+                                            className="px-6 py-3 items-center"
+                                        >
+                                            Actions
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {filteredData.map((data, index) => (
+                                        <tr
+                                            key={index}
+                                            className={`border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 ${
+                                                selectedCantons.includes(
+                                                    data.canton_id,
+                                                )
+                                                    ? "bg-violet-100 dark:bg-violet-900"
+                                                    : "bg-white dark:bg-gray-800"
+                                            }`}
+                                        >
+                                            <td className="w-4 p-4">
+                                                <div className="flex items-center">
+                                                    <Checkbox
+                                                        className={styles}
+                                                        checked={selectedCantons.includes(
+                                                            data.canton_id,
+                                                        )}
+                                                        onChange={() =>
+                                                            handleCheckboxChange(
+                                                                data.canton_id,
+                                                            )
+                                                        }
+                                                    />
+                                                    <label
+                                                        htmlFor="checkbox-table-search-1"
+                                                        className="sr-only"
+                                                    >
+                                                        checkbox
+                                                    </label>
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                {data.canton_id}
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                {data.province_name}
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                {data.canton_name}
+                                            </td>
+                                            <td className="flex items-center px-6 py-4 gap-1">
+                                                <EditCircleButton />
+                                                <DeleteCircleButton
+                                                    onClick={() =>
+                                                        openDeleteModal(
+                                                            data.canton_id,
+                                                        )
+                                                    }
+                                                />
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    ) : (
+                        <h2 className="flex items-center gap-2 text-lg font-bold text-gray-500 dark:text-gray-400">
+                            No se han encontrado resultados
+                            <CgUnavailable className="text-red-500 text-xl" />
+                        </h2>
+                    )}
+                </>
             ) : (
                 <h2 className="flex items-center gap-2 text-lg font-bold text-gray-500 dark:text-gray-400">
                     No hay registros disponibles
-                    <CgUnavailable className="text-red-500 text-xl"/>
+                    <CgUnavailable className="text-red-500 text-xl" />
                 </h2>
             )}
         </>
