@@ -10,7 +10,6 @@ import {
     EditCircleButton,
     DeleteCircleButton,
 } from "@/Components/CustomButtons";
-import SearchBar from "@/Components/SearchBar";
 import InputError from "@/Components/InputError";
 import ModalCreate from "@/Components/ModalCreate";
 import Box from "@/Layouts/Box";
@@ -193,14 +192,11 @@ const Canton = ({ auth, Provinces, Cantons }) => {
 export default Canton;
 
 import { CgUnavailable } from "react-icons/cg";
-import {
-    RiArrowUpDownFill,
-    RiArrowUpLine,
-    RiArrowDownLine,
-} from "react-icons/ri";
+import { RiArrowUpDownFill } from "react-icons/ri";
 import FloatInputText from "@/Components/FloatInputText";
-import { FaArrowDownShortWide } from "react-icons/fa6";
-import { FaArrowUpShortWide } from "react-icons/fa6";
+import { FaArrowDownShortWide, FaArrowUpShortWide } from "react-icons/fa6";
+import SecondaryButton from "@/Components/SecondaryButton";
+import { IoIosArrowForward, IoIosArrowBack } from "react-icons/io";
 
 function TableCustom({
     Headers,
@@ -219,6 +215,8 @@ function TableCustom({
         key: null,
         direction: "asc",
     });
+    const [itemsPerPage, setItemsPerPage] = useState(5);
+    const [currentPage, setCurrentPage] = useState(1);
 
     useEffect(() => {
         setFilteredData(Data);
@@ -234,6 +232,7 @@ function TableCustom({
             });
         });
         setFilteredData(filtered);
+        setCurrentPage(1);
     };
 
     const handleSort = (columnKey) => {
@@ -264,17 +263,46 @@ function TableCustom({
         return <FaArrowDownShortWide />;
     };
 
+    const handleItemsPerPageChange = (event) => {
+        setItemsPerPage(parseInt(event.target.value, 10));
+        setCurrentPage(1);
+    };
+
+    const handleNextPage = () => {
+        if (currentPage * itemsPerPage < filteredData.length) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
+
+    const handlePreviousPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
+
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = Math.min(startIndex + itemsPerPage, filteredData.length);
+    const currentData = filteredData.slice(startIndex, endIndex);
+
     return (
         <>
             {Data.length > 0 ? (
                 <>
                     <nav className="flex justify-between pb-3">
-                        <div>
-                            <select name="" id="">
-                                <option>5</option>
-                                <option>10</option>
-                                <option>25</option>
+                        <div className="flex items-center gap-2">
+                            <select
+                                onChange={handleItemsPerPageChange}
+                                value={itemsPerPage}
+                                className="bg-white dark:bg-gray-800  rounded border-gray-300 dark:border-gray-700 shadow-sm focus:ring-violet-500 dark:focus:ring-violet-600 dark:focus:ring-offset-gray-800 "
+                            >
+                                <option value={5}>5</option>
+                                <option value={10}>10</option>
+                                <option value={25}>25</option>
                             </select>
+                            <span>
+                                {startIndex + 1}-{endIndex} de{" "}
+                                {filteredData.length} registros
+                            </span>
                         </div>
                         <FloatInputText
                             label="Buscar..."
@@ -332,12 +360,12 @@ function TableCustom({
                                             scope="col"
                                             className="px-6 py-3 items-center"
                                         >
-                                            Actions
+                                            Acciones
                                         </th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {filteredData.map((data, index) => (
+                                    {currentData.map((data, index) => (
                                         <tr
                                             key={index}
                                             className={`border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 ${
@@ -392,6 +420,33 @@ function TableCustom({
                                     ))}
                                 </tbody>
                             </table>
+                            <div className="flex justify-center gap-3 items-center p-4">
+                                <SecondaryButton
+                                    className="px-3 py-1 flex items-center gap-1 bg-gray-200 dark:bg-gray-600"
+                                    onClick={handlePreviousPage}
+                                    disabled={currentPage === 1}
+                                >
+                                    <IoIosArrowBack />
+                                    Prev
+                                </SecondaryButton>
+                                <span>
+                                    Página {currentPage} de{" "}
+                                    {Math.ceil(
+                                        filteredData.length / itemsPerPage,
+                                    )}
+                                </span>
+                                <SecondaryButton
+                                    className="px-3 py-1 flex items-center gap-1 bg-gray-200 dark:bg-gray-600"
+                                    onClick={handleNextPage}
+                                    disabled={
+                                        currentPage * itemsPerPage >=
+                                        filteredData.length
+                                    }
+                                >
+                                    Next
+                                    <IoIosArrowForward />
+                                </SecondaryButton>
+                            </div>
                         </div>
                     ) : (
                         <h2 className="flex items-center gap-2 text-lg font-bold text-gray-500 dark:text-gray-400">
