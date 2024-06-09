@@ -9,12 +9,7 @@ import ModalCreate from "@/Components/ModalCreate";
 import InputError from "@/Components/InputError";
 import TablePagination from "@/Components/TableCustom";
 import Tab from "@/Layouts/TabLayout";
-
-import { IoPeopleSharp } from "react-icons/io5";
-import { FaPhone } from "react-icons/fa";
-import { FaHome } from "react-icons/fa";
-import { FaMapMarked } from "react-icons/fa";
-import { PiCityFill } from "react-icons/pi";
+import tabs from "./tabs";
 
 const Client = ({ auth }) => {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -50,7 +45,6 @@ const Client = ({ auth }) => {
             type: "text",
             name: "cedula",
             value: data.cedula,
-            isFocused: true,
             onChange: (e) => setData("cedula", e.target.value),
             inputError: <InputError message={errors.cedula} className="mt-2" />,
         },
@@ -86,34 +80,6 @@ const Client = ({ auth }) => {
             inputError: (
                 <InputError message={errors.correo_cliente} className="mt-2" />
             ),
-        },
-    ];
-
-    const tabs = [
-        {
-            name: "Clientes",
-            route: "clients",
-            icon: IoPeopleSharp,
-        },
-        // {
-        //     name: "Telefonos",
-        //     route: "customers.phones",
-        //     icon: FaPhone,
-        // },
-        // {
-        //     name: "Direcciones",
-        //     route: "customers",
-        //     icon: FaHome,
-        // },
-        // {
-        //     name: "Parroquias",
-        //     route: "customers",
-        //     icon: FaMapMarked,
-        // },
-        {
-            name: "Cantones",
-            route: "cantons",
-            icon: PiCityFill,
         },
     ];
 

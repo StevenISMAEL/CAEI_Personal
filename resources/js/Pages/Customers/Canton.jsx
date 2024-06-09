@@ -9,11 +9,7 @@ import InputError from "@/Components/InputError";
 import ModalCreate from "@/Components/ModalCreate";
 import Box from "@/Layouts/Box";
 
-import { IoPeopleSharp } from "react-icons/io5";
-import { FaPhone } from "react-icons/fa";
-import { FaHome } from "react-icons/fa";
-import { FaMapMarked } from "react-icons/fa";
-import { PiCityFill } from "react-icons/pi";
+import tabs from "./tabs"
 
 const Canton = ({ auth, Provinces }) => {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -42,13 +38,12 @@ const Canton = ({ auth, Provinces }) => {
 
     const inputs = [
         {
-            label: "Provincia",
+            placeholder: "Provincia",
             type: "select",
             labelKey: "province_name",
             valueKey: "province_id",
-            placeholder: "Selecciona una Provincia",
-            data: Provinces,
-            onChange: (id) => setData("province_id", id),
+            options: Provinces,
+            onSelect: (id) => setData("province_id", id),
             inputError: (
                 <InputError message={errors.province_id} className="mt-2" />
             ),
@@ -63,19 +58,6 @@ const Canton = ({ auth, Provinces }) => {
             inputError: (
                 <InputError message={errors.canton_name} className="mt-2" />
             ),
-        },
-    ];
-
-    const tabs = [
-        {
-            name: "Clientes",
-            route: "clients",
-            icon: IoPeopleSharp,
-        },
-        {
-            name: "Cantones",
-            route: "cantons",
-            icon: PiCityFill,
         },
     ];
 

@@ -27,7 +27,7 @@ function NavLink({ children, active = false, ...props }) {
         <Link
             {...props}
             className={
-                `inline-flex items-center justify-center p-4  border-b-2 rounded-t-lg dark:border-violet-500 group ` +
+                `inline-flex items-center justify-center p-4  border-b-2 rounded-t-lg group ` +
                 (active
                     ? "text-violet-600 dark:text-violet-500 border-violet-600 dark:border-violet-600 focus:border-violet-700 "
                     : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-700 focus:text-gray-700 dark:focus:text-gray-300 focus:border-gray-300 dark:focus:border-gray-700 ")

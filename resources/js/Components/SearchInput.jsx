@@ -132,7 +132,7 @@ const SearchDropdown = ({
                 <button
                     type="button"
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 focus:outline-none focus:ring-1 focus:ring-offset-0 focus:ring-green-500"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 focus:outline-none focus:ring-0 focus:ring-offset-0 focus:ring-green-500"
                 >
                     <FaChevronDown
                         className={`text-gray-400 dark:text-gray-500 transition-transform duration-200 ${
@@ -155,7 +155,7 @@ const SearchDropdown = ({
                                     onClick={() => handleOptionSelect(option)}
                                     className={`px-4 py-2 text-sm dark:text-gray-50 cursor-pointer ${
                                         index === focusedIndex
-                                            ? "bg-green-100 dark:bg-green-300 text-green-800"
+                                            ? "bg-green-100 dark:bg-green-300 dark:text-gray-800 dark:hover:text-white text-green-800"
                                             : "text-gray-700"
                                     } hover:bg-gray-100 dark:hover:bg-gray-600`}
                                 >

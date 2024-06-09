@@ -3,6 +3,7 @@ import FloatInputText from "./FloatInputText";
 import SearchDropdown from "./SearchInput";
 import SecondaryButton from "./SecondaryButton";
 import PrimaryButton from "./PrimaryButton";
+import { useRef } from "react";
 
 const ModalCreate = ({
     title,
@@ -24,16 +25,13 @@ const ModalCreate = ({
                             <div key={index}>
                                 {input.type === "select" ? (
                                     <SearchDropdown
+                                        {...input}
                                         className="mt-3 block w-full"
-                                        options={input.data}
-                                        labelKey={input.labelKey}
-                                        valueKey={input.valueKey}
-                                        onSelect={input.onChange}
-                                        placeholder={input.placeholder}
                                     />
                                 ) : (
                                     <FloatInputText
                                         {...input}
+                                        isFocused={false}
                                         className="mt-3 block w-full"
                                     />
                                 )}

@@ -7,6 +7,7 @@ use Inertia\Inertia;
 
 use App\Http\Controllers\ConClientController;
 use App\Http\Controllers\ConCantonController;
+use App\Models\ConCanton;
 
 Route::get("/", function () {
     return Inertia::render("Welcome", [
@@ -43,24 +44,34 @@ Route::get("/app", function () {
     return Inertia::render("App");
 });
 
-Route::prefix("manage-customers")->group(function () {
-    Route::get("/clients", [ConClientController::class, "index"])->name(
-        "clients"
-    );
-    Route::post("/clients", [ConClientController::class, "store"])->name(
-        "clients.store"
-    );
+Route::prefix("manage-customers")
+    ->group(function () {
+        Route::get("/clients", [ConClientController::class, "index"])->name(
+            "clients"
+        );
+        Route::post("/clients", [ConClientController::class, "store"])->name(
+            "clients.store"
+        );
 
-    Route::get("/phones", [ConClientController::class, "index"])->name(
-        "phones"
-    );
+        Route::get("/phones", [ConClientController::class, "index"])->name(
+            "phones"
+        );
 
-    Route::get("/cantons", [ConCantonController::class, "index"])->name(
-        "cantons"
-    );
-    Route::post("/cantons", [ConCantonController::class, "store"])->name(
-        "cantons.store"
-    );
-});
+        Route::get("/addresses", [ConClientController::class, "index"])->name(
+            "addresses"
+        );
+
+        Route::get("/parishes", [ConClientController::class, "index"])->name(
+            "parishes"
+        );
+
+        Route::get("/cantons", [ConCantonController::class, "index"])->name(
+            "cantons"
+        );
+        Route::post("/cantons", [ConCantonController::class, "store"])->name(
+            "cantons.store"
+        );
+    })
+    ->middleware(["auth", "verified"]);
 
 require __DIR__ . "/auth.php";

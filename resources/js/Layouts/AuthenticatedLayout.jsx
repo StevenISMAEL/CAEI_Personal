@@ -32,7 +32,6 @@ const Authenticated = ({
         useState(false);
 
     const currentUrl = window.location.pathname;
-
     const Menus = [
         {
             title: "Dashboard",
@@ -87,7 +86,8 @@ const Authenticated = ({
                                 href={route(Menu.route)}
                                 active={
                                     Menu.subroute
-                                        ? (Menu.subroute + route().current() === currentUrl && route().current())
+                                        ? Menu.subroute + route().current() ===
+                                              currentUrl && route().current()
                                         : route().current(Menu.route)
                                 }
                                 className={`${!open && "justify-center"}`}
@@ -235,8 +235,12 @@ const Authenticated = ({
                                     <ResponsiveNavLink
                                         href={route(Menu.route)}
                                         active={
-                                            route().current(Menu.route) ||
-                                            route().current(Menu.route + "/*")
+                                            Menu.subroute
+                                                ? Menu.subroute +
+                                                      route().current() ===
+                                                      currentUrl &&
+                                                  route().current()
+                                                : route().current(Menu.route)
                                         }
                                     >
                                         {Menu.title}
