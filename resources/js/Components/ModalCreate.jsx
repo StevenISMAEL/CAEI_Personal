@@ -3,7 +3,6 @@ import FloatInputText from "./FloatInputText";
 import SearchDropdown from "./SearchInput";
 import SecondaryButton from "./SecondaryButton";
 import PrimaryButton from "./PrimaryButton";
-import { useRef } from "react";
 
 const ModalCreate = ({
     title,

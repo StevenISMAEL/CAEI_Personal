@@ -7,7 +7,6 @@ use Inertia\Inertia;
 
 use App\Http\Controllers\ConClientController;
 use App\Http\Controllers\ConCantonController;
-use App\Models\ConCanton;
 
 Route::get("/", function () {
     return Inertia::render("Welcome", [
@@ -71,6 +70,11 @@ Route::prefix("manage-customers")
         Route::post("/cantons", [ConCantonController::class, "store"])->name(
             "cantons.store"
         );
+
+        Route::delete("/cantons/{id}", [
+            ConCantonController::class,
+            "destroy",
+        ])->name("cantons.destroy");
     })
     ->middleware(["auth", "verified"]);
 

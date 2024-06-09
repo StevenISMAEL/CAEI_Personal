@@ -32,7 +32,9 @@ class CantonRequest extends FormRequest {
             case "PATCH":
                 return [];
             case "DELETE":
-                return [];
+                return [
+                    "id" => "required|string|exists:con_cantons,canton_id",
+                ];
             default:
                 return [];
         }

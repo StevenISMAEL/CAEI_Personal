@@ -27,6 +27,19 @@ class ConCanton extends Model {
         });
     }
 
+    public static function getCantons() {
+        return self::with("province")
+            ->get()
+            ->map(function ($canton) {
+                return [
+                    "canton_id" => $canton->canton_id,
+                    "province_id" => $canton->province_id,
+                    "province_name" => $canton->province->province_name,
+                    "canton_name" => $canton->canton_name,
+                ];
+            });
+    }
+
     public function province() {
         return $this->belongsTo(
             ConProvince::class,
