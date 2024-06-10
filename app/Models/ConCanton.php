@@ -47,4 +47,8 @@ class ConCanton extends Model {
             "province_id"
         );
     }
+
+    public function parishes() {
+        return $this->hasMany(ConParish::class, "canton_id");
+    }
 }
