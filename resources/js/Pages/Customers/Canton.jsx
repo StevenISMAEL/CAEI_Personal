@@ -6,12 +6,12 @@ import Tab from "@/Layouts/TabLayout";
 import {
     AddButton,
     DeleteButton,
-    ExportButton,
     EditCircleButton,
     DeleteCircleButton,
 } from "@/Components/CustomButtons";
 import InputError from "@/Components/InputError";
 import ModalCreate from "@/Components/ModalCreate";
+import ModalEdit from "@/Components/ModalEdit";
 import Box from "@/Layouts/Box";
 
 import tabs from "./tabs";
@@ -27,15 +27,17 @@ const Canton = ({ auth, Provinces, Cantons }) => {
         errors,
         reset,
         delete: destroy,
+        patch,
     } = useForm({
         province_id: "",
         canton_name: "",
         ids: [],
-        numbers: [],
     });
 
     const [showCreate, setShowCreate] = useState(false);
     const [showDelete, setShowDelete] = useState(false);
+    const [showEdit, setShowEdit] = useState(false);
+    const [editData, setEditData] = useState(null);
     const [dataToDelete, setDataToDelete] = useState(null);
     const [selectedCantons, setSelectedCantons] = useState([]);
 
@@ -51,12 +53,36 @@ const Canton = ({ auth, Provinces, Cantons }) => {
         setDataToDelete(id);
     };
 
+    const closeEditModal = () => {
+        setShowEdit(false);
+        setEditData(null);
+    };
+    const openEditModal = (canton) => {
+        setShowEdit(true);
+        setEditData(canton);
+        setData({
+            province_id: canton.province_id,
+            canton_name: canton.canton_name,
+        });
+    };
+
     const handleSubmitAdd = (e) => {
         e.preventDefault();
 
         post(route("cantons.store"), {
             preserveScroll: true,
             onSuccess: () => closeModalCreate(),
+            onError: (error) => console.log(error),
+            onFinish: () => reset(),
+        });
+    };
+
+    const handleSubmitEdit = (e) => {
+        e.preventDefault();
+
+        patch(route("cantons.update", { id: editData.canton_id }), {
+            preserveScroll: true,
+            onSuccess: () => closeEditModal(),
             onError: (error) => console.log(error),
             onFinish: () => reset(),
         });
@@ -95,6 +121,7 @@ const Canton = ({ auth, Provinces, Cantons }) => {
             inputError: (
                 <InputError message={errors.province_id} className="mt-2" />
             ),
+            defaultValue: data.province_id,
         },
         {
             label: "Nombre del Canton",
@@ -106,6 +133,7 @@ const Canton = ({ auth, Provinces, Cantons }) => {
             inputError: (
                 <InputError message={errors.canton_name} className="mt-2" />
             ),
+            defaultValue: data.canton_name,
         },
     ];
 
@@ -151,7 +179,11 @@ const Canton = ({ auth, Provinces, Cantons }) => {
                                 onClick={openDeleteModalForSelected}
                             />
                         </div>
-                        <ExportButton disabled={false} />
+                        <ExportData
+                            data={Cantons}
+                            searchColumns={searchColumns}
+                            headers={theaders}
+                        />
                     </div>
                 </Box>
                 <ModalCreate
@@ -169,17 +201,26 @@ const Canton = ({ auth, Provinces, Cantons }) => {
                     handleDelete={() => handleDelete(dataToDelete)}
                     processing={processing}
                 />
-
+                <ModalEdit
+                    title="Edit Canton"
+                    showEdit={showEdit}
+                    closeEditModal={closeEditModal}
+                    inputs={inputs}
+                    processing={processing}
+                    handleSubmitEdit={handleSubmitEdit}
+                />
                 <Box className="mt-3 hidden md:block">
                     <TableCustom
-                        Headers={theaders}
-                        Data={Cantons}
-                        openDeleteModal={openDeleteModal}
-                        selectedCantons={selectedCantons}
-                        handleCheckboxChange={handleCheckboxChange}
-                        handleSelectAll={handleSelectAll}
+                        headers={theaders}
+                        data={Cantons}
                         searchColumns={searchColumns}
-                    ></TableCustom>
+                        onDelete={openDeleteModal}
+                        onEdit={openEditModal}
+                        idKey="canton_id"
+                        onSelectChange={handleCheckboxChange}
+                        selectedItems={selectedCantons}
+                        onSelectAll={handleSelectAll}
+                    />
                 </Box>
                 <Box className="mt-3 md:hidden">
                     <h2>Card</h2>
@@ -197,20 +238,22 @@ import FloatInputText from "@/Components/FloatInputText";
 import { FaArrowDownShortWide, FaArrowUpShortWide } from "react-icons/fa6";
 import SecondaryButton from "@/Components/SecondaryButton";
 import { IoIosArrowForward, IoIosArrowBack } from "react-icons/io";
-
+import ExportData from "@/Components/ExportData";
 function TableCustom({
-    Headers,
-    Data,
-    openDeleteModal,
-    selectedCantons,
-    handleCheckboxChange,
-    handleSelectAll,
+    headers,
+    data,
     searchColumns,
+    onDelete,
+    onEdit,
+    idKey,
+    onSelectChange,
+    selectedItems,
+    onSelectAll,
 }) {
     const styles =
         "text-violet-600 shadow-sm focus:ring-violet-500 dark:focus:ring-violet-600";
     const [searchValue, setSearchValue] = useState("");
-    const [filteredData, setFilteredData] = useState(Data);
+    const [filteredData, setFilteredData] = useState(data);
     const [sortConfig, setSortConfig] = useState({
         key: null,
         direction: "asc",
@@ -219,15 +262,15 @@ function TableCustom({
     const [currentPage, setCurrentPage] = useState(1);
 
     useEffect(() => {
-        setFilteredData(Data);
-    }, [Data]);
+        setFilteredData(data);
+    }, [data]);
 
     const handleSearch = (event) => {
         const value = event.target.value.toLowerCase();
         setSearchValue(value);
-        const filtered = Data.filter((data) => {
+        const filtered = data.filter((item) => {
             return searchColumns.some((column) => {
-                const fieldValue = data[column].toString().toLowerCase();
+                const fieldValue = item[column].toString().toLowerCase();
                 return fieldValue.includes(value);
             });
         });
@@ -286,14 +329,14 @@ function TableCustom({
 
     return (
         <>
-            {Data.length > 0 ? (
+            {data.length > 0 ? (
                 <>
                     <nav className="flex justify-between pb-3">
                         <div className="flex items-center gap-2">
                             <select
                                 onChange={handleItemsPerPageChange}
                                 value={itemsPerPage}
-                                className="bg-white dark:bg-gray-800  rounded border-gray-300 dark:border-gray-700 shadow-sm focus:ring-violet-500 dark:focus:ring-violet-600 dark:focus:ring-offset-gray-800 "
+                                className="bg-white dark:bg-gray-800 rounded-md border-gray-300 dark:border-gray-700 shadow-md focus:ring-violet-500 dark:focus:ring-violet-600 dark:focus:ring-offset-gray-800"
                             >
                                 <option value={5}>5</option>
                                 <option value={10}>10</option>
@@ -320,10 +363,10 @@ function TableCustom({
                                                 <Checkbox
                                                     className={styles}
                                                     checked={
-                                                        selectedCantons.length ===
-                                                        Data.length
+                                                        selectedItems.length ===
+                                                        data.length
                                                     }
-                                                    onChange={handleSelectAll}
+                                                    onChange={onSelectAll}
                                                 />
                                                 <label
                                                     htmlFor="checkbox-all"
@@ -333,11 +376,11 @@ function TableCustom({
                                                 </label>
                                             </div>
                                         </th>
-                                        {Headers.map((header, index) => (
+                                        {headers.map((header, index) => (
                                             <th
                                                 key={index}
                                                 scope="col"
-                                                className="px-6 py-3"
+                                                className="px-6 py-3 truncate"
                                             >
                                                 <button
                                                     className="flex items-center gap-2"
@@ -365,12 +408,12 @@ function TableCustom({
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {currentData.map((data, index) => (
+                                    {currentData.map((item, index) => (
                                         <tr
-                                            key={index}
+                                            key={item[idKey]}
                                             className={`border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 ${
-                                                selectedCantons.includes(
-                                                    data.canton_id,
+                                                selectedItems.includes(
+                                                    item[idKey],
                                                 )
                                                     ? "bg-violet-100 dark:bg-violet-900"
                                                     : "bg-white dark:bg-gray-800"
@@ -380,12 +423,12 @@ function TableCustom({
                                                 <div className="flex items-center">
                                                     <Checkbox
                                                         className={styles}
-                                                        checked={selectedCantons.includes(
-                                                            data.canton_id,
+                                                        checked={selectedItems.includes(
+                                                            item[idKey],
                                                         )}
                                                         onChange={() =>
-                                                            handleCheckboxChange(
-                                                                data.canton_id,
+                                                            onSelectChange(
+                                                                item[idKey],
                                                             )
                                                         }
                                                     />
@@ -397,22 +440,23 @@ function TableCustom({
                                                     </label>
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4">
-                                                {data.canton_id}
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                {data.province_name}
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                {data.canton_name}
-                                            </td>
+                                            {searchColumns.map(
+                                                (column, idx) => (
+                                                    <td
+                                                        key={idx}
+                                                        className="px-6 py-4 whitespace-pre-wrap truncate"
+                                                    >
+                                                        {item[column]}
+                                                    </td>
+                                                ),
+                                            )}
                                             <td className="flex items-center px-6 py-4 gap-1">
-                                                <EditCircleButton />
+                                                <EditCircleButton
+                                                    onClick={() => onEdit(item)}
+                                                />
                                                 <DeleteCircleButton
                                                     onClick={() =>
-                                                        openDeleteModal(
-                                                            data.canton_id,
-                                                        )
+                                                        onDelete(item[idKey])
                                                     }
                                                 />
                                             </td>

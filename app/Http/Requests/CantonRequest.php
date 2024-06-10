@@ -26,11 +26,12 @@ class CantonRequest extends FormRequest {
                         "required|string|max:7|exists:con_provinces,province_id",
                     "canton_name" => "required|string|max:50",
                 ];
-
-            case "PUT":
-                return [];
             case "PATCH":
-                return [];
+                return [
+                    "province_id" =>
+                        "sometimes|required|string|max:7|exists:con_provinces,province_id",
+                    "canton_name" => "sometimes|required|string|max:50",
+                ];
             case "DELETE":
                 return [
                     "id" => "required|string|exists:con_cantons,canton_id",

@@ -21,6 +21,12 @@ class ConCantonController extends Controller {
         return to_route("cantons");
     }
 
+    public function update(CantonRequest $cantonRequest, $id) {
+        $canton = ConCanton::findOrFail($id);
+        $canton->update($cantonRequest->validated());
+        return to_route("cantons");
+    }
+
     public function destroy($id) {
         ConCanton::find($id)->delete();
         return to_route("cantons");

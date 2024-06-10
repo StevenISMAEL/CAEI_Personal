@@ -70,17 +70,14 @@ Route::prefix("manage-customers")
         Route::post("/cantons", [ConCantonController::class, "store"])->name(
             "cantons.store"
         );
-
         Route::delete("/cantons/{id}", [
             ConCantonController::class,
             "destroy",
         ])->name("cantons.destroy");
-
-        Route::delete("/cantons/{id}", [
+        Route::patch("/cantons/{id}", [
             ConCantonController::class,
-            "destroy",
-        ])->name("cantons.destroy");
-
+            "update",
+        ])->name("cantons.update");
         Route::delete("/cantons", [
             ConCantonController::class,
             "destroyMultiple",
