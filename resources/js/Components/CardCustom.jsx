@@ -206,7 +206,7 @@ const CardsCustom = ({
                             <CgUnavailable className="text-red-500 text-xl" />
                         </h2>
                     )}
-                    <div className="flex justify-center gap-3 items-center p-4">
+                    <div className="flex justify-between gap-3 py-3 items-center sm:justify-center">
                         <SecondaryButton
                             className="px-3 py-1 flex items-center gap-1 bg-gray-200 dark:bg-gray-600"
                             onClick={handlePreviousPage}
