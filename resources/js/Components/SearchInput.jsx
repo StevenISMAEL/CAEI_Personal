@@ -8,6 +8,7 @@ const SearchDropdown = ({
     valueKey,
     onSelect,
     placeholder,
+    defaultValue,
     className = "",
 }) => {
     const [search, setSearch] = useState("");

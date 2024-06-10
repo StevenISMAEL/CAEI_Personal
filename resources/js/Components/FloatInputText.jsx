@@ -9,6 +9,7 @@ const FloatInputText = forwardRef(
             className = "",
             isFocused = false,
             inputError,
+            defaultValue,
             ...props
         },
         ref,
