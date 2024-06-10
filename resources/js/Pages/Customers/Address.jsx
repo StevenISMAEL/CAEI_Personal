@@ -14,7 +14,7 @@ import DeleteModal from "@/Components/DeleteModal";
 import TableCustom from "@/Components/TableCustom";
 import CardsCustom from "@/Components/CardCustom";
 
-const Parish = ({ auth, Cantons, Parishes }) => {
+const Address = ({ auth, Parishes, Addresses }) => {
     const {
         data,
         setData,
@@ -25,8 +25,10 @@ const Parish = ({ auth, Cantons, Parishes }) => {
         delete: destroy,
         patch,
     } = useForm({
-        canton_id: "",
-        parish_name: "",
+        parish_id: "",
+        address: "",
+        reference: "",
+        neighborhood: "",
         ids: [],
     });
 
@@ -35,7 +37,7 @@ const Parish = ({ auth, Cantons, Parishes }) => {
     const [showEdit, setShowEdit] = useState(false);
     const [editData, setEditData] = useState(null);
     const [dataToDelete, setDataToDelete] = useState(null);
-    const [selectedParishes, setSelectedParishes] = useState([]);
+    const [selectedAddresses, setSelectedAddresses] = useState([]);
 
     const closeModalCreate = () => setShowCreate(false);
     const openCreateModal = () => setShowCreate(true);
@@ -53,19 +55,21 @@ const Parish = ({ auth, Cantons, Parishes }) => {
         setShowEdit(false);
         setEditData(null);
     };
-    const openEditModal = (parish) => {
+    const openEditModal = (address) => {
         setShowEdit(true);
-        setEditData(parish);
+        setEditData(address);
         setData({
-            canton_id: parish.canton_id,
-            parish_name: parish.parish_name,
+            parish_id: address.parish_id,
+            address: address.address,
+            reference: address.reference,
+            neighborhood: address.neighborhood,
         });
     };
 
     const handleSubmitAdd = (e) => {
         e.preventDefault();
 
-        post(route("parishes.store"), {
+        post(route("addresses.store"), {
             preserveScroll: true,
             onSuccess: () => closeModalCreate(),
             onError: (error) => console.log(error),
@@ -76,7 +80,7 @@ const Parish = ({ auth, Cantons, Parishes }) => {
     const handleSubmitEdit = (e) => {
         e.preventDefault();
 
-        patch(route("parishes.update", { id: editData.parish_id }), {
+        patch(route("addresses.update", { id: editData.address_id }), {
             preserveScroll: true,
             onSuccess: () => closeEditModal(),
             onError: (error) => console.log(error),
@@ -87,17 +91,17 @@ const Parish = ({ auth, Cantons, Parishes }) => {
     const handleDelete = (id) => {
         if (Array.isArray(id)) {
             data.ids = id;
-            destroy(route("parishes.multiple.destroy"), {
+            destroy(route("addresses.multiple.destroy"), {
                 preserveScroll: true,
                 onSuccess: () => {
-                    setSelectedParishes([]);
+                    setSelectedAddresses([]);
                     closeDeleteModal();
                 },
                 onError: (error) => console.error(error),
                 onFinish: () => reset(),
             });
         } else {
-            destroy(route("parishes.destroy", { id }), {
+            destroy(route("addresses.destroy", { id }), {
                 preserveScroll: true,
                 onSuccess: () => closeDeleteModal(),
                 onError: (error) => console.error(error),
@@ -108,36 +112,72 @@ const Parish = ({ auth, Cantons, Parishes }) => {
 
     const inputs = [
         {
-            placeholder: "Canton",
-            type: "select",
-            labelKey: "canton_name",
-            valueKey: "canton_id",
-            options: Cantons,
-            onSelect: (id) => setData("canton_id", id),
+            label: "Dirección",
+            id: "address",
+            type: "text",
+            name: "address",
+            value: data.address,
+            onChange: (e) => setData("address", e.target.value),
             inputError: (
-                <InputError message={errors.canton_id} className="mt-2" />
+                <InputError message={errors.address} className="mt-2" />
             ),
-            defaultValue: data.canton_id,
+            defaultValue: data.address,
         },
         {
-            label: "Nombre de la Parroquia",
-            id: "parish_name",
-            type: "text",
-            name: "parish_name",
-            value: data.parish_name,
-            onChange: (e) => setData("parish_name", e.target.value),
+            placeholder: "Parroquia",
+            type: "select",
+            labelKey: "parish_name",
+            valueKey: "parish_id",
+            options: Parishes,
+            onSelect: (id) => setData("parish_id", id),
             inputError: (
-                <InputError message={errors.parish_name} className="mt-2" />
+                <InputError message={errors.parish_id} className="mt-2" />
             ),
-            defaultValue: data.parish_name,
+            defaultValue: data.parish_id,
+        },
+        {
+            label: "Referencia",
+            id: "reference",
+            type: "text",
+            name: "reference",
+            value: data.reference,
+            onChange: (e) => setData("reference", e.target.value),
+            inputError: (
+                <InputError message={errors.reference} className="mt-2" />
+            ),
+            defaultValue: data.reference,
+        },
+        {
+            label: "Vecindario",
+            id: "neighborhood",
+            type: "text",
+            name: "neighborhood",
+            value: data.neighborhood,
+            onChange: (e) => setData("neighborhood", e.target.value),
+            inputError: (
+                <InputError message={errors.neighborhood} className="mt-2" />
+            ),
+            defaultValue: data.neighborhood,
         },
     ];
 
-    const theaders = ["ID", "Canton", "Parroquia"];
-    const searchColumns = ["parish_id", "canton_name", "parish_name"];
+    const theaders = [
+        "ID",
+        "Direccion",
+        "Parroquia",
+        "Referencias",
+        "Vecindario",
+    ];
+    const searchColumns = [
+        "address_id",
+        "address",
+        "parish_name",
+        "reference",
+        "neighborhood",
+    ];
 
     const handleCheckboxChange = (id) => {
-        setSelectedParishes((prevSelected) => {
+        setSelectedAddresses((prevSelected) => {
             if (prevSelected.includes(id)) {
                 return prevSelected.filter((item) => item !== id);
             } else {
@@ -147,36 +187,36 @@ const Parish = ({ auth, Cantons, Parishes }) => {
     };
 
     const handleSelectAll = () => {
-        if (selectedParishes.length === Parishes.length) {
-            setSelectedParishes([]);
+        if (selectedAddresses.length === Addresses.length) {
+            setSelectedAddresses([]);
         } else {
-            setSelectedParishes(Parishes.map((parish) => parish.parish_id));
+            setSelectedAddresses(Addresses.map((address) => address.address_id));
         }
     };
 
     const openDeleteModalForSelected = () => {
         setShowDelete(true);
-        setDataToDelete(selectedParishes);
+        setDataToDelete(selectedAddresses);
     };
 
     return (
         <Authenticated
             user={auth.user}
-            header={<Header subtitle="Manage Parishes" />}
+            header={<Header subtitle="Manage Addresses" />}
         >
-            <Head title="Parroquias" />
+            <Head title="Direcciones" />
             <Tab tabs={tabs}>
                 <Box>
                     <div className="flex flex-wrap items-center justify-center md:justify-between gap-2">
                         <div className="w-full sm:w-auto flex flex-wrap justify-center gap-2">
                             <AddButton onClick={openCreateModal} />
                             <DeleteButton
-                                disabled={selectedParishes.length === 0}
+                                disabled={selectedAddresses.length === 0}
                                 onClick={openDeleteModalForSelected}
                             />
                         </div>
                         <ExportData
-                            data={Parishes}
+                            data={Addresses}
                             searchColumns={searchColumns}
                             headers={theaders}
                         />
@@ -185,7 +225,7 @@ const Parish = ({ auth, Cantons, Parishes }) => {
                 <ModalCreate
                     showCreate={showCreate}
                     closeModalCreate={closeModalCreate}
-                    title={"Add Parishes"}
+                    title={"Add Addresses"}
                     inputs={inputs}
                     processing={processing}
                     handleSubmitAdd={handleSubmitAdd}
@@ -193,7 +233,7 @@ const Parish = ({ auth, Cantons, Parishes }) => {
                 <DeleteModal
                     showDelete={showDelete}
                     closeDeleteModal={closeDeleteModal}
-                    title={"Delete Parishes"}
+                    title={"Delete Addresses"}
                     handleDelete={() => handleDelete(dataToDelete)}
                     processing={processing}
                 />
@@ -208,26 +248,26 @@ const Parish = ({ auth, Cantons, Parishes }) => {
                 <Box className="mt-3 hidden md:block">
                     <TableCustom
                         headers={theaders}
-                        data={Parishes}
+                        data={Addresses}
                         searchColumns={searchColumns}
                         onDelete={openDeleteModal}
                         onEdit={openEditModal}
-                        idKey="parish_id"
+                        idKey="address_id"
                         onSelectChange={handleCheckboxChange}
-                        selectedItems={selectedParishes}
+                        selectedItems={selectedAddresses}
                         onSelectAll={handleSelectAll}
                     />
                 </Box>
                 <Box className="mt-3  md:hidden">
                     <CardsCustom
                         headers={theaders}
-                        data={Parishes}
+                        data={Addresses}
                         searchColumns={searchColumns}
                         onDelete={openDeleteModal}
                         onEdit={openEditModal}
-                        idKey="parish_id"
+                        idKey="address_id"
                         onSelectChange={handleCheckboxChange}
-                        selectedItems={selectedParishes}
+                        selectedItems={selectedAddresses}
                         onSelectAll={handleSelectAll}
                     />
                 </Box>
@@ -236,4 +276,4 @@ const Parish = ({ auth, Cantons, Parishes }) => {
     );
 };
 
-export default Parish;
+export default Address;

@@ -42,4 +42,8 @@ class ConParish extends Model {
     public function canton() {
         return $this->belongsTo(ConCanton::class, "canton_id", "canton_id");
     }
+
+    public function addresses() {
+        return $this->hasMany(ConAddress::class, "parish_id");
+    }
 }

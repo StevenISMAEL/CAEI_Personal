@@ -8,6 +8,7 @@ use Inertia\Inertia;
 use App\Http\Controllers\ConClientController;
 use App\Http\Controllers\ConCantonController;
 use App\Http\Controllers\ConParishController;
+use App\Http\Controllers\ConAddressController;
 
 Route::get("/", function () {
     return Inertia::render("Welcome", [
@@ -57,9 +58,24 @@ Route::prefix("manage-customers")
             "phones"
         );
 
-        Route::get("/addresses", [ConClientController::class, "index"])->name(
+        Route::get("/addresses", [ConAddressController::class, "index"])->name(
             "addresses"
         );
+        Route::post("/addresses", [ConAddressController::class, "store"])->name(
+            "addresses.store"
+        );
+        Route::patch("/addresses/{id}", [
+            ConAddressController::class,
+            "update",
+        ])->name("addresses.update");
+        Route::delete("/addresses/{id}", [
+            ConAddressController::class,
+            "destroy",
+        ])->name("addresses.destroy");
+        Route::delete("/addresses", [
+            ConAddressController::class,
+            "destroyMultiple",
+        ])->name("addresses.multiple.destroy");
 
         
 
