@@ -50,4 +50,8 @@ class ConAddress extends Model {
     public function parish() {
         return $this->belongsTo(ConParish::class, "parish_id", "parish_id");
     }
+
+    public function clients() {
+        return $this->hasMany(ConClient::class, "address_id", "address_id");
+    }
 }

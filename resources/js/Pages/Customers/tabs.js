@@ -7,27 +7,27 @@ import { PiCityFill } from "react-icons/pi";
 const tabs = [
     {
         name: "Clientes",
-        route: "clients",
+        route: "clients.index",
         icon: IoPeopleSharp,
     },
     {
         name: "Telefonos",
-        route: "phones",
+        route: "phones.index",
         icon: FaPhone,
     },
     {
         name: "Direcciones",
-        route: "addresses",
+        route: "addresses.index",
         icon: FaHome,
     },
     {
         name: "Parroquias",
-        route: "parishes",
+        route: "parishes.index",
         icon: FaMapMarked,
     },
     {
         name: "Cantones",
-        route: "cantons",
+        route: "cantons.index",
         icon: PiCityFill,
     },
 ];

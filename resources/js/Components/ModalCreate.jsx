@@ -30,7 +30,6 @@ const ModalCreate = ({
                                 ) : (
                                     <FloatInputText
                                         {...input}
-                                        isFocused={false}
                                         className="mt-3 block w-full"
                                     />
                                 )}

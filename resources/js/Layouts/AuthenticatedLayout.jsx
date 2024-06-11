@@ -41,7 +41,7 @@ const Authenticated = ({
         },
         {
             title: "Customers",
-            route: "clients",
+            route: "clients.index",
             subroute: "/manage-customers/",
             icon: <IoPeopleCircle />,
             roles: ["admin", "gerente"],
@@ -95,7 +95,7 @@ const Authenticated = ({
                                 active={
                                     Menu.subroute
                                         ? Menu.subroute + route().current() ===
-                                              currentUrl && route().current()
+                                          currentUrl + ".index"
                                         : route().current(Menu.route)
                                 }
                                 className={`${!open && "justify-center"}`}

@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+
 use App\Http\Controllers\ConClientController;
 use App\Http\Controllers\ConCantonController;
 use App\Http\Controllers\ConParishController;
@@ -11,6 +12,7 @@ use App\Http\Controllers\ConAddressController;
 
 use App\Http\Controllers\IpOltsController;
 use App\Models\IpOlts;
+use App\Http\Controllers\ConPhoneController;
 
 Route::get("/", function () {
     return Inertia::render("Welcome", [
@@ -39,88 +41,64 @@ Route::middleware("auth")->group(function () {
     );
 });
 
-Route::get("/home", function () {
-    return view("home", ["nombre" => "Jordan :)"]);
-});
-
 Route::get("/app", function () {
     return Inertia::render("App");
 });
 
 Route::prefix("manage-customers")
+    ->middleware(["auth", "verified"])
     ->group(function () {
-        Route::get("/clients", [ConClientController::class, "index"])->name(
-            "clients"
-        );
-        Route::post("/clients", [ConClientController::class, "store"])->name(
-            "clients.store"
-        );
+        Route::resource("clients", ConClientController::class)->except([
+            "create",
+            "show",
+            "edit",
+        ]);
+        Route::delete("/clients", [
+            ConClientController::class,
+            "destroyMultiple",
+        ])->name("clients.multiple.destroy");
 
-        Route::get("/phones", [ConClientController::class, "index"])->name(
-            "phones"
-        );
+        Route::resource("phones", ConPhoneController::class)->except([
+            "create",
+            "show",
+            "edit",
+        ]);
+        Route::delete("/phones", [
+            ConPhoneController::class,
+            "destroyMultiple",
+        ])->name("phones.multiple.destroy");
 
-        Route::get("/addresses", [ConAddressController::class, "index"])->name(
-            "addresses"
-        );
-        Route::post("/addresses", [ConAddressController::class, "store"])->name(
-            "addresses.store"
-        );
-        Route::patch("/addresses/{id}", [
-            ConAddressController::class,
-            "update",
-        ])->name("addresses.update");
-        Route::delete("/addresses/{id}", [
-            ConAddressController::class,
-            "destroy",
-        ])->name("addresses.destroy");
+        Route::resource("addresses", ConAddressController::class)->except([
+            "create",
+            "show",
+            "edit",
+        ]);
         Route::delete("/addresses", [
             ConAddressController::class,
             "destroyMultiple",
         ])->name("addresses.multiple.destroy");
 
-        Route::get("/parishes", [ConParishController::class, "index"])->name(
-            "parishes"
-        );
-        Route::post("/parishes", [ConParishController::class, "store"])->name(
-            "parishes.store"
-        );
-        Route::patch("/parishes/{id}", [
-            ConParishController::class,
-            "update",
-        ])->name("parishes.update");
-        Route::delete("/parishes/{id}", [
-            ConParishController::class,
-            "destroy",
-        ])->name("parishes.destroy");
+        Route::resource("parishes", ConParishController::class)->except([
+            "create",
+            "show",
+            "edit",
+        ]);
         Route::delete("/parishes", [
-            ConParishController::class,
+            ConClientController::class,
             "destroyMultiple",
         ])->name("parishes.multiple.destroy");
-
-        Route::get("/cantons", [ConCantonController::class, "index"])->name(
-            "cantons"
-        );
-        Route::post("/cantons", [ConCantonController::class, "store"])->name(
-            "cantons.store"
-        );
-        Route::delete("/cantons/{id}", [
-            ConCantonController::class,
-            "destroy",
-        ])->name("cantons.destroy");
-        Route::patch("/cantons/{id}", [
-            ConCantonController::class,
-            "update",
-        ])->name("cantons.update");
+        Route::resource("cantons", ConCantonController::class)->except([
+            "create",
+            "show",
+            "edit",
+        ]);
         Route::delete("/cantons", [
             ConCantonController::class,
             "destroyMultiple",
         ])->name("cantons.multiple.destroy");
-    })
-    ->middleware(["auth", "verified"]);
+    });
 
-
-    Route::prefix("manage-ips")
+Route::prefix("manage-ips")
     ->group(function () {
         Route::resource("olts", IpOltsController::class)->except([
             "create",
@@ -131,7 +109,6 @@ Route::prefix("manage-customers")
             IpOltsController::class,
             "destroyMultiple",
         ])->name("olts.multiple.destroy");
-
     })
     ->middleware(["auth", "verified"]);
 

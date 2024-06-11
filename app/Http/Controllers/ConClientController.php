@@ -3,24 +3,38 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Con_Cliente;
+use App\Models\ConAddress;
+use App\Http\Requests\ClientRequest;
+use App\Models\ConClient;
 use Inertia\Inertia;
 
 class ConClientController extends Controller {
     public function index() {
-        return Inertia::render("Customers/Client");
+        return Inertia::render("Customers/Client", [
+            "Addresses" => ConAddress::all(),
+            "Clients" => ConClient::getClients(),
+        ]);
     }
 
-    public function store(Request $request) {
-        $validatedData = $request->validate([
-            "cedula" => "required|string|unique:con_clientes",
-            "id_direccion" => "nullable|string",
-            "nombres_cliente" => "nullable|string",
-            "correo_cliente" => "nullable|email",
-        ]);
-        
-        Con_Cliente::create($validatedData);
+    public function store(ClientRequest $clientRequest) {
+        ConClient::create($clientRequest->validated());
+        return to_route("clients.index");
+    }
 
-        return to_route("customers");
+    public function update(ClientRequest $clientRequest, $id) {
+        $client = ConClient::findOrFail($id);
+        $client->update($clientRequest->validated());
+        return to_route("clients.index");
+    }
+
+    public function destroy($id) {
+        ConClient::find($id)->delete();
+        return to_route("clients.index");
+    }
+
+    public function destroyMultiple(Request $request) {
+        $ids = $request->input("ids");
+        ConClient::whereIn("client_id", $ids)->delete();
+        return to_route("clients.index");
     }
 }

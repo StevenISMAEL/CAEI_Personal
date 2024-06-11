@@ -1,7 +1,16 @@
-import { Fragment } from 'react';
-import { Dialog, Transition } from '@headlessui/react';
+import { Fragment, useRef } from "react";
+import { Dialog, Transition } from "@headlessui/react";
 
-export default function Modal({ children, show = false, maxWidth = '2xl', closeable = true, onClose = () => {} }) {
+export default function Modal({
+    children,
+    show = false,
+    maxWidth = "2xl",
+    closeable = true,
+    onClose = () => {},
+}) {
+    const modalRef = useRef(null);
+    const initialFocusRef = useRef(null);
+
     const close = () => {
         if (closeable) {
             onClose();
@@ -9,11 +18,11 @@ export default function Modal({ children, show = false, maxWidth = '2xl', closea
     };
 
     const maxWidthClass = {
-        sm: 'sm:max-w-sm',
-        md: 'sm:max-w-md',
-        lg: 'sm:max-w-lg',
-        xl: 'sm:max-w-xl',
-        '2xl': 'sm:max-w-2xl',
+        sm: "sm:max-w-sm",
+        md: "sm:max-w-md",
+        lg: "sm:max-w-lg",
+        xl: "sm:max-w-xl",
+        "2xl": "sm:max-w-2xl",
     }[maxWidth];
 
     return (
@@ -23,6 +32,7 @@ export default function Modal({ children, show = false, maxWidth = '2xl', closea
                 id="modal"
                 className="fixed inset-0 flex overflow-y-auto px-4 py-6 sm:px-0 items-center justify-center sm:w-auto z-50 transform transition-all"
                 onClose={close}
+                initialFocus={initialFocusRef}
             >
                 <Transition.Child
                     as={Fragment}
@@ -46,8 +56,15 @@ export default function Modal({ children, show = false, maxWidth = '2xl', closea
                     leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                 >
                     <Dialog.Panel
+                        ref={modalRef}
                         className={`mb-6 bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-xl transform transition-all w-10/12 sm:w-11/12 sm:mx-auto ${maxWidthClass}`}
                     >
+                        {/* Elemento oculto para evitar el enfoque inicial */}
+                        <div
+                            ref={initialFocusRef}
+                            tabIndex={-1}
+                            className="absolute top-0 left-0 w-0 h-0 overflow-hidden"
+                        />
                         {children}
                     </Dialog.Panel>
                 </Transition.Child>

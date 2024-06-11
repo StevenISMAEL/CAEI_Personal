@@ -18,23 +18,23 @@ class ConParishController extends Controller {
 
     public function store(ParishRequest $parishRequest) {
         ConParish::create($parishRequest->validated());
-        return to_route("parishes");
+        return to_route("parishes.index");
     }
 
     public function update(ParishRequest $parishRequest, $id) {
         $parish = ConParish::findOrFail($id);
         $parish->update($parishRequest->validated());
-        return to_route("parishes");
+        return to_route("parishes.index");
     }
 
     public function destroy($id) {
         ConParish::find($id)->delete();
-        return to_route("parishes");
+        return to_route("parishes.index");
     }
 
     public function destroyMultiple(Request $request) {
         $ids = $request->input("ids");
         ConParish::whereIn("parish_id", $ids)->delete();
-        return to_route("parishes");
+        return to_route("parishes.index");
     }
 }

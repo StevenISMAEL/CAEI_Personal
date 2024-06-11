@@ -18,23 +18,23 @@ class ConAddressController extends Controller {
 
     public function store(AddressRequest $addressRequest) {
         ConAddress::create($addressRequest->validated());
-        return to_route("addresses");
+        return to_route("addresses.index");
     }
 
     public function update(AddressRequest $addressRequest, $id) {
         $address = ConAddress::findOrFail($id);
         $address->update($addressRequest->validated());
-        return to_route("addresses");
+        return to_route("addresses.index");
     }
 
     public function destroy($id) {
         ConAddress::find($id)->delete();
-        return to_route("addresses");
+        return to_route("addresses.index");
     }
 
     public function destroyMultiple(Request $request) {
         $ids = $request->input("ids");
         ConAddress::whereIn("address_id", $ids)->delete();
-        return to_route("addresses");
+        return to_route("addresses.index");
     }
 }
