@@ -23,14 +23,14 @@ const DeleteModal = ({
                 </div>
                 <div className="mt-6 flex justify-end">
                     <SecondaryButton onClick={closeDeleteModal}>
-                        Cancel
+                        Cancelar
                     </SecondaryButton>
                     <PrimaryButton
                         className="ms-3"
                         onClick={handleDelete}
                         disabled={processing}
                     >
-                        Delete
+                        Eliminar
                     </PrimaryButton>
                 </div>
             </div>

@@ -4,11 +4,13 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-
 use App\Http\Controllers\ConClientController;
 use App\Http\Controllers\ConCantonController;
 use App\Http\Controllers\ConParishController;
 use App\Http\Controllers\ConAddressController;
+
+use App\Http\Controllers\IpOltsController;
+use App\Models\IpOlts;
 
 Route::get("/", function () {
     return Inertia::render("Welcome", [
@@ -77,8 +79,6 @@ Route::prefix("manage-customers")
             "destroyMultiple",
         ])->name("addresses.multiple.destroy");
 
-        
-
         Route::get("/parishes", [ConParishController::class, "index"])->name(
             "parishes"
         );
@@ -98,7 +98,6 @@ Route::prefix("manage-customers")
             "destroyMultiple",
         ])->name("parishes.multiple.destroy");
 
-
         Route::get("/cantons", [ConCantonController::class, "index"])->name(
             "cantons"
         );
@@ -117,6 +116,22 @@ Route::prefix("manage-customers")
             ConCantonController::class,
             "destroyMultiple",
         ])->name("cantons.multiple.destroy");
+    })
+    ->middleware(["auth", "verified"]);
+
+
+    Route::prefix("manage-ips")
+    ->group(function () {
+        Route::resource("olts", IpOltsController::class)->except([
+            "create",
+            "show",
+            "edit",
+        ]);
+        Route::delete("/olts", [
+            IpOltsController::class,
+            "destroyMultiple",
+        ])->name("olts.multiple.destroy");
+
     })
     ->middleware(["auth", "verified"]);
 

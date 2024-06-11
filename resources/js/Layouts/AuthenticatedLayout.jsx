@@ -46,6 +46,14 @@ const Authenticated = ({
             icon: <IoPeopleCircle />,
             roles: ["admin", "gerente"],
         },
+        {
+            title: "Ips",
+            route: "olts.index",
+            subroute: "/manage-ips/",
+            icon: <IoPeopleCircle />,
+            roles: ["admin", "gerente"],
+        },
+        
     ];
 
     return (

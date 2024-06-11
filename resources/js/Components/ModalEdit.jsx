@@ -42,11 +42,11 @@ const ModalEdit = ({
                 </div>
                 <div className="mt-6 flex justify-end">
                     <SecondaryButton onClick={closeEditModal}>
-                        Cancel
+                        Cancelar
                     </SecondaryButton>
 
                     <PrimaryButton className="ms-3" disabled={processing}>
-                        Update
+                        Actualizar
                     </PrimaryButton>
                 </div>
             </form>

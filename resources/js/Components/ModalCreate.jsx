@@ -40,11 +40,11 @@ const ModalCreate = ({
                 </div>
                 <div className="mt-6 flex justify-end">
                     <SecondaryButton onClick={closeModalCreate}>
-                        Cancel
+                        Cancelar
                     </SecondaryButton>
 
                     <PrimaryButton className="ms-3" disabled={processing}>
-                        Save
+                        Guardar
                     </PrimaryButton>
                 </div>
             </form>

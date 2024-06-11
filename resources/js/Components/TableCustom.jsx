@@ -244,7 +244,7 @@ const TableCustom = ({
                                     disabled={currentPage === 1}
                                 >
                                     <IoIosArrowBack />
-                                    Prev
+                                    Atras
                                 </SecondaryButton>
                                 <span>
                                     Página {currentPage} de{" "}
@@ -260,7 +260,7 @@ const TableCustom = ({
                                         filteredData.length
                                     }
                                 >
-                                    Next
+                                   Siguiente
                                     <IoIosArrowForward />
                                 </SecondaryButton>
                             </div>
