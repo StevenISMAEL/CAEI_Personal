@@ -18,7 +18,7 @@ class ConClientController extends Controller {
             "nombres_cliente" => "nullable|string",
             "correo_cliente" => "nullable|email",
         ]);
-        
+
         Con_Cliente::create($validatedData);
 
         return to_route("customers");

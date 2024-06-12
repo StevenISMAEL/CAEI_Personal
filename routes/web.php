@@ -9,6 +9,8 @@ use App\Http\Controllers\ConClientController;
 use App\Http\Controllers\ConCantonController;
 use App\Http\Controllers\ConParishController;
 use App\Http\Controllers\ConAddressController;
+use App\Http\Controllers\InvProductController;
+use App\Http\Controllers\InvMovementTypeController;
 
 Route::get("/", function () {
     return Inertia::render("Welcome", [
@@ -77,8 +79,6 @@ Route::prefix("manage-customers")
             "destroyMultiple",
         ])->name("addresses.multiple.destroy");
 
-        
-
         Route::get("/parishes", [ConParishController::class, "index"])->name(
             "parishes"
         );
@@ -98,7 +98,6 @@ Route::prefix("manage-customers")
             "destroyMultiple",
         ])->name("parishes.multiple.destroy");
 
-
         Route::get("/cantons", [ConCantonController::class, "index"])->name(
             "cantons"
         );
@@ -117,6 +116,51 @@ Route::prefix("manage-customers")
             ConCantonController::class,
             "destroyMultiple",
         ])->name("cantons.multiple.destroy");
+    })
+    ->middleware(["auth", "verified"]);
+
+Route::prefix("manage-inventory")
+    ->group(function () {
+        Route::get("/products", [InvProductController::class, "index"])->name(
+            "products"
+        );
+        Route::post("/products", [InvProductController::class, "store"])->name(
+            "products.store"
+        );
+        Route::patch("/products/{id}", [
+            InvProductController::class,
+            "update",
+        ])->name("products.update");
+
+        Route::delete("/products/{id}", [
+            InvProductController::class,
+            "destroy",
+        ])->name("products.destroy");
+        Route::delete("/products", [
+            InvProductController::class,
+            "destroyMultiple",
+        ])->name("products.multiple.destroy");
+
+        Route::get("/types", [InvMovementTypeController::class, "index"])->name(
+            "types"
+        );
+        Route::post("/types", [
+            InvMovementTypeController::class,
+            "store",
+        ])->name("types.store");
+        Route::patch("/types/{id}", [
+            InvMovementTypeController::class,
+            "update",
+        ])->name("types.update");
+
+        Route::delete("/types/{id}", [
+            InvMovementTypeController::class,
+            "destroy",
+        ])->name("types.destroy");
+        Route::delete("/types", [
+            InvMovementTypeController::class,
+            "destroyMultiple",
+        ])->name("types.multiple.destroy");
     })
     ->middleware(["auth", "verified"]);
 

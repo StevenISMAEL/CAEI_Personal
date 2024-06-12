@@ -9,6 +9,7 @@ import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
 import { IoPeopleCircle } from "react-icons/io5";
 import DarkModeToggle from "@/Components/NightMode";
 import { DarkModeContext } from "@/Components/DarkModeContext";
+import { MdInventory } from "react-icons/md";
 
 const Authenticated = ({
     user,
@@ -44,6 +45,13 @@ const Authenticated = ({
             route: "clients",
             subroute: "/manage-customers/",
             icon: <IoPeopleCircle />,
+            roles: ["admin", "gerente"],
+        },
+        {
+            title: "Inventory",
+            route: "products",
+            subroute: "/manage-inventory/",
+            icon: <MdInventory />,
             roles: ["admin", "gerente"],
         },
     ];
