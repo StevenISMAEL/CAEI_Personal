@@ -44,7 +44,7 @@ const Authenticated = ({
             route: "clients.index",
             subroute: "/manage-customers/",
             icon: <IoPeopleCircle />,
-            roles: ["admin", "gerente"],
+            roles: ["admin", "vendedor"],
         },
         {
             title: "Ips",
