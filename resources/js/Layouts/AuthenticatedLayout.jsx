@@ -9,6 +9,8 @@ import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
 import { IoPeopleCircle } from "react-icons/io5";
 import DarkModeToggle from "@/Components/NightMode";
 import { DarkModeContext } from "@/Components/DarkModeContext";
+import { MdInventory } from "react-icons/md";
+import { IoPlanet } from "react-icons/io5";
 
 const Authenticated = ({
     user,
@@ -50,10 +52,16 @@ const Authenticated = ({
             title: "Ips",
             route: "olts.index",
             subroute: "/manage-ips/",
-            icon: <IoPeopleCircle />,
+            icon: <IoPlanet />,
             roles: ["admin", "gerente"],
         },
-        
+        {
+            title: "Inventory",
+            route: "products.index",
+            subroute: "/manage-inventory/",
+            icon: <MdInventory />,
+            roles: ["admin", "gerente"],
+        },
     ];
 
     return (
@@ -246,8 +254,7 @@ const Authenticated = ({
                                             Menu.subroute
                                                 ? Menu.subroute +
                                                       route().current() ===
-                                                      currentUrl &&
-                                                  route().current()
+                                                  currentUrl + ".index"
                                                 : route().current(Menu.route)
                                         }
                                     >

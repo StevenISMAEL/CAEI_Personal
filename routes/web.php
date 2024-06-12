@@ -13,6 +13,9 @@ use App\Http\Controllers\ConAddressController;
 use App\Http\Controllers\IpOltsController;
 use App\Models\IpOlts;
 use App\Http\Controllers\ConPhoneController;
+use App\Http\Controllers\InvProductController;
+use App\Http\Controllers\InvMovementTypeController;
+use App\Models\InvProduct;
 
 Route::get("/", function () {
     return Inertia::render("Welcome", [
@@ -109,6 +112,30 @@ Route::prefix("manage-ips")
             IpOltsController::class,
             "destroyMultiple",
         ])->name("olts.multiple.destroy");
+    })
+    ->middleware(["auth", "verified"]);
+
+Route::prefix("manage-inventory")
+    ->group(function () {
+        Route::resource("products", InvProductController::class)->except([
+            "create",
+            "show",
+            "edit",
+        ]);
+        Route::delete("/products", [
+            InvProductController::class,
+            "destroyMultiple",
+        ])->name("products.multiple.destroy");
+
+        Route::resource("types", InvMovementTypeController::class)->except([
+            "create",
+            "show",
+            "edit",
+        ]);
+        Route::delete("/types", [
+            InvMovementTypeController::class,
+            "destroyMultiple",
+        ])->name("types.multiple.destroy");
     })
     ->middleware(["auth", "verified"]);
 
