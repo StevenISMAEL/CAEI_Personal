@@ -18,5 +18,6 @@ class DatabaseSeeder extends Seeder {
             "email" => "test@example.com",
         ]);
         $this->call(ProvinceSeeder::class);
+        $this->call(TypeOrderSeeder::class);
     }
 }

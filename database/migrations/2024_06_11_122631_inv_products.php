@@ -51,23 +51,23 @@ return new class extends Migration {
                 */
         });
 
-        Schema::create("sup_work_orders", function (Blueprint $table) {
-            $table->string("work_order_id", length: 8)->primary();
-            $table->string("movement_id", length: 8);
-            $table->dateTime("solution_date", precision: 0);
-            $table->dateTime("issue_date", precision: 0);
-            $table->string("employee_id", length: 7);
-            $table->string("order_channel", length: 150);
-            $table->string("order_abclaim", length: 250);
-            $table->string("order_initial_abis", length: 150);
-            $table->string("order_initial_potency", length: 150);
-            $table->string("order_final_abis", length: 150);
-            $table->string("order_initial_diagnosis", length: 250);
-            $table->string("order_solution", length: 250);
-            $table->boolean("order_relevant");
-            $table->string("order_current_potency", length: 150);
-            $table->string("order_status", length: 50);
-        });
+        // Schema::create("sup_work_orders", function (Blueprint $table) {
+        //     $table->string("work_order_id", length: 8)->primary();
+        //     $table->string("movement_id", length: 8);
+        //     $table->dateTime("solution_date", precision: 0);
+        //     $table->dateTime("issue_date", precision: 0);
+        //     $table->string("employee_id", length: 7);
+        //     $table->string("order_channel", length: 150);
+        //     $table->string("order_abclaim", length: 250);
+        //     $table->string("order_initial_abis", length: 150);
+        //     $table->string("order_initial_potency", length: 150);
+        //     $table->string("order_final_abis", length: 150);
+        //     $table->string("order_initial_diagnosis", length: 250);
+        //     $table->string("order_solution", length: 250);
+        //     $table->boolean("order_relevant");
+        //     $table->string("order_current_potency", length: 150);
+        //     $table->string("order_status", length: 50);
+        // });
     }
 
     /**
@@ -87,6 +87,6 @@ return new class extends Migration {
         */
         Schema::dropIfExists("inv_products");
         Schema::dropIfExists("inv_movements");
-        Schema::dropIfExists("sup_work_orders");
+        // Schema::dropIfExists("sup_work_orders");
     }
 };
