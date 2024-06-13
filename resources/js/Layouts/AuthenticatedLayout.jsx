@@ -11,7 +11,9 @@ import DarkModeToggle from "@/Components/NightMode";
 import { DarkModeContext } from "@/Components/DarkModeContext";
 import { MdInventory } from "react-icons/md";
 import { IoPlanet } from "react-icons/io5";
+import { TiDocumentText } from "react-icons/ti";
 import { MdOutlineNetworkWifi } from "react-icons/md";
+
 const Authenticated = ({
     user,
     header,
@@ -62,13 +64,20 @@ const Authenticated = ({
             icon: <MdInventory />,
             roles: ["admin", "gerente"],
         },
+        {
+            title: "Support",
+            route: "work-orders.index",
+            subroute: "/manage-orders/",
+            icon: <TiDocumentText />,
+            roles: ["admin", "gerente"],
+        },
     ];
 
     return (
         <div className="flex min-h-screen  bg-gray-100 dark:bg-gray-900">
             <div
                 className={` ${
-                    open ? "w-48" : "w-20 "
+                    open ? "w-60" : "w-28 "
                 } hidden sm:block min-h-screen bg-white dark:bg-gray-800 border-e  shadow-md dark:shadow-gray-600 border-gray-100 dark:border-gray-700 relative duration-300`}
             >
                 <MdKeyboardArrowLeft
@@ -80,12 +89,10 @@ const Authenticated = ({
                     className={`flex items-center gap-x-4 py-3 px-4 h-16 ${!open && " justify-center"} cursor-pointer hover:bg-green-50 dark:hover:bg-green-500 dark:hover:bg-opacity-5 rounded-sm group`}
                 >
                     <ApplicationLogo
-                        className={`cursor-pointer duration-500 text-2xl text-gray-800 dark:text-gray-200 ${
-                            open && "rotate-[360deg]"
-                        }`}
+                        className={`cursor-pointer duration-500 text-2xl text-gray-800 dark:text-gray-200 `}
                     />
                     <h1
-                        className={`text-gray-800 dark:text-gray-200 origin-left text-2xl ${
+                        className={`text-gray-800 dark:text-gray-200 origin-left text-3xl ${
                             !open && "duration-500 hidden"
                         } truncate overflow-hidden whitespace-nowrap`}
                     >
@@ -108,7 +115,7 @@ const Authenticated = ({
                                 }
                                 className={`${!open && "justify-center"}`}
                             >
-                                <span className="text-lg">{Menu.icon}</span>
+                                <span className="text-xl">{Menu.icon}</span>
                                 <span
                                     className={`text-lg truncate overflow-hidden whitespace-nowrap ${
                                         !open && "duration-500 hidden"

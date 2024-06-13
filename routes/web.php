@@ -163,5 +163,19 @@ Route::prefix("manage-inventory")
     })
     ->middleware(["auth", "verified"]);
 
+Route::prefix("manage-orders")
+    ->group(function () {
+        Route::resource("work-orders", InvProductController::class)->except([
+            "create",
+            "show",
+            "edit",
+        ]);
+        Route::delete("/work-orders", [
+            InvProductController::class,
+            "destroyMultiple",
+        ])->name("work-orders.multiple.destroy");
+    })
+    ->middleware(["auth", "verified"]);
+
 
 require __DIR__ . "/auth.php";
