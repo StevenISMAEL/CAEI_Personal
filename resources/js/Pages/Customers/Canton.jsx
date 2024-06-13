@@ -13,6 +13,7 @@ import tabs from "./tabs";
 import DeleteModal from "@/Components/DeleteModal";
 import TableCustom from "@/Components/TableCustom";
 import CardsCustom from "@/Components/CardCustom";
+import { Notify } from "@/Components/Toast";
 
 const Canton = ({ auth, Provinces, Cantons }) => {
     const {
@@ -67,7 +68,10 @@ const Canton = ({ auth, Provinces, Cantons }) => {
 
         post(route("cantons.store"), {
             preserveScroll: true,
-            onSuccess: () => closeModalCreate(),
+            onSuccess: () => {
+                closeModalCreate();
+                Notify("success", "Canton agregado correctamente");
+            },
             onError: (error) => console.log(error),
             onFinish: () => reset(),
         });
@@ -78,7 +82,10 @@ const Canton = ({ auth, Provinces, Cantons }) => {
 
         patch(route("cantons.update", { id: editData.canton_id }), {
             preserveScroll: true,
-            onSuccess: () => closeEditModal(),
+            onSuccess: () => {
+                closeModalCreate();
+                Notify("success", "Canton actualizado correctamente");
+            },
             onError: (error) => console.log(error),
             onFinish: () => reset(),
         });
@@ -92,6 +99,7 @@ const Canton = ({ auth, Provinces, Cantons }) => {
                 onSuccess: () => {
                     setSelectedCantons([]);
                     closeDeleteModal();
+                    Notify("success", "Canton agregado correctamente");
                 },
                 onError: (error) => console.error(error),
                 onFinish: () => reset(),

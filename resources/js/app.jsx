@@ -5,6 +5,8 @@ import { createRoot } from "react-dom/client";
 import { createInertiaApp } from "@inertiajs/react";
 import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
 import { DarkModeProvider } from "@/Components/DarkModeContext";
+import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 createInertiaApp({
     title: (title) => `${title}`,
@@ -18,6 +20,7 @@ createInertiaApp({
         root.render(
             <DarkModeProvider>
                 <App {...props} />
+                <ToastContainer autoClose={3000} />
             </DarkModeProvider>,
         );
     },

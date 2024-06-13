@@ -87,7 +87,7 @@ return new class extends Migration
             $table->dropForeign(["distribution_nap_id"]);
         });
         
-        Schema::table("distribution_nap_id", function (Blueprint $table) {
+        Schema::table("ip_distribution_naps", function (Blueprint $table) {
             $table->dropForeign(["olt_id"]);
         });
         Schema::dropIfExists('olt_id');
