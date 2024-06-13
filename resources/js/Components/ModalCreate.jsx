@@ -3,6 +3,7 @@ import FloatInputText from "./FloatInputText";
 import SearchDropdown from "./SearchInput";
 import SecondaryButton from "./SecondaryButton";
 import PrimaryButton from "./PrimaryButton";
+import ComboBox from "./ComboBox";
 
 const ModalCreate = ({
     title,
@@ -24,6 +25,11 @@ const ModalCreate = ({
                             <div key={index}>
                                 {input.type === "select" ? (
                                     <SearchDropdown
+                                        {...input}
+                                        className="mt-3 block w-full"
+                                    />
+                                ) : input.type === "combobox" ? (
+                                    <ComboBox
                                         {...input}
                                         className="mt-3 block w-full"
                                     />

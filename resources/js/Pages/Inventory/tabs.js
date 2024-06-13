@@ -8,8 +8,8 @@ const tabs = [
     },
 
     {
-        name: "Tipos de movimientos",
-        route: "types.index",
+        name: "Movimientos",
+        route: "movements.index",
         icon: BiCustomize,
     },
     /*

@@ -16,6 +16,7 @@ use App\Http\Controllers\ConPhoneController;
 use App\Http\Controllers\InvProductController;
 use App\Http\Controllers\InvMovementTypeController;
 use App\Models\InvProduct;
+use App\Http\Controllers\InvMovementController;
 use App\Http\Controllers\IpDistributionController;
 use App\Http\Controllers\IpLastMileController;
 
@@ -115,12 +116,11 @@ Route::prefix("manage-ips")
             "destroyMultiple",
         ])->name("olts.multiple.destroy");
 
-        Route::resource("distributionNaps", IpDistributionController::class)->except([
-            "create",
-            "show",
-            "edit",
-        ]);
-        
+        Route::resource(
+            "distributionNaps",
+            IpDistributionController::class
+        )->except(["create", "show", "edit"]);
+
         Route::delete("/distributionNaps", [
             IpDistributionController::class,
             "destroyMultiple",
@@ -131,7 +131,7 @@ Route::prefix("manage-ips")
             "show",
             "edit",
         ]);
-        
+
         Route::delete("/lastmileNaps", [
             IpLastMileController::class,
             "destroyMultiple",
@@ -160,8 +160,17 @@ Route::prefix("manage-inventory")
             InvMovementTypeController::class,
             "destroyMultiple",
         ])->name("types.multiple.destroy");
+
+        Route::resource("movements", InvMovementController::class)->except([
+            "create",
+            "show",
+            "edit",
+        ]);
+        Route::delete("/movements", [
+            InvMovementController::class,
+            "destroyMultiple",
+        ])->name("movements.multiple.destroy");
     })
     ->middleware(["auth", "verified"]);
-
 
 require __DIR__ . "/auth.php";
