@@ -14,14 +14,25 @@ import DeleteModal from "@/Components/DeleteModal";
 import TableCustom from "@/Components/TableCustom";
 import CardsCustom from "@/Components/CardCustom";
 
-const Olts = ({ auth, Olts}) => {
-    const { data, setData, post, processing, errors, reset,patch, delete:destroy } = useForm({
+const distributionNap = ({ auth, Olts, DistributionNaps }) => {
+    console.log(Olts);
+    const {
+        data,
+        setData,
+        post,
+        processing,
+        errors,
+        reset,
+        delete: destroy,
+        patch,
+    } = useForm({
         olt_id: "",
-        olt_name: "",
-        olt_address: "",
-        olt_coordx: "",
-        olt_coordy: "",
-        olt_ports: "",
+        distribution_nap_name: "",
+        distribution_nap_address: "",
+        distribution_nap_coordx: "",
+        distribution_nap_coordy: "",
+        distribution_nap_splitter: "",
+        ids: [],
     });
 
     const [showCreate, setShowCreate] = useState(false);
@@ -29,16 +40,7 @@ const Olts = ({ auth, Olts}) => {
     const [showEdit, setShowEdit] = useState(false);
     const [editData, setEditData] = useState(null);
     const [dataToDelete, setDataToDelete] = useState(null);
-    const [selectedOlts, setSelectedOlts] = useState([]);
-
-    const openCreateModal = () => {
-        reset();
-        setShowCreate(true);
-    };
-    const closeModalCreate = () => {
-        setShowCreate(false);
-        reset();
-    };
+    const [selectedDistributionNaps, setSelectedDistributionNaps] = useState([], );
 
     const closeDeleteModal = () => {
         setShowDelete(false);
@@ -48,28 +50,35 @@ const Olts = ({ auth, Olts}) => {
         setShowDelete(true);
         setDataToDelete(id);
     };
-
+    const openCreateModal = () => {
+        reset();
+        setShowCreate(true);
+    };
+    const closeModalCreate = () => {
+        setShowCreate(false);
+        reset();
+    };
     const closeEditModal = () => {
         setShowEdit(false);
         setEditData(null);
     };
-    const openEditModal = (olt) => {
+    const openEditModal = (distributionNap) => {
         setShowEdit(true);
-        setEditData(olt);
+        setEditData(distributionNap);
         setData({
-            olt_id: olt.olt_id,
-            olt_name: olt.olt_name,
-            olt_address: olt.olt_address,
-            olt_coordx: olt.olt_coordx,
-            olt_coordy: olt.olt_coordy,
-            olt_ports: olt.olt_ports,
+            olt_id: distributionNap.olt_id,
+            distribution_nap_name: distributionNap.distribution_nap_name,
+            distribution_nap_address: distributionNap.distribution_nap_address,
+            distribution_nap_coordx: distributionNap.distribution_nap_coordx,
+            distribution_nap_coordy: distributionNap.distribution_nap_coordy,
+            distribution_nap_splitter: distributionNap.distribution_nap_splitter,
         });
     };
 
     const handleSubmitAdd = (e) => {
         e.preventDefault();
 
-        post(route("olts.store"), {
+        post(route("distributionNaps.store"), {
             preserveScroll: true,
             onSuccess: () => closeModalCreate(),
             onError: (error) => console.log(error),
@@ -80,28 +89,33 @@ const Olts = ({ auth, Olts}) => {
     const handleSubmitEdit = (e) => {
         e.preventDefault();
 
-        patch(route("olts.update", { id: editData.olt_id }), {
-            preserveScroll: true,
-            onSuccess: () => closeEditModal(),
-            onError: (error) => console.log(error),
-            onFinish: () => reset(),
-        });
+        patch(
+            route("distributionNaps.update", {
+                id: editData.distribution_nap_id,
+            }),
+            {
+                preserveScroll: true,
+                onSuccess: () => closeEditModal(),
+                onError: (error) => console.log(error),
+                onFinish: () => reset(),
+            },
+        );
     };
 
     const handleDelete = (id) => {
         if (Array.isArray(id)) {
             data.ids = id;
-            destroy(route("olts.multiple.destroy"), {
+            destroy(route("distributionNaps.multiple.destroy"), {
                 preserveScroll: true,
                 onSuccess: () => {
-                    setSelectedOlts([]);
+                    setSelectedDistributionNaps([]);
                     closeDeleteModal();
                 },
                 onError: (error) => console.error(error),
                 onFinish: () => reset(),
             });
         } else {
-            destroy(route("olts.destroy", { id }), {
+            destroy(route("distributionNaps.destroy", { id }), {
                 preserveScroll: true,
                 onSuccess: () => closeDeleteModal(),
                 onError: (error) => console.error(error),
@@ -112,99 +126,104 @@ const Olts = ({ auth, Olts}) => {
 
     const inputs = [
         {
-            label: "OLT Nombre",
-            id: "olt_name",
-            type: "text",
-            name: "olt_name",
-            value: data.olt_name,
-            onChange: (e) => setData("olt_name", e.target.value),
+            placeholder: "Olt",
+            type: "select",
+            labelKey: "olt_name",
+            valueKey: "olt_id",
+            options: Olts,
+            value:Olts.olt_name,
+            onSelect: (id) => setData("olt_id", id),
             inputError: (
-                <InputError message={errors.olt_name} className="mt-2" />
+                <InputError message={errors.olt_id} className="mt-2" />
             ),
-            defaultValue: data.olt_name,
+            defaultValue: data.olt_id,
         },
         {
-            label: "OLT Dirección",
-            id: "olt_address",
+            label: "Nombre de la NAP de Distribución",
+            id: "distribution_nap_name",
             type: "text",
-            name: "olt_address",
-            value: data.olt_address,
-            onChange: (e) => setData("olt_address", e.target.value),
+            name: "distribution_nap_name",
+            value: data.distribution_nap_name,
+            onChange: (e) => setData("distribution_nap_name", e.target.value),
             inputError: (
-                <InputError message={errors.olt_address} className="mt-2" />
+                <InputError
+                    message={errors.distribution_nap_name}
+                    className="mt-2"
+                />
             ),
-            defaultValue: data.olt_address,
+            defaultValue: data.distribution_nap_name,
         },
         {
-            label: "OLT Coordenada X",
-            id: "olt_coordx",
+            label: "Dirección de la NAP de Distribución",
+            id: "distribution_nap_address",
             type: "text",
-            name: "olt_coordx",
-            value: data.olt_coordx,
+            name: "distribution_nap_address",
+            value: data.distribution_nap_address,
+            onChange: (e) =>
+                setData("distribution_nap_address", e.target.value),
+            inputError: (
+                <InputError
+                    message={errors.distribution_nap_address}
+                    className="mt-2"
+                />
+            ),
+            defaultValue: data.distribution_nap_address,
+        },
+        {
+            label: "NAP Coordenada X",
+            id: "distribution_nap_coordx",
+            type: "text",
+            name: "distribution_nap_coordx",
+            value: data.distribution_nap_coordx,
             onChange: (e) => {
                 const inputValue = e.target.value;
                 const onlyNumbers = inputValue.replace(/[^0-9]/g, ''); // Eliminar todo lo que no sea número
-                setData("olt_coordx", onlyNumbers);
+                setData("distribution_nap_coordx", onlyNumbers);
             },
             inputError: (
-                <InputError message={errors.olt_coordx} className="mt-2" />
+                <InputError message={errors.distribution_nap_coordx} className="mt-2" />
             ),
-
-            defaultValue: data.olt_coordx,
+            defaultValue: data.distribution_nap_coordx,
         },
         {
-            label: "OLT Coordenada Y",
-            id: "olt_coordy",
+            label: "NAP Coordenada Y",
+            id: "distribution_nap_coordy",
             type: "text",
-            name: "olt_coordy",
-            value: data.olt_coordy,
+            name: "distribution_nap_coordy",
+            value: data.distribution_nap_coordy,
             onChange: (e) => {
                 const inputValue = e.target.value;
-                const onlyNumbers = inputValue.replace(/[^0-9]/g, ''); // Eliminar todo lo que no sea número
-                setData("olt_coordy", onlyNumbers);
+                const onlyNumbers = inputValue.replace(/[^0-9]/g, ''); 
+                setData("distribution_nap_coordy", onlyNumbers);
             },
             inputError: (
-                <InputError message={errors.olt_coordy} className="mt-2" />
+                <InputError message={errors.distribution_nap_coordy} className="mt-2" />
             ),
-            defaultValue: data.olt_coordy,
+            defaultValue: data.distribution_nap_coordy,
         },
         {
-            label: "OLT Puertos",
-            id: "olt_ports",
+            label: "NAP Splitter",
+            id: "distribution_nap_splitter",
             type: "number",
-            name: "olt_ports",
-            value: data.olt_ports,
-            onChange: (e) => setData("olt_ports", e.target.value),
-            min: "1",
-            max: "24",
+            name: "distribution_nap_splitter",
+            value: data.distribution_nap_splitter,
+            onChange: (e) => setData("distribution_nap_splitter", e.target.value),
+             min: "1",
+             max: "24",
             inputError: (
-                <InputError message={errors.olt_ports} className="mt-2" />
+                <InputError message={errors.distribution_nap_splitter} className="mt-2" />
             ),
-            defaultValue: data.olt_ports,
+            defaultValue: data.distribution_nap_splitter,
         },
+       
     ];
 
+    const theaders = ["ID", "OLT", "Nombre de la NAP", "Dirección", "Coord X", "Coord Y", "Splitter"];
+    const searchColumns = ["distribution_nap_id", "olt_name", "distribution_nap_name", "distribution_nap_address", "distribution_nap_coordx", "distribution_nap_coordy", "distribution_nap_splitter"];
 
-    const theaders = [
-        "OLT ID",
-        "OLT Nombre",
-        "OLT Direccion",
-        "OLT Coordenada X",
-        "OLT Coordenada Y",
-        "OLT Puertos",
-    ];
-    
-    const searchColumns = [
-        "olt_id",
-        "olt_name",
-        "olt_address",
-        "olt_coordx",
-        "olt_coordy",
-        "olt_ports",
-    ];
 
     const handleCheckboxChange = (id) => {
-        setSelectedOlts((prevSelected) => {
+        setSelectedDistributionNaps((prevSelected) => {
             if (prevSelected.includes(id)) {
                 return prevSelected.filter((item) => item !== id);
             } else {
@@ -214,36 +233,40 @@ const Olts = ({ auth, Olts}) => {
     };
 
     const handleSelectAll = () => {
-        if (selectedOlts.length === Olts.length) {
-            setSelectedOlts([]);
+        if (selectedDistributionNaps.length === DistributionNaps.length) {
+            setSelectedDistributionNaps([]);
         } else {
-            setSelectedOlts(Olts.map((olt) =>olt.olt_id));
+            setSelectedDistributionNaps(
+                DistributionNaps.map(
+                    (nap) => nap.distribution_nap_id
+                ),
+            );
         }
     };
 
     const openDeleteModalForSelected = () => {
         setShowDelete(true);
-        setDataToDelete(selectedOlts);
+        setDataToDelete(selectedDistributionNaps);
     };
 
     return (
         <Authenticated
             user={auth.user}
-            header={<Header subtitle="Aministrar Olts" />}
+            header={<Header subtitle="Administrar Naps de Distribución" />}
         >
-            <Head title="Olts" />
+            <Head title="distribucion de Naps" />
             <Tab tabs={tabs}>
                 <Box>
                     <div className="flex flex-wrap items-center justify-center md:justify-between gap-2">
                         <div className="w-full sm:w-auto flex flex-wrap justify-center gap-2">
                             <AddButton onClick={openCreateModal} />
                             <DeleteButton
-                                disabled={selectedOlts.length === 0}
+                                disabled={selectedDistributionNaps.length === 0}
                                 onClick={openDeleteModalForSelected}
                             />
                         </div>
                         <ExportData
-                            data={Olts}
+                            data={DistributionNaps}
                             searchColumns={searchColumns}
                             headers={theaders}
                         />
@@ -252,7 +275,7 @@ const Olts = ({ auth, Olts}) => {
                 <ModalCreate
                     showCreate={showCreate}
                     closeModalCreate={closeModalCreate}
-                    title={"Agregar Olt"}
+                    title={"Agregar Nap de Distribución"}
                     inputs={inputs}
                     processing={processing}
                     handleSubmitAdd={handleSubmitAdd}
@@ -260,12 +283,12 @@ const Olts = ({ auth, Olts}) => {
                 <DeleteModal
                     showDelete={showDelete}
                     closeDeleteModal={closeDeleteModal}
-                    title={"Eliminar Olt"}
+                    title={"Eliminar Nap de distribución"}
                     handleDelete={() => handleDelete(dataToDelete)}
                     processing={processing}
                 />
                 <ModalEdit
-                    title="Editar Olt"
+                    title="Editar Nap de Distribución"
                     showEdit={showEdit}
                     closeEditModal={closeEditModal}
                     inputs={inputs}
@@ -275,26 +298,26 @@ const Olts = ({ auth, Olts}) => {
                 <Box className="mt-3 hidden md:block">
                     <TableCustom
                         headers={theaders}
-                        data={Olts}
+                        data={DistributionNaps}
                         searchColumns={searchColumns}
                         onDelete={openDeleteModal}
                         onEdit={openEditModal}
-                        idKey="olt_id"
+                        idKey="distribution_nap_id"
                         onSelectChange={handleCheckboxChange}
-                        selectedItems={selectedOlts}
+                        selectedItems={selectedDistributionNaps}
                         onSelectAll={handleSelectAll}
                     />
                 </Box>
                 <Box className="mt-3  md:hidden">
                     <CardsCustom
                         headers={theaders}
-                        data={Olts}
+                        data={DistributionNaps}
                         searchColumns={searchColumns}
                         onDelete={openDeleteModal}
                         onEdit={openEditModal}
-                        idKey="olt_id"
+                        idKey="distribution_nap_id"
                         onSelectChange={handleCheckboxChange}
-                        selectedItems={selectedOlts}
+                        selectedItems={selectedDistributionNaps}
                         onSelectAll={handleSelectAll}
                     />
                 </Box>
@@ -303,4 +326,4 @@ const Olts = ({ auth, Olts}) => {
     );
 };
 
-export default Olts;
+export default distributionNap;

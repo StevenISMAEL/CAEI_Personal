@@ -11,7 +11,7 @@ import DarkModeToggle from "@/Components/NightMode";
 import { DarkModeContext } from "@/Components/DarkModeContext";
 import { MdInventory } from "react-icons/md";
 import { IoPlanet } from "react-icons/io5";
-
+import { MdOutlineNetworkWifi } from "react-icons/md";
 const Authenticated = ({
     user,
     header,
