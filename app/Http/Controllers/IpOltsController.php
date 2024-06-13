@@ -1,58 +1,44 @@
 <?php
-
 namespace App\Http\Controllers;
-
-use Illuminate\Http\Request;
+use App\Http\Requests\OltsRequest;
 use Inertia\Inertia;
 use App\Models\IpOlts;
+use Illuminate\Http\Request;
 class IpOltsController extends Controller
 {
-    public function index() {
+    public function index()
+    {
         return Inertia::render("Ips/Olt", [
             "Olts" => IpOlts::all(),
         ]);
     }
 
-    public function store(Request $request) {
-        $validatedData = $request->validate([
-            'olt_name' => 'required|string|max:50',
-            'olt_address' => 'required|string|max:100',
-            'olt_coordx' => 'required|string|max:25',
-            'olt_coordy' => 'required|string|max:25',
-            'olt_ports' => 'required|integer',
-        ]);
-
+    public function store(OltsRequest $request)
+    {
+        $validatedData = $request->validated();
         IpOlts::create($validatedData);
-
         return to_route("olts.index");
     }
 
-    public function update(Request $request, $id) {
+    public function update(OltsRequest $request, $id)
+    {
         $ipOlts = IpOlts::findOrFail($id);
-
-        $validatedData = $request->validate([
-            'olt_name' => 'required|string|max:50',
-            'olt_address' => 'required|string|max:100',
-            'olt_coordx' => 'required|string|max:25',
-            'olt_coordy' => 'required|string|max:25',
-            'olt_ports' => 'required|integer',
-        ]);
-
+        $validatedData = $request->validated();
         $ipOlts->update($validatedData);
-
         return to_route("olts.index");
     }
 
-    public function destroy($id) {
+    public function destroy($id)
+    {
         IpOlts::findOrFail($id)->delete();
-
         return to_route("olts.index");
     }
 
-    public function destroyMultiple(Request $request) {
+    public function destroyMultiple(Request $request)
+    {
         $ids = $request->input('ids');
         IpOlts::whereIn('olt_id', $ids)->delete();
-
         return to_route("olts.index");
     }
+
 }

@@ -11,8 +11,10 @@ use App\Http\Controllers\ConParishController;
 use App\Http\Controllers\ConAddressController;
 
 use App\Http\Controllers\IpOltsController;
-use App\Models\IpOlts;
+
 use App\Http\Controllers\ConPhoneController;
+use App\Http\Controllers\IpDistributionController;
+use App\Http\Controllers\IpLastMileController;
 
 Route::get("/", function () {
     return Inertia::render("Welcome", [
@@ -109,7 +111,30 @@ Route::prefix("manage-ips")
             IpOltsController::class,
             "destroyMultiple",
         ])->name("olts.multiple.destroy");
+
+        Route::resource("distributionNaps", IpDistributionController::class)->except([
+            "create",
+            "show",
+            "edit",
+        ]);
+        
+        Route::delete("/distributionNaps", [
+            IpDistributionController::class,
+            "destroyMultiple",
+        ])->name("distributionNaps.multiple.destroy");
+
+        Route::resource("lastmileNaps", IpLastMileController::class)->except([
+            "create",
+            "show",
+            "edit",
+        ]);
+        
+        Route::delete("/lastmileNaps", [
+            IpLastMileController::class,
+            "destroyMultiple",
+        ])->name("lastmileNaps.multiple.destroy");
     })
     ->middleware(["auth", "verified"]);
+
 
 require __DIR__ . "/auth.php";

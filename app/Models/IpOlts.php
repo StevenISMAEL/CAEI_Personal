@@ -35,4 +35,8 @@ class IpOlts extends Model
                 "OLT-" . str_pad($nextNumber, 2, "0", STR_PAD_LEFT);
         });
     }
+
+    public function distributionNaps() {
+        return $this->hasMany(IpDistribution::class, 'olt_id', 'olt_id');
+    }
 }

@@ -9,7 +9,7 @@ import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
 import { IoPeopleCircle } from "react-icons/io5";
 import DarkModeToggle from "@/Components/NightMode";
 import { DarkModeContext } from "@/Components/DarkModeContext";
-
+import { MdOutlineNetworkWifi } from "react-icons/md";
 const Authenticated = ({
     user,
     header,
@@ -50,7 +50,7 @@ const Authenticated = ({
             title: "Ips",
             route: "olts.index",
             subroute: "/manage-ips/",
-            icon: <IoPeopleCircle />,
+            icon: <MdOutlineNetworkWifi />,
             roles: ["admin", "gerente"],
         },
         
