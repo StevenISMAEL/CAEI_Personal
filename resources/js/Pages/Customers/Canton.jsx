@@ -170,7 +170,8 @@ const Canton = ({ auth, Provinces, Cantons }) => {
     return (
         <Authenticated
             user={auth.user}
-            header={<Header subtitle="Manage Cantons" />}
+            header={<Header subtitle="Administra Cantones" />}
+            roles={auth.user.roles.map((role) => role.name)}
         >
             <Head title="Cantones" />
             <Tab tabs={tabs}>
@@ -193,7 +194,7 @@ const Canton = ({ auth, Provinces, Cantons }) => {
                 <ModalCreate
                     showCreate={showCreate}
                     closeModalCreate={closeModalCreate}
-                    title={"Add Cantons"}
+                    title={"Añadir Canton"}
                     inputs={inputs}
                     processing={processing}
                     handleSubmitAdd={handleSubmitAdd}
@@ -201,12 +202,12 @@ const Canton = ({ auth, Provinces, Cantons }) => {
                 <DeleteModal
                     showDelete={showDelete}
                     closeDeleteModal={closeDeleteModal}
-                    title={"Delete Cantons"}
+                    title={"Borrar Canton"}
                     handleDelete={() => handleDelete(dataToDelete)}
                     processing={processing}
                 />
                 <ModalEdit
-                    title="Edit Canton"
+                    title="Editar Canton"
                     showEdit={showEdit}
                     closeEditModal={closeEditModal}
                     inputs={inputs}

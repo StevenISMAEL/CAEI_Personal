@@ -6,6 +6,8 @@ use App\Http\Requests\CantonRequest;
 use App\Models\ConCanton;
 use App\Models\ConProvince;
 use Illuminate\Http\Request;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class ConCantonController extends Controller {

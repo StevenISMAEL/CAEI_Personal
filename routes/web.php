@@ -4,18 +4,16 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-
+use Spatie\Permission\Middleware\RoleMiddleware;
 use App\Http\Controllers\ConClientController;
 use App\Http\Controllers\ConCantonController;
 use App\Http\Controllers\ConParishController;
 use App\Http\Controllers\ConAddressController;
 
 use App\Http\Controllers\IpOltsController;
-
 use App\Http\Controllers\ConPhoneController;
 use App\Http\Controllers\InvProductController;
 use App\Http\Controllers\InvMovementTypeController;
-use App\Models\InvProduct;
 use App\Http\Controllers\InvMovementController;
 use App\Http\Controllers\IpDistributionController;
 use App\Http\Controllers\IpLastMileController;
@@ -52,7 +50,7 @@ Route::get("/app", function () {
 });
 
 Route::prefix("manage-customers")
-    ->middleware(["auth", "verified"])
+    ->middleware(["auth", "verified", "role:admin"])
     ->group(function () {
         Route::resource("clients", ConClientController::class)->except([
             "create",

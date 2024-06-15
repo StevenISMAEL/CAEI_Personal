@@ -19,5 +19,6 @@ class DatabaseSeeder extends Seeder {
         ]);
         $this->call(ProvinceSeeder::class);
         $this->call(TypeOrderSeeder::class);
+        $this->call(UserRoleSeeder::class);
     }
 }

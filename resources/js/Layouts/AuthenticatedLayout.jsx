@@ -14,12 +14,7 @@ import { IoPlanet } from "react-icons/io5";
 import { TiDocumentText } from "react-icons/ti";
 import { MdOutlineNetworkWifi } from "react-icons/md";
 
-const Authenticated = ({
-    user,
-    header,
-    children,
-    roles = ["admin", "gerente"],
-}) => {
+const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
     const getSidebarStatus = () => {
         const value = localStorage.getItem("open");
         return value === "true" || value === null;
@@ -55,22 +50,28 @@ const Authenticated = ({
             route: "olts.index",
             subroute: "/manage-ips/",
             icon: <IoPlanet />,
-            roles: ["admin", "gerente"],
+            roles: ["gerente"],
         },
         {
             title: "Inventory",
             route: "products.index",
             subroute: "/manage-inventory/",
             icon: <MdInventory />,
-            roles: ["admin", "gerente"],
+            roles: ["gerente"],
         },
         {
             title: "Support",
             route: "work-orders.index",
             subroute: "/manage-orders/",
             icon: <TiDocumentText />,
-            roles: ["admin", "gerente"],
+            roles: ["gerente"],
         },
+        //{
+        //    title: "Manage",
+        //    route: "",
+        //    icon: "",
+        //    roles: ["admin"]
+        //}
     ];
 
     return (
@@ -253,7 +254,9 @@ const Authenticated = ({
                         }
                     >
                         <ul className="pt-2 pb-3 space-y-1">
-                            {Menus.map((Menu, index) => (
+                            {Menus.filter((item) =>
+                                item.roles.some((role) => roles.includes(role)),
+                            ).map((Menu, index) => (
                                 <li key={index}>
                                     <ResponsiveNavLink
                                         href={route(Menu.route)}

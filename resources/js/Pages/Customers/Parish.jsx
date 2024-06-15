@@ -163,6 +163,7 @@ const Parish = ({ auth, Cantons, Parishes }) => {
         <Authenticated
             user={auth.user}
             header={<Header subtitle="Manage Parishes" />}
+            roles={auth.user.roles.map((role) => role.name)}
         >
             <Head title="Parroquias" />
             <Tab tabs={tabs}>

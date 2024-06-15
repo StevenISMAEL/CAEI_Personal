@@ -161,12 +161,7 @@ const Client = ({ auth, Addresses, Clients }) => {
         },
     ];
 
-    const theaders = [
-        "Cédula",
-        "Nombres",
-        "Direccion",
-        "Email",
-    ];
+    const theaders = ["Cédula", "Nombres", "Direccion", "Email"];
     const searchColumns = [
         "client_id",
         "client_name",
@@ -201,6 +196,7 @@ const Client = ({ auth, Addresses, Clients }) => {
         <Authenticated
             user={auth.user}
             header={<Header subtitle="Manage Clients" />}
+            roles={auth.user.roles.map((role) => role.name)}
         >
             <Head title="Clientes" />
             <Tab tabs={tabs}>
