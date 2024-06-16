@@ -12,8 +12,8 @@ class ConProvince extends Model {
     public $incrementing = false;
     protected $keyType = "string";
     protected $fillable = ["province_id", "province_name"];
-    
+
     public function cantons() {
-        return $this->hasMany(ConCanton::class, "province_id");
+        return $this->hasMany(ConCanton::class, "province_id", "province_id");
     }
 }

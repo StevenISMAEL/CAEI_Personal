@@ -4,14 +4,8 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use Spatie\Permission\Middleware\RoleMiddleware;
-use App\Http\Controllers\ConClientController;
-use App\Http\Controllers\ConCantonController;
-use App\Http\Controllers\ConParishController;
-use App\Http\Controllers\ConAddressController;
 
 use App\Http\Controllers\IpOltsController;
-use App\Http\Controllers\ConPhoneController;
 use App\Http\Controllers\InvProductController;
 use App\Http\Controllers\InvMovementTypeController;
 use App\Http\Controllers\InvMovementController;
@@ -30,7 +24,7 @@ Route::get("/", function () {
 Route::get("/dashboard", function () {
     return Inertia::render("Dashboard");
 })
-    ->middleware(["auth", "verified"])
+    ->middleware(["auth", "verified", "role:admin|vendedor|tecnico|auditor"])
     ->name("dashboard");
 
 Route::middleware("auth")->group(function () {
@@ -48,63 +42,6 @@ Route::middleware("auth")->group(function () {
 //Route::get("/app", function () {
 //    return Inertia::render("App");
 //});
-
-Route::get("employees", function () {
-    return "hola";
-})->name("employees.index");
-
-Route::prefix("manage-customers")
-    ->middleware(["auth", "verified", "role:admin"])
-    ->group(function () {
-        Route::resource("clients", ConClientController::class)->except([
-            "create",
-            "show",
-            "edit",
-        ]);
-        Route::delete("/clients", [
-            ConClientController::class,
-            "destroyMultiple",
-        ])->name("clients.multiple.destroy");
-
-        Route::resource("phones", ConPhoneController::class)->except([
-            "create",
-            "show",
-            "edit",
-        ]);
-        Route::delete("/phones", [
-            ConPhoneController::class,
-            "destroyMultiple",
-        ])->name("phones.multiple.destroy");
-
-        Route::resource("addresses", ConAddressController::class)->except([
-            "create",
-            "show",
-            "edit",
-        ]);
-        Route::delete("/addresses", [
-            ConAddressController::class,
-            "destroyMultiple",
-        ])->name("addresses.multiple.destroy");
-
-        Route::resource("parishes", ConParishController::class)->except([
-            "create",
-            "show",
-            "edit",
-        ]);
-        Route::delete("/parishes", [
-            ConClientController::class,
-            "destroyMultiple",
-        ])->name("parishes.multiple.destroy");
-        Route::resource("cantons", ConCantonController::class)->except([
-            "create",
-            "show",
-            "edit",
-        ]);
-        Route::delete("/cantons", [
-            ConCantonController::class,
-            "destroyMultiple",
-        ])->name("cantons.multiple.destroy");
-    });
 
 Route::prefix("manage-ips")
     ->group(function () {
@@ -190,3 +127,5 @@ Route::prefix("manage-orders")
     ->middleware(["auth", "verified"]);
 
 require __DIR__ . "/auth.php";
+require __DIR__ . "/customer-management.php";
+require __DIR__ . "/admin.php";

@@ -15,7 +15,8 @@ import TableCustom from "@/Components/TableCustom";
 import CardsCustom from "@/Components/CardCustom";
 import { Notify } from "@/Components/Toast";
 
-const Canton = ({ auth, Provinces, Cantons }) => {
+const Canton = ({ auth, Provinces, Cantons, permissions }) => {
+    console.log(permissions);
     const {
         data,
         setData,
@@ -166,7 +167,6 @@ const Canton = ({ auth, Provinces, Cantons }) => {
         setShowDelete(true);
         setDataToDelete(selectedCantons);
     };
-
     return (
         <Authenticated
             user={auth.user}

@@ -14,6 +14,7 @@ import { IoPlanet } from "react-icons/io5";
 import { TiDocumentText } from "react-icons/ti";
 import { MdOutlineNetworkWifi } from "react-icons/md";
 import { FaUsersGear } from "react-icons/fa6";
+import { FaFileContract } from "react-icons/fa6";
 
 const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
     const getSidebarStatus = () => {
@@ -51,6 +52,13 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
             subroute: "/manage-customers/",
             icon: <IoPeopleCircle />,
             roles: ["vendedor"],
+        },
+        {
+            title: "Contratos",
+            route: "contracts.index",
+            subroute: "/manage-contracts/",
+            icon: <FaFileContract />,
+            roles: ["admin","vendedor"],
         },
         {
             title: "Ips",
@@ -232,14 +240,14 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
                                             <Dropdown.Link
                                                 href={route("profile.edit")}
                                             >
-                                                Profile
+                                                Perfil
                                             </Dropdown.Link>
                                             <Dropdown.Link
                                                 href={route("logout")}
                                                 method="post"
                                                 as="button"
                                             >
-                                                Log Out
+                                                Cerrar Sesión
                                             </Dropdown.Link>
                                         </Dropdown.Content>
                                     </Dropdown>

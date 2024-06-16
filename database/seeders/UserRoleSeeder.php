@@ -6,6 +6,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 use App\Models\User;
+use Spatie\Permission\Models\Permission;
 
 class UserRoleSeeder extends Seeder {
     /**
@@ -28,6 +29,21 @@ class UserRoleSeeder extends Seeder {
             $auditorRole
         );
 
+        //Permisos para vendedor
+        $permissions = [
+            "manage clients",
+            "manage phones",
+            "manage addresses",
+            "manage parishes",
+            "manage cantons",
+        ];
+
+        foreach ($permissions as $permission) {
+            Permission::create(["name" => $permission]);
+        }
+        $vendedorRole->givePermissionTo($permissions);
+
+        //Usuarios por defecto
         $adminUser = User::factory()->create([
             "name" => "Admin",
             "email" => "admin@example.com",
