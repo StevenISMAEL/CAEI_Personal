@@ -13,7 +13,7 @@ import { MdInventory } from "react-icons/md";
 import { IoPlanet } from "react-icons/io5";
 import { TiDocumentText } from "react-icons/ti";
 import { MdOutlineNetworkWifi } from "react-icons/md";
-
+import { TbTableOptions } from "react-icons/tb";
 const Authenticated = ({
     user,
     header,
@@ -69,6 +69,13 @@ const Authenticated = ({
             route: "work-orders.index",
             subroute: "/manage-orders/",
             icon: <TiDocumentText />,
+            roles: ["admin", "gerente"],
+        },
+        {
+            title: "Plans",
+            route: "plans.index",
+            subroute: "/manage-plans/",
+            icon: <TbTableOptions />,
             roles: ["admin", "gerente"],
         },
     ];

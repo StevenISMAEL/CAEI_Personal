@@ -24,8 +24,8 @@ class IpLastMileController extends Controller {
   
 
     public function update(LastMileNapsRequest $request, $id) {
-        $distributionNap = IpLastMile::findOrFail($id);
-        $distributionNap->update($request->validated());
+        $lastmileNap = IpLastMile::findOrFail($id);
+        $lastmileNap->update($request->validated());
         return redirect()->route("lastmileNaps.index");
     }
 

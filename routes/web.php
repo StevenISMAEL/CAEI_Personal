@@ -19,6 +19,7 @@ use App\Models\InvProduct;
 use App\Http\Controllers\InvMovementController;
 use App\Http\Controllers\IpDistributionController;
 use App\Http\Controllers\IpLastMileController;
+use App\Http\Controllers\PlansController;
 
 Route::get("/", function () {
     return Inertia::render("Welcome", [
@@ -186,5 +187,20 @@ Route::prefix("manage-orders")
         ])->name("work-orders.multiple.destroy");
     })
     ->middleware(["auth", "verified"]);
+
+    
+Route::prefix("manage-plans")
+->group(function () {
+    Route::resource("plans",PlansController::class)->except([
+        "create",
+        "show",
+        "edit",
+    ]);
+    Route::delete("/plans", [
+        PlansController::class,
+        "destroyMultiple",
+    ])->name("plans.multiple.destroy");
+})
+->middleware(["auth", "verified"]);
 
 require __DIR__ . "/auth.php";

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Requests\LastMileNapsRequest;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -56,12 +57,8 @@ class IpDistribution extends Model
             });
     }
 
-    public function olts() {
-        return $this->belongsTo(
-            IpOlts::class,
-            "olt_id",
-            "olt_id"
-        );
+    public function lastmileNaps() {
+        return $this->hasMany(IpLastMile::class, "last_mile_nap_id","last_mile_nap_id");
     }
 
     public function olt() {
