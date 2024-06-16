@@ -126,22 +126,18 @@ return new class extends Migration {
      */
     public function down(): void {
         Schema::table("con_contracts", function (Blueprint $table) {
-            $table->dropForeign([
-                "client_id",
-                "plan_id",
-                "discount_id",
-                "status_id",
-                "ip_address",
-                "work_order_id",
-            ]);
+            $table->dropForeign(["client_id"]);
+            $table->dropForeign(["plan_id"]);
+            $table->dropForeign(["discount_id"]);
+            $table->dropForeign(["status_id"]);
+            $table->dropForeign(["ip_address"]);
+            $table->dropForeign(["work_order_id"]);
         });
 
         Schema::table("sup_work_orders", function (Blueprint $table) {
-            $table->dropForeign([
-                "employee_id",
-                "movement_id",
-                "type_report_id",
-            ]);
+            $table->dropForeign(["employee_id"]);
+            $table->dropForeign(["movement_id"]);
+            $table->dropForeign(["type_report_id"]);
         });
 
         Schema::dropIfExists("sup_work_orders");

@@ -1,9 +1,7 @@
 import { useEffect } from "react";
 import GuestLayout from "@/Layouts/GuestLayout";
 import InputError from "@/Components/InputError";
-import InputLabel from "@/Components/InputLabel";
 import PrimaryButton from "@/Components/PrimaryButton";
-import TextInput from "@/Components/TextInput";
 import FloatInputText from "@/Components/FloatInputText";
 import { Head, Link, useForm } from "@inertiajs/react";
 
@@ -29,12 +27,12 @@ export default function Register() {
 
     return (
         <GuestLayout>
-            <Head title="Register" />
+            <Head title="Registro" />
 
             <form onSubmit={submit}>
                 <div>
                     <FloatInputText
-                        label="Name"
+                        label="Nombre"
                         id="name"
                         name="name"
                         value={data.name}
@@ -66,7 +64,7 @@ export default function Register() {
 
                 <div className="mt-4">
                     <FloatInputText
-                        label="Password"
+                        label="Contraseña"
                         id="password"
                         type="password"
                         name="password"
@@ -82,7 +80,7 @@ export default function Register() {
 
                 <div className="mt-4">
                     <FloatInputText
-                        label="Confirm Password"
+                        label="Confirmar Contraseña"
                         id="password_confirmation"
                         type="password"
                         name="password_confirmation"
@@ -106,11 +104,11 @@ export default function Register() {
                         href={route("login")}
                         className="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 dark:focus:ring-offset-gray-800"
                     >
-                        Already registered?
+                        ¿Ya estás registrado?
                     </Link>
 
                     <PrimaryButton className="ms-4" disabled={processing}>
-                        Register
+                        Registrar
                     </PrimaryButton>
                 </div>
             </form>

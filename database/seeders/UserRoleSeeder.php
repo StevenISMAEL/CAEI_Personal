@@ -14,40 +14,45 @@ class UserRoleSeeder extends Seeder {
     public function run(): void {
         $adminRole = Role::create(["name" => "admin"]);
         $vendedorRole = Role::create(["name" => "vendedor"]);
+        $tecnicoRole = Role::create(["name" => "tecnico"]);
+        $auditorRole = Role::create(["name" => "auditor"]);
 
-        $adminUser = User::create([
-            "name" => "Admin User",
+        $super = User::factory()->create([
+            "name" => "Super User",
+            "email" => "su@example.com",
+        ]);
+        $super->assignRole(
+            $adminRole,
+            $vendedorRole,
+            $tecnicoRole,
+            $auditorRole
+        );
+
+        $adminUser = User::factory()->create([
+            "name" => "Admin",
             "email" => "admin@example.com",
-            "password" => bcrypt("password"),
         ]);
         $adminUser->assignRole($adminRole);
 
         $vendedorUser = User::create([
-            "name" => "Vendedor User",
+            "name" => "Vendedor",
             "email" => "vendedor@example.com",
             "password" => bcrypt("password"),
         ]);
         $vendedorUser->assignRole($vendedorRole);
 
-        $secondAdminUser = User::create([
-            "name" => "Second Admin",
-            "email" => "secondadmin@example.com",
+        $tecnicoUser = User::create([
+            "name" => "Tecnico",
+            "email" => "tecnico@example.com",
             "password" => bcrypt("password"),
         ]);
-        $secondAdminUser->assignRole($adminRole);
+        $tecnicoUser->assignRole([$tecnicoRole]);
 
-        $secondVendedorUser = User::create([
-            "name" => "Second Vendedor",
-            "email" => "secondvendedor@example.com",
+        $auditorUser = User::create([
+            "name" => "Auditor",
+            "email" => "auditor@example.com",
             "password" => bcrypt("password"),
         ]);
-        $secondVendedorUser->assignRole($vendedorRole);
-
-        $multiRoleUser = User::create([
-            "name" => "Multi Role User",
-            "email" => "multiuser@example.com",
-            "password" => bcrypt("password"),
-        ]);
-        $multiRoleUser->assignRole([$adminRole, $vendedorRole]);
+        $auditorUser->assignRole([$auditorRole]);
     }
 }

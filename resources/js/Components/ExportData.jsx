@@ -26,7 +26,6 @@ const ExportData = ({ data, searchColumns, headers }) => {
 
             const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
 
-            // Crear un enlace temporal para descargar el archivo
             const link = document.createElement("a");
             if (link.download !== undefined) {
                 const url = URL.createObjectURL(blob);

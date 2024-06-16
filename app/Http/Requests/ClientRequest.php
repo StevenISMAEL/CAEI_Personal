@@ -26,7 +26,7 @@ class ClientRequest extends FormRequest {
                         "required",
                         "string",
                         "size:10",
-                        // new ValidCedula,
+                        new ValidCedula(),
                     ],
                     "address_id" =>
                         "required|string|max:7|exists:con_address,address_id",

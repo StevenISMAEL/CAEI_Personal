@@ -45,9 +45,13 @@ Route::middleware("auth")->group(function () {
     );
 });
 
-Route::get("/app", function () {
-    return Inertia::render("App");
-});
+//Route::get("/app", function () {
+//    return Inertia::render("App");
+//});
+
+Route::get("employees", function () {
+    return "hola";
+})->name("employees.index");
 
 Route::prefix("manage-customers")
     ->middleware(["auth", "verified", "role:admin"])

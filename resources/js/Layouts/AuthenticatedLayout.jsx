@@ -13,6 +13,7 @@ import { MdInventory } from "react-icons/md";
 import { IoPlanet } from "react-icons/io5";
 import { TiDocumentText } from "react-icons/ti";
 import { MdOutlineNetworkWifi } from "react-icons/md";
+import { FaUsersGear } from "react-icons/fa6";
 
 const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
     const getSidebarStatus = () => {
@@ -36,42 +37,42 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
             title: "Dashboard",
             route: "dashboard",
             icon: <RiDashboard2Fill />,
+            roles: ["admin", "vendedor", "tecnico", "auditor"],
+        },
+        {
+            title: "Empleados",
+            route: "employees.index",
+            icon: <FaUsersGear />,
             roles: ["admin"],
         },
         {
-            title: "Customers",
+            title: "Clientes",
             route: "clients.index",
             subroute: "/manage-customers/",
             icon: <IoPeopleCircle />,
-            roles: ["admin", "vendedor"],
+            roles: ["vendedor"],
         },
         {
             title: "Ips",
             route: "olts.index",
             subroute: "/manage-ips/",
             icon: <IoPlanet />,
-            roles: ["gerente"],
+            roles: ["admin"],
         },
         {
-            title: "Inventory",
+            title: "Inventario",
             route: "products.index",
             subroute: "/manage-inventory/",
             icon: <MdInventory />,
-            roles: ["gerente"],
+            roles: ["admin"],
         },
         {
-            title: "Support",
+            title: "Suporte",
             route: "work-orders.index",
             subroute: "/manage-orders/",
             icon: <TiDocumentText />,
-            roles: ["gerente"],
+            roles: ["admin", "tecnico"],
         },
-        //{
-        //    title: "Manage",
-        //    route: "",
-        //    icon: "",
-        //    roles: ["admin"]
-        //}
     ];
 
     return (
@@ -95,7 +96,7 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
                     <h1
                         className={`text-gray-800 dark:text-gray-200 origin-left text-3xl ${
                             !open && "duration-500 hidden"
-                        } truncate overflow-hidden whitespace-nowrap`}
+                        } truncate overflow-hidden whitespace-nowrap font-semibold`}
                     >
                         Digitell
                     </h1>
@@ -286,14 +287,14 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
 
                             <div className="mt-3 space-y-1">
                                 <ResponsiveNavLink href={route("profile.edit")}>
-                                    Profile
+                                    Perfil
                                 </ResponsiveNavLink>
                                 <ResponsiveNavLink
                                     method="post"
                                     href={route("logout")}
                                     as="button"
                                 >
-                                    Log Out
+                                    Cerrar Sesión
                                 </ResponsiveNavLink>
                             </div>
                         </div>
