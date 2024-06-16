@@ -188,19 +188,18 @@ Route::prefix("manage-orders")
     })
     ->middleware(["auth", "verified"]);
 
-    
 Route::prefix("manage-plans")
-->group(function () {
-    Route::resource("plans",PlansController::class)->except([
-        "create",
-        "show",
-        "edit",
-    ]);
-    Route::delete("/plans", [
-        PlansController::class,
-        "destroyMultiple",
-    ])->name("plans.multiple.destroy");
-})
-->middleware(["auth", "verified"]);
+    ->group(function () {
+        Route::resource("plans", PlansController::class)->except([
+            "create",
+            "show",
+            "edit",
+        ]);
+        Route::delete("/plans", [
+            PlansController::class,
+            "destroyMultiple",
+        ])->name("plans.multiple.destroy");
+    })
+    ->middleware(["auth", "verified"]);
 
 require __DIR__ . "/auth.php";
