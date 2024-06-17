@@ -45,27 +45,27 @@ class UserRoleSeeder extends Seeder {
 
         //Usuarios por defecto
         $adminUser = User::factory()->create([
-            "name" => "Admin",
+            "name" => "Admin User",
             "email" => "admin@example.com",
         ]);
         $adminUser->assignRole($adminRole);
 
         $vendedorUser = User::create([
-            "name" => "Vendedor",
+            "name" => "Vendedor User",
             "email" => "vendedor@example.com",
             "password" => bcrypt("password"),
         ]);
         $vendedorUser->assignRole($vendedorRole);
 
         $tecnicoUser = User::create([
-            "name" => "Tecnico",
+            "name" => "Tecnico User",
             "email" => "tecnico@example.com",
             "password" => bcrypt("password"),
         ]);
         $tecnicoUser->assignRole([$tecnicoRole]);
 
         $auditorUser = User::create([
-            "name" => "Auditor",
+            "name" => "Auditor User",
             "email" => "auditor@example.com",
             "password" => bcrypt("password"),
         ]);

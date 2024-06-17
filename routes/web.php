@@ -126,6 +126,10 @@ Route::prefix("manage-orders")
     })
     ->middleware(["auth", "verified"]);
 
+Route::get("orden-trabajo", function () {
+    return Inertia::render("OrdenTrabajo");
+});
+
 require __DIR__ . "/auth.php";
 require __DIR__ . "/customer-management.php";
 require __DIR__ . "/admin.php";

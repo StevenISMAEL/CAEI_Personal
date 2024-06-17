@@ -6,6 +6,8 @@ use App\Http\Controllers\ConParishController;
 use App\Http\Controllers\ConAddressController;
 use App\Http\Controllers\ConPhoneController;
 
+// use App\Http\Controllers\Emplo
+
 Route::prefix("manage-customers")
     ->middleware(["auth", "verified", "role:vendedor"])
     ->group(function () {

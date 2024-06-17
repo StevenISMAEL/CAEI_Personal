@@ -18,6 +18,12 @@ export default {
             colors: {
                 GreenP: "#77dd77",
             },
+            gridTemplateRows: {
+                23: "repeat(23, minmax(0, 1fr))",
+            },
+            fontFamily: {
+                console: ["Consolas", "monospace"],
+            },
         },
     },
 

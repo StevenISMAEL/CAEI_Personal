@@ -51,7 +51,7 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
             route: "clients.index",
             subroute: "/manage-customers/",
             icon: <IoPeopleCircle />,
-            roles: ["vendedor"],
+            roles: ["admin","vendedor"],
         },
         {
             title: "Contratos",
