@@ -41,6 +41,7 @@ const Movement = ({ auth, Products, Movements }) => {
     const [selectedMovements, setSelectedMovements] = useState([]);
     const [productQuantity, setProductQuantity] = useState(0);
     const [showQuantityError, setShowQuantityError] = useState(false);
+    const [selectedOption, setSelectedOption] = useState("");
 
     useEffect(() => {
         // Reset product quantity and error state whenever product changes
@@ -80,31 +81,37 @@ const Movement = ({ auth, Products, Movements }) => {
             movement_total: movement.movement_total,
             movement_type: movement.movement_type,
         });
+        setSelectedOption(movement.movement_type);
     };
+
     const handleQuantityChange = (e) => {
         const quantity = parseFloat(e.target.value);
         const selectedProduct = Products.find(
             (product) => product.product_id === data.product_id,
         );
+
         if (selectedProduct) {
-            if (quantity <= selectedProduct.product_quantity) {
-                setData((prevData) => ({
-                    ...prevData,
-                    movement_quantity: quantity,
-                    movement_total: parseFloat(
-                        (quantity * selectedProduct.product_price).toFixed(2),
-                    ), // Redondear el total a 2 decimales
-                }));
-                setShowQuantityError(false);
-            } else {
+            if (
+                data.movement_type === "Salida" &&
+                quantity > selectedProduct.product_quantity
+            ) {
+                setShowQuantityError(true);
                 setData((prevData) => ({
                     ...prevData,
                     movement_quantity: quantity,
                     movement_total: "",
                 }));
-
-                setShowQuantityError(true);
+            } else {
+                setShowQuantityError(false);
+                setData((prevData) => ({
+                    ...prevData,
+                    movement_quantity: quantity,
+                    movement_total: parseFloat(
+                        (quantity * selectedProduct.product_price).toFixed(2),
+                    ),
+                }));
             }
+            setProductQuantity(selectedProduct.product_quantity);
         }
     };
 
@@ -152,7 +159,16 @@ const Movement = ({ auth, Products, Movements }) => {
         }
     };
 
-    const [selectedOption, setSelectedOption] = useState("");
+    const handleChange = (value) => {
+        setSelectedOption(value); // Actualiza el estado cuando cambia la selección
+        setData("movement_type", value); // Asegura que movement_type también se actualice
+        // Reset the quantity and total if the movement type changes
+        setData((prevData) => ({
+            ...prevData,
+            movement_quantity: "",
+            movement_total: "",
+        }));
+    };
 
     const inputs = [
         {
@@ -180,15 +196,29 @@ const Movement = ({ auth, Products, Movements }) => {
             defaultValue: data.movement_date,
         },
         {
+            type: "combobox",
+            label: "Tipo de movimiento",
+            options: [
+                { value: "Entrada", label: "Entrada" },
+                { value: "Salida", label: "Salida" },
+            ],
+            value: selectedOption,
+            onChange: handleChange,
+            inputError: (
+                <InputError message={errors.movement_type} className="mt-2" />
+            ),
+            defaultValue: data.movement_type,
+        },
+        {
             label: "Cantidad del Producto",
             id: "movement_quantity",
             type: "number",
             name: "movement_quantity",
             value: data.movement_quantity,
             onChange: handleQuantityChange,
-            inputError: (
+            inputError: showQuantityError && (
                 <InputError
-                    message={errors.movement_quantity}
+                    message={`La cantidad no puede ser mayor que ${productQuantity}`}
                     className="mt-2"
                 />
             ),
@@ -209,20 +239,6 @@ const Movement = ({ auth, Products, Movements }) => {
                 />
             ),
             defaultValue: data.movement_total,
-        },
-        {
-            type: "combobox",
-            options: [
-                { value: "Entrada", label: " Entrada" },
-                { value: "Salida", label: "Salida" },
-            ],
-            value: { selectedOption },
-            onChange: { setSelectedOption },
-
-            inputError: (
-                <InputError message={errors.movement_type} className="mt-2" />
-            ),
-            defaultValue: data.movement_type,
         },
     ];
 
