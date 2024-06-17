@@ -16,12 +16,51 @@ class InvMovementController extends Controller {
         ]);
     }
     public function store(MovementRequest $movementRequest) {
-        InvMovement::create($movementRequest->validated());
+        // Crear el movimiento y obtener la instancia creada
+        $movement = InvMovement::create($movementRequest->validated());
+
+        // Encontrar el producto correspondiente
+        $product = InvProduct::findOrFail($movement->product_id);
+
+        // Actualizar la cantidad del producto dependiendo del tipo de movimiento
+        if ($movement->movement_type === "Entrada") {
+            $product->product_quantity += $movement->movement_quantity;
+        } elseif ($movement->movement_type === "Salida") {
+            // Verificar que la cantidad no se vuelva negativa
+            if ($product->product_quantity < $movement->movement_quantity) {
+                return redirect()
+                    ->back()
+                    ->withErrors(
+                        "La cantidad del producto no puede ser negativa."
+                    );
+            }
+            $product->product_quantity -= $movement->movement_quantity;
+        }
+
+        // Guardar los cambios en el producto
+        $product->save();
         return to_route("movements.index");
     }
     public function update(MovementRequest $movementRequest, $id) {
         $movement = InvMovement::findOrFail($id);
         $movement->update($movementRequest->validated());
+        $product = InvProduct::findOrFail($movement->product_id);
+
+        if ($movement->movement_type === "Entrada") {
+            $product->product_quantity += $movement->movement_quantity;
+        } elseif ($movement->movement_type === "Salida") {
+            if ($product->product_quantity < $movement->movement_quantity) {
+                return redirect()
+                    ->back()
+                    ->withErrors(
+                        "La cantidad del producto no puede ser negativa."
+                    );
+            }
+            $product->product_quantity -= $movement->movement_quantity;
+        }
+
+        // Guardar los cambios en el producto
+        $product->save();
         return to_route("movements.index");
     }
     public function destroy($id) {

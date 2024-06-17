@@ -3,6 +3,7 @@ import FloatInputText from "./FloatInputText";
 import SearchDropdown from "./SearchInput";
 import SecondaryButton from "./SecondaryButton";
 import PrimaryButton from "./PrimaryButton";
+import ComboBox from "./ComboBox";
 
 const ModalEdit = ({
     title,
@@ -24,6 +25,12 @@ const ModalEdit = ({
                             <div key={index}>
                                 {input.type === "select" ? (
                                     <SearchDropdown
+                                        {...input}
+                                        className="mt-3 block w-full"
+                                        defaultValue={input.defaultValue}
+                                    />
+                                ) : input.type === "combobox" ? (
+                                    <ComboBox
                                         {...input}
                                         className="mt-3 block w-full"
                                         defaultValue={input.defaultValue}

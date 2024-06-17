@@ -31,7 +31,7 @@ const ExportData = ({ data, searchColumns, headers }) => {
             if (link.download !== undefined) {
                 const url = URL.createObjectURL(blob);
                 link.setAttribute("href", url);
-                link.setAttribute("download", "cantons_export.csv");
+                link.setAttribute("download", "data_export.csv");
                 link.style.visibility = "hidden";
                 document.body.appendChild(link);
                 link.click();
