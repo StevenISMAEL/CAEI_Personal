@@ -13,10 +13,9 @@ import tabs from "./tabs";
 import DeleteModal from "@/Components/DeleteModal";
 import TableCustom from "@/Components/TableCustom";
 import CardsCustom from "@/Components/CardCustom";
-import { Notify } from "@/Components/Toast";
+// import { Notify } from "@/Components/Toast";
 
-const Canton = ({ auth, Provinces, Cantons, permissions }) => {
-    console.log(permissions);
+const Canton = ({ auth, Provinces, Cantons }) => {
     const {
         data,
         setData,
@@ -28,6 +27,7 @@ const Canton = ({ auth, Provinces, Cantons, permissions }) => {
         patch,
     } = useForm({
         province_id: "",
+        province_name: "",
         canton_name: "",
         ids: [],
     });
@@ -55,13 +55,17 @@ const Canton = ({ auth, Provinces, Cantons, permissions }) => {
         setShowEdit(false);
         setEditData(null);
     };
+
     const openEditModal = (canton) => {
-        setShowEdit(true);
         setEditData(canton);
         setData({
             province_id: canton.province_id,
+            province_name: Provinces.find(
+                (province) => canton.province_id === province.province_id,
+            )?.province_name,
             canton_name: canton.canton_name,
         });
+        setShowEdit(true);
     };
 
     const handleSubmitAdd = (e) => {
@@ -69,10 +73,7 @@ const Canton = ({ auth, Provinces, Cantons, permissions }) => {
 
         post(route("cantons.store"), {
             preserveScroll: true,
-            onSuccess: () => {
-                closeModalCreate();
-                Notify("success", "Canton agregado correctamente");
-            },
+            onSuccess: () => closeModalCreate(),
             onError: (error) => console.log(error),
             onFinish: () => reset(),
         });
@@ -83,10 +84,7 @@ const Canton = ({ auth, Provinces, Cantons, permissions }) => {
 
         patch(route("cantons.update", { id: editData.canton_id }), {
             preserveScroll: true,
-            onSuccess: () => {
-                closeModalCreate();
-                Notify("success", "Canton actualizado correctamente");
-            },
+            onSuccess: () => closeEditModal(),
             onError: (error) => console.log(error),
             onFinish: () => reset(),
         });
@@ -100,7 +98,7 @@ const Canton = ({ auth, Provinces, Cantons, permissions }) => {
                 onSuccess: () => {
                     setSelectedCantons([]);
                     closeDeleteModal();
-                    Notify("success", "Canton agregado correctamente");
+                    //Notify("success", "Canton agregado correctamente");
                 },
                 onError: (error) => console.error(error),
                 onFinish: () => reset(),
@@ -126,7 +124,7 @@ const Canton = ({ auth, Provinces, Cantons, permissions }) => {
             inputError: (
                 <InputError message={errors.province_id} className="mt-2" />
             ),
-            defaultValue: data.province_id,
+            defaultValue: data.province_name,
         },
         {
             label: "Nombre del Canton",
@@ -167,6 +165,7 @@ const Canton = ({ auth, Provinces, Cantons, permissions }) => {
         setShowDelete(true);
         setDataToDelete(selectedCantons);
     };
+
     return (
         <Authenticated
             user={auth.user}

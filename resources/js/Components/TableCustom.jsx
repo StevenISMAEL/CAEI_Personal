@@ -122,6 +122,7 @@ const TableCustom = ({
                         </div>
                         <FloatInputText
                             label="Buscar..."
+                            id="search-button"
                             onChange={handleSearch}
                             value={searchValue}
                         />
