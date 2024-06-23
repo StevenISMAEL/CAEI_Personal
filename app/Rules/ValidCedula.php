@@ -9,7 +9,7 @@ class ValidCedula implements ValidationRule {
     /**
      * Run the validation rule.
      *
-     * @param  \Closure(string, string, \Illuminate\Translation\PotentiallyTranslatedString): \Illuminate\Translation\PotentiallyTranslatedString  $fail
+     * @param  \Closure(string): \Illuminate\Translation\PotentiallyTranslatedString  $fail
      */
     public function validate(
         string $attribute,
@@ -17,7 +17,7 @@ class ValidCedula implements ValidationRule {
         Closure $fail
     ): void {
         if (!$this->isValidCedula($value)) {
-            $fail($attribute, "El :attribute no es una cédula válida.");
+            $fail($attribute, "No es una cédula válida.");
         }
     }
 
@@ -27,31 +27,32 @@ class ValidCedula implements ValidationRule {
      * @param  string  $cedula
      * @return bool
      */
-    protected function isValidCedula(string $cedula): bool {
-        if (strlen($cedula) == 10 && ctype_digit($cedula)) {
-            $digits = array_map("intval", str_split($cedula));
-            $codigoProvincia = $digits[0] * 10 + $digits[1];
-
-            if (
-                $codigoProvincia >= 1 &&
-                ($codigoProvincia <= 24 || $codigoProvincia == 30)
-            ) {
-                $digitoVerificador = array_pop($digits);
-                $digitoCalculado =
-                    array_reduce(
-                        $digits,
-                        function ($carry, $digit, $index) {
-                            return $carry -
-                                (($digit * (2 - ($index % 2))) % 9) -
-                                ($digit == 9) * 9;
-                        },
-                        1000
-                    ) % 10;
-
-                return $digitoCalculado === $digitoVerificador;
-            }
+    function isValidCedula($cedula) {
+        if (strlen($cedula) != 10) {
+            return false;
         }
 
-        return false;
+        $provincia = intval(substr($cedula, 0, 2));
+        if ($provincia < 1 || $provincia > 24) {
+            return false;
+        }
+
+        $suma = 0;
+        for ($i = 0; $i < 9; $i++) {
+            $digito = intval($cedula[$i]);
+            if ($i % 2 == 0) {
+                $resultado = $digito * 2;
+                if ($resultado >= 10) {
+                    $resultado -= 9;
+                }
+            } else {
+                $resultado = $digito * 1;
+            }
+            $suma += $resultado;
+        }
+
+        $digitoVerificadorCalculado = (10 - ($suma % 10)) % 10;
+
+        return $digitoVerificadorCalculado == intval($cedula[9]);
     }
 }

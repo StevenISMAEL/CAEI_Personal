@@ -11,7 +11,6 @@ import SecondaryButton from "@/Components/SecondaryButton";
 import { IoIosArrowForward, IoIosArrowBack } from "react-icons/io";
 import Checkbox from "@/Components/Checkbox";
 
-
 const TableCustom = ({
     headers,
     data,
@@ -43,6 +42,11 @@ const TableCustom = ({
         setSearchValue(value);
         const filtered = data.filter((item) => {
             return searchColumns.some((column) => {
+                if (column === "roles") {
+                    return item[column].some((role) =>
+                        role.role_name.toLowerCase().includes(value),
+                    );
+                }
                 const fieldValue = item[column].toString().toLowerCase();
                 return fieldValue.includes(value);
             });
@@ -58,6 +62,17 @@ const TableCustom = ({
         }
         setSortConfig({ key: columnKey, direction });
         const sortedData = [...filteredData].sort((a, b) => {
+            if (columnKey === "roles") {
+                const rolesA = a[columnKey]
+                    .map((role) => role.role_name)
+                    .join(", ");
+                const rolesB = b[columnKey]
+                    .map((role) => role.role_name)
+                    .join(", ");
+                return direction === "asc"
+                    ? rolesA.localeCompare(rolesB)
+                    : rolesB.localeCompare(rolesA);
+            }
             if (a[columnKey] < b[columnKey]) {
                 return direction === "asc" ? -1 : 1;
             }
@@ -122,6 +137,7 @@ const TableCustom = ({
                         </div>
                         <FloatInputText
                             label="Buscar..."
+                            id="search-button"
                             onChange={handleSearch}
                             value={searchValue}
                         />
@@ -219,7 +235,21 @@ const TableCustom = ({
                                                         key={idx}
                                                         className="px-6 py-4 whitespace-pre-wrap truncate"
                                                     >
-                                                        {item[column]}
+                                                        {column === "roles"
+                                                            ? item[column]
+                                                                  .length > 0
+                                                                ? item[column]
+                                                                      .map(
+                                                                          (
+                                                                              role,
+                                                                          ) =>
+                                                                              role.role_name,
+                                                                      )
+                                                                      .join(
+                                                                          ", ",
+                                                                      )
+                                                                : "Sin Rol"
+                                                            : item[column]}
                                                     </td>
                                                 ),
                                             )}
@@ -260,7 +290,7 @@ const TableCustom = ({
                                         filteredData.length
                                     }
                                 >
-                                   Siguiente
+                                    Siguiente
                                     <IoIosArrowForward />
                                 </SecondaryButton>
                             </div>
@@ -283,5 +313,3 @@ const TableCustom = ({
 };
 
 export default TableCustom;
-
-

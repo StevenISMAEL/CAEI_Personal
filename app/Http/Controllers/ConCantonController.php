@@ -8,8 +8,12 @@ use App\Models\ConProvince;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
+//use App\Models\User;
+
 class ConCantonController extends Controller {
     public function index() {
+        // $rolePermissions = User::with("roles.permissions")->find(auth()->id());
+
         return Inertia::render("Customers/Canton", [
             "Provinces" => ConProvince::all(),
             "Cantons" => ConCanton::getCantons(),

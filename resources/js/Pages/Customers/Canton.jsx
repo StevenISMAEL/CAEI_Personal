@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Head, useForm } from "@inertiajs/react";
+import { Head, useForm, router } from "@inertiajs/react";
 import Header from "@/Components/Header";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import Tab from "@/Layouts/TabLayout";
@@ -13,7 +13,7 @@ import tabs from "./tabs";
 import DeleteModal from "@/Components/DeleteModal";
 import TableCustom from "@/Components/TableCustom";
 import CardsCustom from "@/Components/CardCustom";
-import { Notify } from "@/Components/Toast";
+import { useNotify } from "@/Components/Toast";
 
 const Canton = ({ auth, Provinces, Cantons }) => {
     const {
@@ -25,8 +25,10 @@ const Canton = ({ auth, Provinces, Cantons }) => {
         reset,
         delete: destroy,
         patch,
+        clearErrors,
     } = useForm({
         province_id: "",
+        province_name: "",
         canton_name: "",
         ids: [],
     });
@@ -37,8 +39,13 @@ const Canton = ({ auth, Provinces, Cantons }) => {
     const [editData, setEditData] = useState(null);
     const [dataToDelete, setDataToDelete] = useState(null);
     const [selectedCantons, setSelectedCantons] = useState([]);
+    const notify = useNotify();
 
-    const closeModalCreate = () => setShowCreate(false);
+    const closeModalCreate = () => {
+        clearErrors();
+        setShowCreate(false);
+        reset();
+    };
     const openCreateModal = () => setShowCreate(true);
 
     const closeDeleteModal = () => {
@@ -51,16 +58,22 @@ const Canton = ({ auth, Provinces, Cantons }) => {
     };
 
     const closeEditModal = () => {
+        clearErrors();
         setShowEdit(false);
         setEditData(null);
+        reset();
     };
+
     const openEditModal = (canton) => {
-        setShowEdit(true);
         setEditData(canton);
         setData({
             province_id: canton.province_id,
+            province_name: Provinces.find(
+                (province) => canton.province_id === province.province_id,
+            )?.province_name,
             canton_name: canton.canton_name,
         });
+        setShowEdit(true);
     };
 
     const handleSubmitAdd = (e) => {
@@ -70,10 +83,9 @@ const Canton = ({ auth, Provinces, Cantons }) => {
             preserveScroll: true,
             onSuccess: () => {
                 closeModalCreate();
-                Notify("success", "Canton agregado correctamente");
+                notify("success", "Cantón agregado correctamente.");
             },
-            onError: (error) => console.log(error),
-            onFinish: () => reset(),
+            onError: (error) => console.error(error.message),
         });
     };
 
@@ -83,11 +95,10 @@ const Canton = ({ auth, Provinces, Cantons }) => {
         patch(route("cantons.update", { id: editData.canton_id }), {
             preserveScroll: true,
             onSuccess: () => {
-                closeModalCreate();
-                Notify("success", "Canton actualizado correctamente");
+                closeEditModal();
+                notify("success", "Cantón actualizado correctamente.");
             },
-            onError: (error) => console.log(error),
-            onFinish: () => reset(),
+            onError: (error) => console.error(error.message),
         });
     };
 
@@ -99,15 +110,17 @@ const Canton = ({ auth, Provinces, Cantons }) => {
                 onSuccess: () => {
                     setSelectedCantons([]);
                     closeDeleteModal();
-                    Notify("success", "Canton agregado correctamente");
+                    notify("success", "Cantones eliminados correctamente.");
                 },
-                onError: (error) => console.error(error),
-                onFinish: () => reset(),
+                onError: (error) => console.error(error.message),
             });
         } else {
             destroy(route("cantons.destroy", { id }), {
                 preserveScroll: true,
-                onSuccess: () => closeDeleteModal(),
+                onSuccess: () => {
+                    closeDeleteModal();
+                    notify("success", "Cantón eliminado correctamente.");
+                },
                 onError: (error) => console.error(error),
                 onFinish: () => reset(),
             });
@@ -125,7 +138,7 @@ const Canton = ({ auth, Provinces, Cantons }) => {
             inputError: (
                 <InputError message={errors.province_id} className="mt-2" />
             ),
-            defaultValue: data.province_id,
+            defaultValue: data.province_name,
         },
         {
             label: "Nombre del Canton",
@@ -170,7 +183,8 @@ const Canton = ({ auth, Provinces, Cantons }) => {
     return (
         <Authenticated
             user={auth.user}
-            header={<Header subtitle="Manage Cantons" />}
+            header={<Header subtitle="Administra Cantones" />}
+            roles={auth.user.roles.map((role) => role.name)}
         >
             <Head title="Cantones" />
             <Tab tabs={tabs}>
@@ -193,7 +207,7 @@ const Canton = ({ auth, Provinces, Cantons }) => {
                 <ModalCreate
                     showCreate={showCreate}
                     closeModalCreate={closeModalCreate}
-                    title={"Add Cantons"}
+                    title={"Añadir Canton"}
                     inputs={inputs}
                     processing={processing}
                     handleSubmitAdd={handleSubmitAdd}
@@ -201,12 +215,12 @@ const Canton = ({ auth, Provinces, Cantons }) => {
                 <DeleteModal
                     showDelete={showDelete}
                     closeDeleteModal={closeDeleteModal}
-                    title={"Delete Cantons"}
+                    title={"Borrar Canton"}
                     handleDelete={() => handleDelete(dataToDelete)}
                     processing={processing}
                 />
                 <ModalEdit
-                    title="Edit Canton"
+                    title="Editar Canton"
                     showEdit={showEdit}
                     closeEditModal={closeEditModal}
                     inputs={inputs}

@@ -1,39 +1,23 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
-use App\Http\Controllers\ConClientController;
-use App\Http\Controllers\ConCantonController;
-use App\Http\Controllers\ConParishController;
-use App\Http\Controllers\ConAddressController;
-
-use App\Http\Controllers\IpOltsController;
-
-use App\Http\Controllers\ConPhoneController;
 use App\Http\Controllers\InvProductController;
-use App\Http\Controllers\InvMovementTypeController;
-use App\Models\InvProduct;
-use App\Http\Controllers\InvMovementController;
-use App\Http\Controllers\IpDistributionController;
-use App\Http\Controllers\IpLastMileController;
 use App\Http\Controllers\PlansController;
 
 Route::get("/", function () {
-    return Inertia::render("Welcome", [
-        "canLogin" => Route::has("login"),
-        "canRegister" => Route::has("register"),
-        "laravelVersion" => Application::VERSION,
-        "phpVersion" => PHP_VERSION,
-    ]);
+    return Auth::check()
+        ? redirect()->route("dashboard")
+        : redirect()->route("login");
 });
 
 Route::get("/dashboard", function () {
     return Inertia::render("Dashboard");
 })
-    ->middleware(["auth", "verified"])
+    ->middleware(["auth", "verified", "role:admin|vendedor|tecnico|auditor"])
     ->name("dashboard");
 
 Route::middleware("auth")->group(function () {
@@ -48,131 +32,9 @@ Route::middleware("auth")->group(function () {
     );
 });
 
-Route::get("/app", function () {
-    return Inertia::render("App");
-});
-
-Route::prefix("manage-customers")
-    ->middleware(["auth", "verified"])
-    ->group(function () {
-        Route::resource("clients", ConClientController::class)->except([
-            "create",
-            "show",
-            "edit",
-        ]);
-        Route::delete("/clients", [
-            ConClientController::class,
-            "destroyMultiple",
-        ])->name("clients.multiple.destroy");
-
-        Route::resource("phones", ConPhoneController::class)->except([
-            "create",
-            "show",
-            "edit",
-        ]);
-        Route::delete("/phones", [
-            ConPhoneController::class,
-            "destroyMultiple",
-        ])->name("phones.multiple.destroy");
-
-        Route::resource("addresses", ConAddressController::class)->except([
-            "create",
-            "show",
-            "edit",
-        ]);
-        Route::delete("/addresses", [
-            ConAddressController::class,
-            "destroyMultiple",
-        ])->name("addresses.multiple.destroy");
-
-        Route::resource("parishes", ConParishController::class)->except([
-            "create",
-            "show",
-            "edit",
-        ]);
-        Route::delete("/parishes", [
-            ConClientController::class,
-            "destroyMultiple",
-        ])->name("parishes.multiple.destroy");
-        Route::resource("cantons", ConCantonController::class)->except([
-            "create",
-            "show",
-            "edit",
-        ]);
-        Route::delete("/cantons", [
-            ConCantonController::class,
-            "destroyMultiple",
-        ])->name("cantons.multiple.destroy");
-    });
-
-Route::prefix("manage-ips")
-    ->group(function () {
-        Route::resource("olts", IpOltsController::class)->except([
-            "create",
-            "show",
-            "edit",
-        ]);
-        Route::delete("/olts", [
-            IpOltsController::class,
-            "destroyMultiple",
-        ])->name("olts.multiple.destroy");
-
-        Route::resource(
-            "distributionNaps",
-            IpDistributionController::class
-        )->except(["create", "show", "edit"]);
-
-        Route::delete("/distributionNaps", [
-            IpDistributionController::class,
-            "destroyMultiple",
-        ])->name("distributionNaps.multiple.destroy");
-
-        Route::resource("lastmileNaps", IpLastMileController::class)->except([
-            "create",
-            "show",
-            "edit",
-        ]);
-
-        Route::delete("/lastmileNaps", [
-            IpLastMileController::class,
-            "destroyMultiple",
-        ])->name("lastmileNaps.multiple.destroy");
-    })
-    ->middleware(["auth", "verified"]);
-
-Route::prefix("manage-inventory")
-    ->group(function () {
-        Route::resource("products", InvProductController::class)->except([
-            "create",
-            "show",
-            "edit",
-        ]);
-        Route::delete("/products", [
-            InvProductController::class,
-            "destroyMultiple",
-        ])->name("products.multiple.destroy");
-
-        Route::resource("types", InvMovementTypeController::class)->except([
-            "create",
-            "show",
-            "edit",
-        ]);
-        Route::delete("/types", [
-            InvMovementTypeController::class,
-            "destroyMultiple",
-        ])->name("types.multiple.destroy");
-
-        Route::resource("movements", InvMovementController::class)->except([
-            "create",
-            "show",
-            "edit",
-        ]);
-        Route::delete("/movements", [
-            InvMovementController::class,
-            "destroyMultiple",
-        ])->name("movements.multiple.destroy");
-    })
-    ->middleware(["auth", "verified"]);
+// Route::get("/app", function () {
+//    return Inertia::render("App");
+// });
 
 Route::prefix("manage-orders")
     ->group(function () {
@@ -203,3 +65,8 @@ Route::prefix("manage-plans")
     ->middleware(["auth", "verified"]);
 
 require __DIR__ . "/auth.php";
+require __DIR__ . "/audit.php";
+require __DIR__ . "/customer-management.php";
+require __DIR__ . "/customer-support.php";
+require __DIR__ . "/inventory-management.php";
+require __DIR__ . "/securities.php";

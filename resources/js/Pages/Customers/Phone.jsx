@@ -134,10 +134,7 @@ const Phone = ({ auth, Clients, Phones }) => {
     ];
 
     const theaders = ["Número Telefono", "Cliente"];
-    const searchColumns = [
-        "phone_number",
-        "client_id",
-    ];
+    const searchColumns = ["phone_number", "client_id"];
 
     const handleCheckboxChange = (id) => {
         setSelectedPhones((prevSelected) => {
@@ -165,7 +162,8 @@ const Phone = ({ auth, Clients, Phones }) => {
     return (
         <Authenticated
             user={auth.user}
-            header={<Header subtitle="Manage Phones" />}
+            header={<Header subtitle="Administrar Teléfonos" />}
+            roles={auth.user.roles.map((role) => role.name)}
         >
             <Head title="Phonees" />
             <Tab tabs={tabs}>
@@ -188,7 +186,7 @@ const Phone = ({ auth, Clients, Phones }) => {
                 <ModalCreate
                     showCreate={showCreate}
                     closeModalCreate={closeModalCreate}
-                    title={"Add Phones"}
+                    title={"Añadir Teléfono"}
                     inputs={inputs}
                     processing={processing}
                     handleSubmitAdd={handleSubmitAdd}
@@ -196,12 +194,12 @@ const Phone = ({ auth, Clients, Phones }) => {
                 <DeleteModal
                     showDelete={showDelete}
                     closeDeleteModal={closeDeleteModal}
-                    title={"Delete Phones"}
+                    title={"Borrar Teléfono"}
                     handleDelete={() => handleDelete(dataToDelete)}
                     processing={processing}
                 />
                 <ModalEdit
-                    title="Edit Parish"
+                    title="Editar Teléfono"
                     showEdit={showEdit}
                     closeEditModal={closeEditModal}
                     inputs={inputs}

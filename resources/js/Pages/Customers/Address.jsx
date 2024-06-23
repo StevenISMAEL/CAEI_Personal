@@ -203,6 +203,7 @@ const Address = ({ auth, Parishes, Addresses }) => {
         <Authenticated
             user={auth.user}
             header={<Header subtitle="Manage Addresses" />}
+            roles={auth.user.roles.map((role) => role.name)}
         >
             <Head title="Direcciones" />
             <Tab tabs={tabs}>

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { stringify } from "csv-stringify/browser/esm/sync";
 import { ExportButton } from "./CustomButtons";
 
-const ExportData = ({ data, searchColumns, headers }) => {
+const ExportData = ({ data, searchColumns, headers, fileName = "Data" }) => {
     const [isExporting, setIsExporting] = useState(false);
 
     const handleExport = () => {
@@ -12,10 +12,17 @@ const ExportData = ({ data, searchColumns, headers }) => {
             const filteredData = data.map((item) => {
                 const filteredItem = {};
                 searchColumns.forEach((column) => {
-                    filteredItem[column] = item[column];
+                    if (column === "roles" && Array.isArray(item[column])) {
+                        filteredItem[column] = item[column]
+                            .map((role) => role.role_name)
+                            .join(", ");
+                    } else {
+                        filteredItem[column] = item[column];
+                    }
                 });
                 return filteredItem;
             });
+
             const csv = stringify(filteredData, {
                 header: true,
                 columns: searchColumns.map((column) => ({
@@ -24,14 +31,18 @@ const ExportData = ({ data, searchColumns, headers }) => {
                 })),
             });
 
-            const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+            const BOM = "\uFEFF";
+            const csvContent = BOM + csv;
 
-            // Crear un enlace temporal para descargar el archivo
+            const blob = new Blob([csvContent], {
+                type: "text/csv;charset=utf-8;",
+            });
+
             const link = document.createElement("a");
             if (link.download !== undefined) {
                 const url = URL.createObjectURL(blob);
                 link.setAttribute("href", url);
-                link.setAttribute("download", "data_export.csv");
+                link.setAttribute("download", `${fileName}.csv`);
                 link.style.visibility = "hidden";
                 document.body.appendChild(link);
                 link.click();

@@ -59,7 +59,6 @@ export default function Modal({
                         ref={modalRef}
                         className={`mb-6 bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-xl transform transition-all w-10/12 sm:w-11/12 sm:mx-auto ${maxWidthClass}`}
                     >
-                        {/* Elemento oculto para evitar el enfoque inicial */}
                         <div
                             ref={initialFocusRef}
                             tabIndex={-1}

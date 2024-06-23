@@ -1,19 +1,18 @@
 import React, { useState, useRef, useEffect } from "react";
-import { FaSearch, FaChevronDown } from "react-icons/fa";
+import { FaChevronDown } from "react-icons/fa";
 import FloatInputText from "./FloatInputText";
 
 const SearchDropdown = ({
-    options,
+    options = [],
     labelKey,
     valueKey,
     onSelect,
     placeholder,
-    defaultValue,
+    defaultValue = "",
     className = "",
 }) => {
-    const [search, setSearch] = useState("");
+    const [search, setSearch] = useState(defaultValue);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const [selectedOption, setSelectedOption] = useState(null);
     const [focusedIndex, setFocusedIndex] = useState(-1);
     const dropdownRef = useRef(null);
     const inputRef = useRef(null);
@@ -34,7 +33,7 @@ const SearchDropdown = ({
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
-    }, [dropdownRef, inputRef]);
+    }, []);
 
     useEffect(() => {
         if (isDropdownOpen) {
@@ -58,20 +57,15 @@ const SearchDropdown = ({
         setSearch(value);
         setIsDropdownOpen(true);
         if (!value) {
-            setSelectedOption(null);
+            onSelect(null);
         }
     };
 
     const handleOptionSelect = (option) => {
-        setSelectedOption(option);
-        setIsDropdownOpen(false);
         setSearch(option[labelKey]);
+        setIsDropdownOpen(false);
         onSelect(option[valueKey]);
         inputRef.current.blur();
-    };
-
-    const handleInputFocus = () => {
-        setIsDropdownOpen(true);
     };
 
     const handleKeyDown = (e) => {
@@ -108,13 +102,8 @@ const SearchDropdown = ({
         }
     };
 
-    const filteredOptions = options.filter(
-        (option) =>
-            option[valueKey]
-                .toString()
-                .toLowerCase()
-                .includes(search.toLowerCase()) ||
-            option[labelKey].toLowerCase().includes(search.toLowerCase()),
+    const filteredOptions = options.filter((option) =>
+        option[labelKey].toLowerCase().includes(search.toLowerCase()),
     );
 
     return (
@@ -126,26 +115,26 @@ const SearchDropdown = ({
                     value={search}
                     onChange={handleSearch}
                     onKeyDown={handleKeyDown}
-                    onFocus={handleInputFocus}
+                    onFocus={() => setIsDropdownOpen(true)}
                     placeholder={placeholder || "Buscar..."}
                     className="w-full"
                 />
                 <button
                     type="button"
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 focus:outline-none focus:ring-0 focus:ring-offset-0 focus:ring-green-500"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 focus:outline-none"
                 >
                     <FaChevronDown
-                        className={`text-gray-400 dark:text-gray-500 transition-transform duration-200 ${
-                            isDropdownOpen ? "rotate-180 duration-1000" : ""
+                        className={`text-gray-400 transition-transform duration-200 ${
+                            isDropdownOpen ? "rotate-180" : ""
                         }`}
                     />
                 </button>
             </div>
 
             {isDropdownOpen && (
-                <div className="mt-2 bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-lg shadow-lg">
-                    <ul className="py-1 max-h-60 overflow-auto focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                <div className="mt-2 bg-white dark:bg-gray-800 border dark:border-gray-600 rounded-lg shadow-lg">
+                    <ul className="py-1 max-h-60 overflow-auto">
                         {filteredOptions.length > 0 ? (
                             filteredOptions.map((option, index) => (
                                 <li
@@ -154,17 +143,17 @@ const SearchDropdown = ({
                                         (optionsRefs.current[index] = el)
                                     }
                                     onClick={() => handleOptionSelect(option)}
-                                    className={`px-4 py-2 text-sm dark:text-gray-50 cursor-pointer ${
+                                    className={`px-4 py-2 text-sm cursor-pointer ${
                                         index === focusedIndex
-                                            ? "bg-green-100 dark:bg-green-300 dark:text-gray-800 dark:hover:text-white text-green-800"
-                                            : "text-gray-700"
-                                    } hover:bg-gray-100 dark:hover:bg-gray-600`}
+                                            ? "bg-green-100 dark:bg-green-500 text-green-800 dark:text-gray-600"
+                                            : "text-gray-700 "
+                                    } hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-white`}
                                 >
                                     {option[labelKey]}
                                 </li>
                             ))
                         ) : (
-                            <li className="px-4 py-2 text-sm text-gray-500 dark:text-gray-400">
+                            <li className="px-4 py-2 text-sm text-gray-500">
                                 No se encontraron resultados.
                             </li>
                         )}

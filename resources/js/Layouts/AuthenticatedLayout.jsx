@@ -13,13 +13,10 @@ import { MdInventory } from "react-icons/md";
 import { IoPlanet } from "react-icons/io5";
 import { TiDocumentText } from "react-icons/ti";
 import { MdOutlineNetworkWifi } from "react-icons/md";
+import { FaUsersGear } from "react-icons/fa6";
+import { FaFileContract } from "react-icons/fa6";
 import { TbTableOptions } from "react-icons/tb";
-const Authenticated = ({
-    user,
-    header,
-    children,
-    roles = ["admin", "gerente"],
-}) => {
+const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
     const getSidebarStatus = () => {
         const value = localStorage.getItem("open");
         return value === "true" || value === null;
@@ -41,13 +38,26 @@ const Authenticated = ({
             title: "Dashboard",
             route: "dashboard",
             icon: <RiDashboard2Fill />,
+            roles: ["admin", "vendedor", "tecnico", "auditor"],
+        },
+        {
+            title: "Empleados",
+            route: "employees.index",
+            icon: <FaUsersGear />,
             roles: ["admin"],
         },
         {
-            title: "Customers",
+            title: "Clientes",
             route: "clients.index",
             subroute: "/manage-customers/",
             icon: <IoPeopleCircle />,
+            roles: ["vendedor"],
+        },
+        {
+            title: "Contratos",
+            route: "contracts.index",
+            subroute: "/manage-contracts/",
+            icon: <FaFileContract />,
             roles: ["admin", "vendedor"],
         },
         {
@@ -55,21 +65,28 @@ const Authenticated = ({
             route: "olts.index",
             subroute: "/manage-ips/",
             icon: <IoPlanet />,
-            roles: ["admin", "gerente"],
+            roles: ["admin"],
         },
         {
-            title: "Inventory",
+            title: "Inventario",
             route: "products.index",
             subroute: "/manage-inventory/",
             icon: <MdInventory />,
-            roles: ["admin", "gerente"],
+            roles: ["admin"],
         },
         {
-            title: "Support",
+            title: "Suporte",
             route: "work-orders.index",
             subroute: "/manage-orders/",
             icon: <TiDocumentText />,
-            roles: ["admin", "gerente"],
+            roles: ["tecnico"],
+        },
+        {
+            title: "Plans",
+            route: "plans.index",
+            subroute: "/manage-plans/",
+            icon: <TbTableOptions />,
+            roles: ["admin", "vendedor"],
         },
         {
             title: "Plans",
@@ -101,7 +118,7 @@ const Authenticated = ({
                     <h1
                         className={`text-gray-800 dark:text-gray-200 origin-left text-3xl ${
                             !open && "duration-500 hidden"
-                        } truncate overflow-hidden whitespace-nowrap`}
+                        } truncate overflow-hidden whitespace-nowrap font-semibold pb-2`}
                     >
                         Digitell
                     </h1>
@@ -237,14 +254,14 @@ const Authenticated = ({
                                             <Dropdown.Link
                                                 href={route("profile.edit")}
                                             >
-                                                Profile
+                                                Perfil
                                             </Dropdown.Link>
                                             <Dropdown.Link
                                                 href={route("logout")}
                                                 method="post"
                                                 as="button"
                                             >
-                                                Log Out
+                                                Cerrar Sesión
                                             </Dropdown.Link>
                                         </Dropdown.Content>
                                     </Dropdown>
@@ -260,7 +277,9 @@ const Authenticated = ({
                         }
                     >
                         <ul className="pt-2 pb-3 space-y-1">
-                            {Menus.map((Menu, index) => (
+                            {Menus.filter((item) =>
+                                item.roles.some((role) => roles.includes(role)),
+                            ).map((Menu, index) => (
                                 <li key={index}>
                                     <ResponsiveNavLink
                                         href={route(Menu.route)}
@@ -290,14 +309,14 @@ const Authenticated = ({
 
                             <div className="mt-3 space-y-1">
                                 <ResponsiveNavLink href={route("profile.edit")}>
-                                    Profile
+                                    Perfil
                                 </ResponsiveNavLink>
                                 <ResponsiveNavLink
                                     method="post"
                                     href={route("logout")}
                                     as="button"
                                 >
-                                    Log Out
+                                    Cerrar Sesión
                                 </ResponsiveNavLink>
                             </div>
                         </div>
