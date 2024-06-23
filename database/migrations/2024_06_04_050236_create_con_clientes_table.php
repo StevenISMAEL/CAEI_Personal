@@ -40,12 +40,11 @@ return new class extends Migration {
                 ->cascadeOnDelete();
         });
 
-        Schema::create("con_address", function (Blueprint $table) {
-            $table->string("address_id", 7)->primary();
+        Schema::create("con_sector", function (Blueprint $table) {
+            $table->string("sector_id", 7)->primary();
             $table->string("parish_id", 7);
-            $table->string("address", 100);
-            $table->string("reference", 100);
-            $table->string("neighborhood", 100);
+            $table->string("sector_name", 100);
+            $table->string("description", 250);
 
             $table
                 ->foreign("parish_id")
@@ -57,14 +56,16 @@ return new class extends Migration {
 
         Schema::create("con_clients", function (Blueprint $table) {
             $table->string("client_id", 10)->primary();
-            $table->string("address_id", 7);
+            $table->string("sector_id", 7);
             $table->string("client_name", 150);
             $table->string("client_email", 250);
+            $table->string("address", 100);
+            $table->string("reference", 250);
 
             $table
-                ->foreign("address_id")
-                ->references("address_id")
-                ->on("con_address")
+                ->foreign("sector_id")
+                ->references("sector_id")
+                ->on("con_sector")
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete();
         });
@@ -91,10 +92,10 @@ return new class extends Migration {
         });
 
         Schema::table("con_clients", function (Blueprint $table) {
-            $table->dropForeign(["address_id"]);
+            $table->dropForeign(["sector_id"]);
         });
 
-        Schema::table("con_address", function (Blueprint $table) {
+        Schema::table("con_sector", function (Blueprint $table) {
             $table->dropForeign(["parish_id"]);
         });
 
@@ -108,7 +109,7 @@ return new class extends Migration {
 
         Schema::dropIfExists("con_phones");
         Schema::dropIfExists("con_clients");
-        Schema::dropIfExists("con_address");
+        Schema::dropIfExists("con_sector");
         Schema::dropIfExists("con_parishes");
         Schema::dropIfExists("con_cantons");
         Schema::dropIfExists("con_provinces");

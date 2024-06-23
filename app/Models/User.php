@@ -17,7 +17,7 @@ class User extends Authenticatable {
      *
      * @var array<int, string>
      */
-    protected $fillable = ["name", "email", "password"];
+    protected $fillable = ["name", "email", "username", "password"];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -37,6 +37,8 @@ class User extends Authenticatable {
             "password" => "hashed",
         ];
     }
+
+    public $timestamps = false;
 
     public static function getAllUserRoles() {
         return self::with("roles.permissions")

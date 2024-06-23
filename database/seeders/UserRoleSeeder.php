@@ -20,6 +20,7 @@ class UserRoleSeeder extends Seeder {
 
         $super = User::factory()->create([
             "name" => "Super User",
+            "username" => "superuser",
             "email" => "su@example.com",
         ]);
         $super->assignRole(
@@ -46,12 +47,14 @@ class UserRoleSeeder extends Seeder {
         //Usuarios por defecto
         $adminUser = User::factory()->create([
             "name" => "Admin User",
+            "username" => "admin",
             "email" => "admin@example.com",
         ]);
         $adminUser->assignRole($adminRole);
 
         $vendedorUser = User::create([
             "name" => "Vendedor User",
+            "username" => "vender",
             "email" => "vendedor@example.com",
             "password" => bcrypt("password"),
         ]);
@@ -59,6 +62,7 @@ class UserRoleSeeder extends Seeder {
 
         $tecnicoUser = User::create([
             "name" => "Tecnico User",
+            "username" => "tecni",
             "email" => "tecnico@example.com",
             "password" => bcrypt("password"),
         ]);
@@ -66,6 +70,7 @@ class UserRoleSeeder extends Seeder {
 
         $auditorUser = User::create([
             "name" => "Auditor User",
+            "username" => "audi",
             "email" => "auditor@example.com",
             "password" => bcrypt("password"),
         ]);

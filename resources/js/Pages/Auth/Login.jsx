@@ -13,7 +13,7 @@ export default function Login({ status, canResetPassword }) {
     const [message, setMessage] = useState(flash.message);
     const [messageType, setMessageType] = useState(flash.type);
     const { data, setData, post, processing, errors, reset } = useForm({
-        email: "",
+        login: "",
         password: "",
         remember: false,
     });
@@ -58,18 +58,18 @@ export default function Login({ status, canResetPassword }) {
             <form onSubmit={submit}>
                 <div>
                     <FloatInputText
-                        label="Email"
-                        id="email"
-                        type="email"
-                        name="email"
-                        value={data.email}
+                        label="Email o Nombre de usuario"
+                        id="login"
+                        type="text"
+                        name="login"
+                        value={data.login}
                         className="mt-1 block w-full"
-                        autoComplete="username"
+                        autoComplete="login"
                         isFocused={true}
-                        onChange={(e) => setData("email", e.target.value)}
+                        onChange={(e) => setData("login", e.target.value)}
                     />
 
-                    <InputError message={errors.email} className="mt-2" />
+                    <InputError message={errors.login} className="mt-2" />
                 </div>
 
                 <div className="mt-4">

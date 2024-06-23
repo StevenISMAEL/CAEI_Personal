@@ -14,9 +14,9 @@ return new class extends Migration {
             $table->string("name");
             $table->string("email")->unique();
             $table->timestamp("email_verified_at")->nullable();
+            $table->string("username", 50)->unique();
             $table->string("password");
             $table->rememberToken();
-            $table->timestamps();
         });
 
         Schema::create("password_reset_tokens", function (Blueprint $table) {
@@ -36,7 +36,7 @@ return new class extends Migration {
 
         Schema::create("aud_audit", function (Blueprint $table) {
             $table->string("audit_id", 8)->primary();
-            $table->date("audit_date");
+            $table->timestamp("audit_date")->useCurrent();
             $table->string("audit_table_name", 50);
             $table->string("audit_action", 100);
         });

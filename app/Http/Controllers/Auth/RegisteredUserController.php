@@ -31,12 +31,22 @@ class RegisteredUserController extends Controller {
             "name" => "required|string|max:255",
             "email" =>
                 "required|string|lowercase|email|max:255|unique:" . User::class,
+            "username" => [
+                "required",
+                "string",
+                "min:5",
+                "max:50",
+                "unique:" . User::class,
+                "regex:/^[a-zA-Z0-9_-]+$/",
+                "not_in:admin,superuser,moderator,administrator,sysadmin,support,guest,anonymous,system,server,database,contact",
+            ],
             "password" => ["required", "confirmed", Rules\Password::defaults()],
         ]);
 
         $user = User::create([
             "name" => $request->name,
             "email" => $request->email,
+            "username" => $request->username,
             "password" => Hash::make($request->password),
         ]);
 
