@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Head, useForm } from "@inertiajs/react";
+import { Head, useForm, router } from "@inertiajs/react";
 import Header from "@/Components/Header";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import Tab from "@/Layouts/TabLayout";
@@ -13,7 +13,6 @@ import tabs from "./tabs";
 import DeleteModal from "@/Components/DeleteModal";
 import TableCustom from "@/Components/TableCustom";
 import CardsCustom from "@/Components/CardCustom";
-// import { Notify } from "@/Components/Toast";
 
 const Canton = ({ auth, Provinces, Cantons }) => {
     const {
@@ -25,6 +24,7 @@ const Canton = ({ auth, Provinces, Cantons }) => {
         reset,
         delete: destroy,
         patch,
+        clearErrors,
     } = useForm({
         province_id: "",
         province_name: "",
@@ -39,7 +39,11 @@ const Canton = ({ auth, Provinces, Cantons }) => {
     const [dataToDelete, setDataToDelete] = useState(null);
     const [selectedCantons, setSelectedCantons] = useState([]);
 
-    const closeModalCreate = () => setShowCreate(false);
+    const closeModalCreate = () => {
+        clearErrors();
+        setShowCreate(false);
+        reset();
+    };
     const openCreateModal = () => setShowCreate(true);
 
     const closeDeleteModal = () => {
@@ -52,8 +56,10 @@ const Canton = ({ auth, Provinces, Cantons }) => {
     };
 
     const closeEditModal = () => {
+        clearErrors();
         setShowEdit(false);
         setEditData(null);
+        reset();
     };
 
     const openEditModal = (canton) => {
@@ -74,8 +80,7 @@ const Canton = ({ auth, Provinces, Cantons }) => {
         post(route("cantons.store"), {
             preserveScroll: true,
             onSuccess: () => closeModalCreate(),
-            onError: (error) => console.log(error),
-            onFinish: () => reset(),
+            onError: (error) => console.error(error.message),
         });
     };
 
@@ -85,8 +90,7 @@ const Canton = ({ auth, Provinces, Cantons }) => {
         patch(route("cantons.update", { id: editData.canton_id }), {
             preserveScroll: true,
             onSuccess: () => closeEditModal(),
-            onError: (error) => console.log(error),
-            onFinish: () => reset(),
+            onError: (error) => console.error(error.message),
         });
     };
 
@@ -98,10 +102,8 @@ const Canton = ({ auth, Provinces, Cantons }) => {
                 onSuccess: () => {
                     setSelectedCantons([]);
                     closeDeleteModal();
-                    //Notify("success", "Canton agregado correctamente");
                 },
-                onError: (error) => console.error(error),
-                onFinish: () => reset(),
+                onError: (error) => console.error(error.message),
             });
         } else {
             destroy(route("cantons.destroy", { id }), {

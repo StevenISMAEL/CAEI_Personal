@@ -1,37 +1,253 @@
+import { useState, useEffect } from "react";
+import { useForm, Head } from "@inertiajs/react";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import Header from "@/Components/Header";
 import Box from "@/Layouts/Box";
+import { DeleteButton } from "@/Components/CustomButtons";
+import TableCustom from "@/Components/TableCustom";
+import CardsCustom from "@/Components/CardCustom";
+import DeleteModal from "@/Components/DeleteModal";
 
 const Employee = ({ auth, roles, employees }) => {
-    console.log(roles, "roles");
-    console.log("permisos", roles.permissions);
+    const {
+        data,
+        setData,
+        post,
+        processing,
+        errors,
+        reset,
+        delete: destroy,
+        patch,
+        clearErrors,
+    } = useForm({
+        role_id: [],
+        ids: [],
+    });
+
+    const [showDelete, setShowDelete] = useState(false);
+    const [showEdit, setShowEdit] = useState(false);
+    const [editData, setEditData] = useState(null);
+    const [dataToDelete, setDataToDelete] = useState(null);
+    const [selectedEmployees, setSelectedEmployees] = useState([]);
+
+    const closeDeleteModal = () => {
+        setShowDelete(false);
+        setDataToDelete(null);
+    };
+
+    const openDeleteModal = (id) => {
+        setShowDelete(true);
+        setDataToDelete(id);
+    };
+
+    const closeEditModal = () => {
+        clearErrors();
+        setShowEdit(false);
+        setEditData(null);
+        reset();
+    };
+
+    const openEditModal = (employee) => {
+        setEditData(employee);
+        setData({
+            role_id: employee.roles.map((role) => role.role_id),
+        });
+        setShowEdit(true);
+    };
+
+    const handleSubmitEdit = (e) => {
+        e.preventDefault();
+        console.log(data.role_id);
+        patch(route("employees.update", { id: editData.user_id }), {
+            preserveScroll: true,
+            onSuccess: () => closeEditModal(),
+            onError: (error) => console.error(error.message),
+        });
+    };
+
+    const handleDelete = (id) => {
+        if (Array.isArray(id)) {
+            data.ids = id;
+            destroy(route("employees.multiple.destroy"), {
+                preserveScroll: true,
+                onSuccess: () => {
+                    setSelectedEmployees([]);
+                    closeDeleteModal();
+                },
+                onError: (error) => console.error(error.message),
+            });
+        } else {
+            destroy(route("employees.destroy", { id }), {
+                preserveScroll: true,
+                onSuccess: () => closeDeleteModal(),
+                onError: (error) => console.error(error),
+            });
+        }
+    };
+
+    const theaders = ["Empleado", "Roles"];
+    const searchColumns = ["user_name", "roles"];
+
+    const handleCheckboxChange = (id) => {
+        setSelectedEmployees((prevSelected) => {
+            if (prevSelected.includes(id)) {
+                return prevSelected.filter((item) => item !== id);
+            } else {
+                return [...prevSelected, id];
+            }
+        });
+    };
+
+    const handleSelectAll = () => {
+        if (selectedEmployees.length === employees.length) {
+            setSelectedEmployees([]);
+        } else {
+            setSelectedEmployees(employees.map((employee) => employee.user_id));
+        }
+    };
+
+    const openDeleteModalForSelected = () => {
+        setShowDelete(true);
+        setDataToDelete(selectedEmployees);
+    };
+
+    const initialSelectedRoles = editData
+        ? editData.roles.map((role) => role.role_id)
+        : [];
+
     return (
         <Authenticated
             user={auth.user}
             roles={auth.user.roles.map((role) => role.name)}
             header={<Header subtitle="Empleados" />}
         >
+            <Head title="Empleados" />
             <Box className="mt-3">
-                <ul className="text-lg text-gray-400">
-                    {employees &&
-                        employees.map((employee, index) => (
-                            <li key={index}>
-                                <h2>{employee.name}</h2>
-                            </li>
-                        ))}
-                </ul>
-                <h2 className="font-extrabold">Roles disponibles</h2>
-                <ul className="text-lg text-gray-400">
-                    {roles &&
-                        roles.map((rol, index) => (
-                            <li key={index}>
-                                <h2>{rol.name}</h2>
-                            </li>
-                        ))}
-                </ul>
+                <div className="flex flex-wrap items-center justify-center md:justify-between gap-2">
+                    <div className="w-full sm:w-auto flex flex-wrap justify-center gap-2">
+                        <DeleteButton
+                            disabled={selectedEmployees.length === 0}
+                            onClick={openDeleteModalForSelected}
+                        />
+                    </div>
+                    {/* <ExportData
+                        data={employees}
+                        searchColumns={searchColumns}
+                        headers={theaders}
+                    /> */}
+                </div>
+            </Box>
+            <ModalEdit
+                title="Editar Roles"
+                showEdit={showEdit}
+                closeEditModal={closeEditModal}
+                processing={processing}
+                handleSubmitEdit={handleSubmitEdit}
+                roles={roles}
+                initialSelectedRoles={data.role_id}
+                setData={setData}
+            />
+            <DeleteModal
+                showDelete={showDelete}
+                closeDeleteModal={closeDeleteModal}
+                title={"Borrar Empleado"}
+                handleDelete={() => handleDelete(dataToDelete)}
+                processing={processing}
+            />
+            <Box className="mt-3 hidden md:block">
+                <TableCustom
+                    headers={theaders}
+                    data={employees}
+                    searchColumns={searchColumns}
+                    onDelete={openDeleteModal}
+                    onEdit={openEditModal}
+                    idKey="user_id"
+                    onSelectChange={handleCheckboxChange}
+                    selectedItems={selectedEmployees}
+                    onSelectAll={handleSelectAll}
+                />
+            </Box>
+            <Box className="mt-3  md:hidden">
+                <CardsCustom
+                    headers={theaders}
+                    data={employees}
+                    searchColumns={searchColumns}
+                    onDelete={openDeleteModal}
+                    onEdit={openEditModal}
+                    idKey="user_id"
+                    onSelectChange={handleCheckboxChange}
+                    selectedItems={selectedEmployees}
+                    onSelectAll={handleSelectAll}
+                />
             </Box>
         </Authenticated>
     );
 };
 
 export default Employee;
+import Modal from "@/Components/Modal";
+import SecondaryButton from "@/Components/SecondaryButton";
+import PrimaryButton from "@/Components/PrimaryButton";
+
+const ModalEdit = ({
+    title,
+    showEdit,
+    closeEditModal,
+    processing,
+    handleSubmitEdit,
+    roles,
+    initialSelectedRoles = [],
+    setData,
+}) => {
+    const [selectedRoles, setSelectedRoles] = useState(initialSelectedRoles);
+
+    useEffect(() => {
+        setSelectedRoles(initialSelectedRoles);
+    }, [initialSelectedRoles]);
+
+    const handleRoleChange = (roleId) => {
+        const updatedRoles = selectedRoles.includes(roleId)
+            ? selectedRoles.filter((id) => id !== roleId)
+            : [...selectedRoles, roleId];
+
+        setSelectedRoles(updatedRoles);
+        setData((prevData) => ({ ...prevData, role_id: updatedRoles }));
+    };
+    return (
+        <Modal show={showEdit} onClose={closeEditModal}>
+            <form onSubmit={handleSubmitEdit} className="p-6">
+                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                    {title.toUpperCase()}
+                </h3>
+                <div className="mt-4">
+                    {roles.map((role) => (
+                        <div key={role.id} className="flex items-center mb-2">
+                            <input
+                                type="checkbox"
+                                id={`role-${role.id}`}
+                                checked={selectedRoles.includes(role.id)}
+                                onChange={() => handleRoleChange(role.id)}
+                                className="mr-2 rounded dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800"
+                            />
+                            <label
+                                htmlFor={`role-${role.id}`}
+                                className="text-sm text-gray-700 dark:text-gray-300"
+                            >
+                                {role.name}
+                            </label>
+                        </div>
+                    ))}
+                </div>
+                <div className="mt-6 flex justify-end">
+                    <SecondaryButton onClick={closeEditModal}>
+                        Cancelar
+                    </SecondaryButton>
+
+                    <PrimaryButton className="ms-3" disabled={processing}>
+                        Actualizar
+                    </PrimaryButton>
+                </div>
+            </form>
+        </Modal>
+    );
+};

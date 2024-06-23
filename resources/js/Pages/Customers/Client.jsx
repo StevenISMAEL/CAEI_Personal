@@ -72,7 +72,7 @@ const Client = ({ auth, Addresses, Clients }) => {
         post(route("clients.store"), {
             preserveScroll: true,
             onSuccess: () => closeModalCreate(),
-            onError: (error) => console.log(error),
+            onError: (error) => console.erro(error.message),
             onFinish: () => reset(),
         });
     };

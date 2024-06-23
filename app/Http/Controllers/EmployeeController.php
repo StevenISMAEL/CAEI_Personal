@@ -8,55 +8,34 @@ use Inertia\Inertia;
 use Spatie\Permission\Models\Role;
 
 class EmployeeController extends Controller {
-    /**
-     * Display a listing of the resource.
-     */
     public function index() {
         return Inertia::render("Employee", [
-            "employees" => User::all(),
+            "employees" => User::getAllUserRoles(),
             "roles" => Role::all(),
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create() {
-        //
+    public function update(Request $request, string $userId) {
+        $request->validate([
+            "role_id" => "nullable|array",
+            "role_id.*" => "integer|exists:roles,id",
+        ]);
+
+        $user = User::findOrFail($userId);
+        $roles = Role::whereIn("id", $request->role_id)->get();
+        $user->syncRoles($roles);
+
+        return to_route("employees.index");
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request) {
-        //
+    public function destroy(string $userId) {
+        User::findOrFail($userId)->delete();
+        return to_route("employees.index");
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id) {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id) {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id) {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id) {
-        //
+    public function destroyMultiple(Request $request) {
+        $ids = $request->input("ids");
+        User::whereIn("id", $ids)->delete();
+        return to_route("employees.index");
     }
 }

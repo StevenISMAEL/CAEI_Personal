@@ -32,7 +32,7 @@ export default function Dashboard({ auth }) {
                 </div>
             </Box>
             <Box className="pt-6">
-                <App />
+                {/* <App /> */}
             </Box>
         </AuthenticatedLayout>
     );
