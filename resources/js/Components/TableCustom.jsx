@@ -237,11 +237,18 @@ const TableCustom = ({
                                                     >
                                                         {column === "roles"
                                                             ? item[column]
-                                                                  .map(
-                                                                      (role) =>
-                                                                          role.role_name,
-                                                                  )
-                                                                  .join(", ")
+                                                                  .length > 0
+                                                                ? item[column]
+                                                                      .map(
+                                                                          (
+                                                                              role,
+                                                                          ) =>
+                                                                              role.role_name,
+                                                                      )
+                                                                      .join(
+                                                                          ", ",
+                                                                      )
+                                                                : "Sin Rol"
                                                             : item[column]}
                                                     </td>
                                                 ),

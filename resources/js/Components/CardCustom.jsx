@@ -135,8 +135,12 @@ const CardsCustom = ({
     };
 
     const renderFieldValue = (item, column) => {
-        if (column === "roles" && Array.isArray(item[column])) {
-            return item[column].map((role) => role.role_name).join(", ");
+        if (column === "roles") {
+            if (Array.isArray(item[column]) && item[column].length > 0) {
+                return item[column].map((role) => role.role_name).join(", ");
+            } else {
+                return "Sin Rol";
+            }
         }
         return String(item[column]);
     };
