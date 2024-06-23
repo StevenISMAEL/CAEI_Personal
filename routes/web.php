@@ -1,20 +1,16 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 use App\Http\Controllers\InvProductController;
 
-
 Route::get("/", function () {
-    return Inertia::render("Welcome", [
-        "canLogin" => Route::has("login"),
-        "canRegister" => Route::has("register"),
-        "laravelVersion" => Application::VERSION,
-        "phpVersion" => PHP_VERSION,
-    ]);
+    return Auth::check()
+        ? redirect()->route("dashboard")
+        : redirect()->route("login");
 });
 
 Route::get("/dashboard", function () {
@@ -35,9 +31,9 @@ Route::middleware("auth")->group(function () {
     );
 });
 
-//Route::get("/app", function () {
+// Route::get("/app", function () {
 //    return Inertia::render("App");
-//});
+// });
 
 Route::prefix("manage-orders")
     ->group(function () {

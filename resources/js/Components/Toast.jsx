@@ -5,7 +5,7 @@ import { DarkModeContext } from "@/Components/DarkModeContext";
 const defaultOptions = {
     pauseOnFocusLoss: false,
     position: "top-right",
-    autoClose: 3000,
+    autoClose: 2000,
 };
 
 const useNotify = () => {

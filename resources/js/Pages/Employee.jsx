@@ -11,8 +11,10 @@ import Modal from "@/Components/Modal";
 import SecondaryButton from "@/Components/SecondaryButton";
 import PrimaryButton from "@/Components/PrimaryButton";
 import ExportData from "@/Components/ExportData";
+import { useNotify } from "@/Components/Toast";
 
 const Employee = ({ auth, roles, employees }) => {
+    const notify = useNotify();
     const {
         data,
         setData,
@@ -61,7 +63,10 @@ const Employee = ({ auth, roles, employees }) => {
         e.preventDefault();
         patch(route("employees.update", { id: editData.user_id }), {
             preserveScroll: true,
-            onSuccess: () => closeEditModal(),
+            onSuccess: () => {
+                closeEditModal();
+                notify("success", "Empleado actualizado correctamente.");
+            },
             onError: (error) => console.error(error.message),
         });
     };
@@ -74,13 +79,17 @@ const Employee = ({ auth, roles, employees }) => {
                 onSuccess: () => {
                     setSelectedEmployees([]);
                     closeDeleteModal();
+                    notify("success", "Empleados eliminados correctamente.");
                 },
                 onError: (error) => console.error(error.message),
             });
         } else {
             destroy(route("employees.destroy", { id }), {
                 preserveScroll: true,
-                onSuccess: () => closeDeleteModal(),
+                onSuccess: () => {
+                    closeDeleteModal();
+                    notify("success", "Empleado eliminado correctamente.");
+                },
                 onError: (error) => console.error(error),
             });
         }
