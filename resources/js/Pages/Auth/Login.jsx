@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Checkbox from "@/Components/Checkbox";
 import GuestLayout from "@/Layouts/GuestLayout";
 import InputError from "@/Components/InputError";
@@ -10,6 +10,8 @@ import { useNotify } from "@/Components/Toast";
 export default function Login({ status, canResetPassword }) {
     const { flash } = usePage().props;
     const notify = useNotify();
+    const [message, setMessage] = useState(flash.message);
+    const [messageType, setMessageType] = useState(flash.type);
     const { data, setData, post, processing, errors, reset } = useForm({
         email: "",
         password: "",
@@ -17,10 +19,19 @@ export default function Login({ status, canResetPassword }) {
     });
 
     useEffect(() => {
-        if (flash.message) {
-            notify(flash.type, flash.message, { autoClose: 5000 });
+        if (message) {
+            notify(messageType, message, { autoClose: 5000 });
+            setMessage(null);
+            setMessageType(null);
         }
-    }, [flash.message]);
+    }, [message, messageType]);
+
+    useEffect(() => {
+        if (flash.message) {
+            setMessage(flash.message);
+            setMessageType(flash.type);
+        }
+    }, [flash]);
 
     useEffect(() => {
         return () => {
