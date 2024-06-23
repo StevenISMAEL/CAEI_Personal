@@ -13,7 +13,6 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import ExportData from "@/Components/ExportData";
 
 const Employee = ({ auth, roles, employees }) => {
-    console.log(employees);
     const {
         data,
         setData,

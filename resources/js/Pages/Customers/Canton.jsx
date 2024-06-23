@@ -13,6 +13,7 @@ import tabs from "./tabs";
 import DeleteModal from "@/Components/DeleteModal";
 import TableCustom from "@/Components/TableCustom";
 import CardsCustom from "@/Components/CardCustom";
+import { useNotify } from "@/Components/Toast";
 
 const Canton = ({ auth, Provinces, Cantons }) => {
     const {
@@ -38,6 +39,7 @@ const Canton = ({ auth, Provinces, Cantons }) => {
     const [editData, setEditData] = useState(null);
     const [dataToDelete, setDataToDelete] = useState(null);
     const [selectedCantons, setSelectedCantons] = useState([]);
+    const notify = useNotify();
 
     const closeModalCreate = () => {
         clearErrors();
@@ -79,7 +81,10 @@ const Canton = ({ auth, Provinces, Cantons }) => {
 
         post(route("cantons.store"), {
             preserveScroll: true,
-            onSuccess: () => closeModalCreate(),
+            onSuccess: () => {
+                closeModalCreate();
+                notify("success", "Cantón agregado correctamente.");
+            },
             onError: (error) => console.error(error.message),
         });
     };
@@ -89,7 +94,10 @@ const Canton = ({ auth, Provinces, Cantons }) => {
 
         patch(route("cantons.update", { id: editData.canton_id }), {
             preserveScroll: true,
-            onSuccess: () => closeEditModal(),
+            onSuccess: () => {
+                closeEditModal();
+                notify("success", "Cantón actualizado correctamente.");
+            },
             onError: (error) => console.error(error.message),
         });
     };
@@ -102,13 +110,17 @@ const Canton = ({ auth, Provinces, Cantons }) => {
                 onSuccess: () => {
                     setSelectedCantons([]);
                     closeDeleteModal();
+                    notify("success", "Cantones eliminados correctamente.");
                 },
                 onError: (error) => console.error(error.message),
             });
         } else {
             destroy(route("cantons.destroy", { id }), {
                 preserveScroll: true,
-                onSuccess: () => closeDeleteModal(),
+                onSuccess: () => {
+                    closeDeleteModal();
+                    notify("success", "Cantón eliminado correctamente.");
+                },
                 onError: (error) => console.error(error),
                 onFinish: () => reset(),
             });

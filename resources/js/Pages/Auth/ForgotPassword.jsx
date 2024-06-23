@@ -1,7 +1,7 @@
 import GuestLayout from "@/Layouts/GuestLayout";
 import InputError from "@/Components/InputError";
 import PrimaryButton from "@/Components/PrimaryButton";
-import { Head, useForm } from "@inertiajs/react";
+import { Head, useForm, Link } from "@inertiajs/react";
 import FloatInputText from "@/Components/FloatInputText";
 
 export default function ForgotPassword({ status }) {
@@ -47,6 +47,12 @@ export default function ForgotPassword({ status }) {
                 <InputError message={errors.email} className="mt-2" />
 
                 <div className="flex items-center justify-end mt-4">
+                    <Link
+                        href={route("login")}
+                        className="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 dark:focus:ring-offset-gray-800"
+                    >
+                        Regresar
+                    </Link>
                     <PrimaryButton className="ms-4" disabled={processing}>
                         Restablecer contraseña
                     </PrimaryButton>

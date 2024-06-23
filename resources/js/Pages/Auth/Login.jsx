@@ -4,14 +4,23 @@ import GuestLayout from "@/Layouts/GuestLayout";
 import InputError from "@/Components/InputError";
 import PrimaryButton from "@/Components/PrimaryButton";
 import FloatInputText from "@/Components/FloatInputText";
-import { Head, Link, useForm } from "@inertiajs/react";
+import { Head, Link, useForm, usePage } from "@inertiajs/react";
+import { useNotify } from "@/Components/Toast";
 
 export default function Login({ status, canResetPassword }) {
+    const { flash } = usePage().props;
+    const notify = useNotify();
     const { data, setData, post, processing, errors, reset } = useForm({
         email: "",
         password: "",
         remember: false,
     });
+
+    useEffect(() => {
+        if (flash.message) {
+            notify(flash.type, flash.message, { autoClose: 5000 });
+        }
+    }, [flash.message]);
 
     useEffect(() => {
         return () => {
@@ -82,7 +91,13 @@ export default function Login({ status, canResetPassword }) {
                     </label>
                 </div>
 
-                <div className="flex items-center justify-end mt-4">
+                <div className="flex justify-center items-center mt-4 w-full">
+                    <PrimaryButton className="px-16" disabled={processing}>
+                        Iniciar Sesión
+                    </PrimaryButton>
+                </div>
+
+                <div className="flex items-center justify-between mt-4">
                     {canResetPassword && (
                         <Link
                             href={route("password.request")}
@@ -92,9 +107,12 @@ export default function Login({ status, canResetPassword }) {
                         </Link>
                     )}
 
-                    <PrimaryButton className="ms-4" disabled={processing}>
-                        Iniciar Sesión
-                    </PrimaryButton>
+                    <Link
+                        href={route("register")}
+                        className="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 dark:focus:ring-offset-gray-800"
+                    >
+                        ¿No tienes una cuenta?
+                    </Link>
                 </div>
             </form>
         </GuestLayout>

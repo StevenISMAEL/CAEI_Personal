@@ -1,41 +1,47 @@
-// import { useContext } from "react";
-// import { toast } from "react-toastify";
-// import { DarkModeContext } from "@/Components/DarkModeContext";
+import { useContext } from "react";
+import { toast } from "react-toastify";
+import { DarkModeContext } from "@/Components/DarkModeContext";
 
-// const useNotify = () => {
-//     const { isDarkMode } = useContext(DarkModeContext);
-//     const theme = isDarkMode ? "dark" : "light";
+const defaultOptions = {
+    pauseOnFocusLoss: false,
+    position: "top-right",
+    autoClose: 3000,
+};
 
-//     const notify = (type, mensaje) => {
-//         switch (type) {
-//             case "success":
-//                 toast.success(mensaje, {
-//                     pauseOnFocusLoss: false,
-//                     icon: "👌",
-//                     theme,
-//                 });
-//                 break;
-//             case "error":
-//                 toast.error(mensaje, {
-//                     pauseOnFocusLoss: false,
-//                     icon: "❌",
-//                     theme,
-//                 });
-//                 break;
-//             case "info":
-//                 toast.info(mensaje, {
-//                     pauseOnFocusLoss: false,
-//                     icon: "ℹ",
-//                     theme,
-//                 });
-//                 break;
-//             default:
-//                 console.warn(`Tipo de notificación desconocido: ${type}`);
-//                 break;
-//         }
-//     };
+const useNotify = () => {
+    const { isDarkMode = false } = useContext(DarkModeContext) || {};
+    const theme = isDarkMode ? "dark" : "light";
 
-//     return notify;
-// };
+    const notify = (type, message, customOptions = {}) => {
+        const toastOptions = {
+            ...defaultOptions,
+            ...customOptions,
+            theme,
+        };
 
-// export { useNotify };
+        const icons = {
+            success: "👌",
+            error: "❌",
+            info: "ℹ",
+            warning: "⚠",
+        };
+
+        try {
+            if (type in toast) {
+                toast[type](message, {
+                    ...toastOptions,
+                    icon: icons[type] || null,
+                });
+            } else {
+                toast(message, toastOptions);
+            }
+        } catch (error) {
+            console.error("Error al mostrar la notificación:", error);
+            console.log(`${type.toUpperCase()}: ${message}`);
+        }
+    };
+
+    return notify;
+};
+
+export { useNotify };

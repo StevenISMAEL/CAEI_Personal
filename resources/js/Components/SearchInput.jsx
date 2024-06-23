@@ -133,7 +133,7 @@ const SearchDropdown = ({
             </div>
 
             {isDropdownOpen && (
-                <div className="mt-2 bg-white border rounded-lg shadow-lg">
+                <div className="mt-2 bg-white dark:bg-gray-800 border dark:border-gray-600 rounded-lg shadow-lg">
                     <ul className="py-1 max-h-60 overflow-auto">
                         {filteredOptions.length > 0 ? (
                             filteredOptions.map((option, index) => (
@@ -145,9 +145,9 @@ const SearchDropdown = ({
                                     onClick={() => handleOptionSelect(option)}
                                     className={`px-4 py-2 text-sm cursor-pointer ${
                                         index === focusedIndex
-                                            ? "bg-green-100 text-green-800"
-                                            : "text-gray-700"
-                                    } hover:bg-gray-100`}
+                                            ? "bg-green-100 dark:bg-green-500 text-green-800 dark:text-gray-600"
+                                            : "text-gray-700 "
+                                    } hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-white`}
                                 >
                                     {option[labelKey]}
                                 </li>

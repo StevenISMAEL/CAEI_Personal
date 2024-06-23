@@ -51,7 +51,7 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
             route: "clients.index",
             subroute: "/manage-customers/",
             icon: <IoPeopleCircle />,
-            roles: ["admin","vendedor"],
+            roles: ["vendedor"],
         },
         {
             title: "Contratos",
@@ -79,7 +79,7 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
             route: "work-orders.index",
             subroute: "/manage-orders/",
             icon: <TiDocumentText />,
-            roles: ["admin", "tecnico"],
+            roles: ["tecnico"],
         },
     ];
 
@@ -104,7 +104,7 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
                     <h1
                         className={`text-gray-800 dark:text-gray-200 origin-left text-3xl ${
                             !open && "duration-500 hidden"
-                        } truncate overflow-hidden whitespace-nowrap font-semibold`}
+                        } truncate overflow-hidden whitespace-nowrap font-semibold pb-2`}
                     >
                         Digitell
                     </h1>
