@@ -7,14 +7,17 @@ import { DeleteButton } from "@/Components/CustomButtons";
 import TableCustom from "@/Components/TableCustom";
 import CardsCustom from "@/Components/CardCustom";
 import DeleteModal from "@/Components/DeleteModal";
+import Modal from "@/Components/Modal";
+import SecondaryButton from "@/Components/SecondaryButton";
+import PrimaryButton from "@/Components/PrimaryButton";
+import ExportData from "@/Components/ExportData";
 
 const Employee = ({ auth, roles, employees }) => {
+    console.log(employees);
     const {
         data,
         setData,
-        post,
         processing,
-        errors,
         reset,
         delete: destroy,
         patch,
@@ -57,7 +60,6 @@ const Employee = ({ auth, roles, employees }) => {
 
     const handleSubmitEdit = (e) => {
         e.preventDefault();
-        console.log(data.role_id);
         patch(route("employees.update", { id: editData.user_id }), {
             preserveScroll: true,
             onSuccess: () => closeEditModal(),
@@ -111,10 +113,6 @@ const Employee = ({ auth, roles, employees }) => {
         setDataToDelete(selectedEmployees);
     };
 
-    const initialSelectedRoles = editData
-        ? editData.roles.map((role) => role.role_id)
-        : [];
-
     return (
         <Authenticated
             user={auth.user}
@@ -130,11 +128,12 @@ const Employee = ({ auth, roles, employees }) => {
                             onClick={openDeleteModalForSelected}
                         />
                     </div>
-                    {/* <ExportData
+                    <ExportData
                         data={employees}
                         searchColumns={searchColumns}
                         headers={theaders}
-                    /> */}
+                        fileName="Empleados"
+                    />
                 </div>
             </Box>
             <ModalEdit
@@ -185,9 +184,6 @@ const Employee = ({ auth, roles, employees }) => {
 };
 
 export default Employee;
-import Modal from "@/Components/Modal";
-import SecondaryButton from "@/Components/SecondaryButton";
-import PrimaryButton from "@/Components/PrimaryButton";
 
 const ModalEdit = ({
     title,
