@@ -32,10 +32,6 @@ Route::middleware("auth")->group(function () {
     );
 });
 
-// Route::get("/app", function () {
-//    return Inertia::render("App");
-// });
-
 Route::prefix("manage-orders")
     ->group(function () {
         Route::resource("work-orders", InvProductController::class)->except([

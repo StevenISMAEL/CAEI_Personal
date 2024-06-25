@@ -28,56 +28,17 @@ return new class extends Migration {
             $table->string("discount_name", 50);
             $table->string("discount_description", 100);
         });
-
-        Schema::create("sup_work_orders", function (Blueprint $table) {
-            $table->string("work_order_id", 8)->primary();
-            $table->dateTime("solution_date");
-            $table->dateTime("issue_date");
-            $table->unsignedBigInteger("employee_id");
-            $table->string("movement_id", 8);
-            $table->string("type_report_id", 8);
-            $table->string("order_channel", 150);
-            $table->string("order_abclaim", 250);
-            $table->string("order_initial_abis", 150);
-            $table->string("order_initial_potency", 150);
-            $table->string("order_final_abis", 150);
-            $table->string("order_initial_diagnosis", 250);
-            $table->string("order_solution", 250);
-            $table->boolean("order_relevant")->default(false);
-            $table->string("order_current_potency", 150);
-            $table->string("order_status", 50);
-
-            $table
-                ->foreign("type_report_id")
-                ->references("type_report_id")
-                ->on("sup_type_report")
-                ->cascadeOnDelete()
-                ->cascadeOnUpdate();
-
-            $table
-                ->foreign("employee_id")
-                ->references("id")
-                ->on("users")
-                ->cascadeOnDelete()
-                ->cascadeOnUpdate();
-            $table
-                ->foreign("movement_id")
-                ->references("movement_id")
-                ->on("inv_movements")
-                ->cascadeOnDelete()
-                ->cascadeOnUpdate();
-        });
-
+        
         Schema::create("con_contracts", function (Blueprint $table) {
-            $table->string("contract_id", 8)->primary();
+            $table->string("contract_num", 13)->primary();
+            $table->string("contract_id", 8);
             $table->string("client_id", 10);
             $table->string("ip_address", 15);
             $table->string("plan_id", 8);
             $table->string("discount_id", 8);
             $table->string("status_id", 8);
-            $table->string("work_order_id", 8);
-            $table->string("contract_num", 13);
             $table->date("installation_date");
+            $table->string("maximum_date", 2);
             $table
                 ->foreign("client_id")
                 ->references("client_id")
@@ -111,39 +72,59 @@ return new class extends Migration {
                 ->on("ip_ip")
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
+        });
+        
+        Schema::create("sup_work_orders", function (Blueprint $table) {
+            $table->string("work_order_id", 8)->primary();
+            $table->unsignedBigInteger("employee_id");
+            $table->string("type_report_id", 8);
+            $table->string("contract_num", 13);
+            $table->string("order_channel", 150);
+            $table->dateTime("issue_date");
+            $table->boolean("order_precedents");
+            $table->string("order_status", 50);
+            $table->string("order_abclaim", 250)->nullable();
+            $table->dateTime("solution_date")->nullable();
+            $table->string("order_initial_abis", 150)->nullable();
+            $table->string("order_initial_potency", 150)->nullable();
+            $table->string("order_final_abis", 150)->nullable();
+            $table->string("order_initial_diagnosis", 250)->nullable();
+            $table->string("order_solution", 250)->nullable();
+            $table->string("order_final_potency", 150)->nullable();
+            $table->string("order_final_diagnosis", 250)->nullable();
+            $table->integer("value_due")->nullable();
 
             $table
-                ->foreign("work_order_id")
-                ->references("work_order_id")
-                ->on("sup_work_orders")
+                ->foreign("type_report_id")
+                ->references("type_report_id")
+                ->on("sup_type_report")
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+
+            $table
+                ->foreign("employee_id")
+                ->references("id")
+                ->on("users")
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+            $table
+                ->foreign("contract_num")
+                ->references("contract_num")
+                ->on("con_contracts")
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
         });
+
     }
 
     /**
      * Reverse the migrations.
      */
     public function down(): void {
-        Schema::table("con_contracts", function (Blueprint $table) {
-            $table->dropForeign(["client_id"]);
-            $table->dropForeign(["plan_id"]);
-            $table->dropForeign(["discount_id"]);
-            $table->dropForeign(["status_id"]);
-            $table->dropForeign(["ip_address"]);
-            $table->dropForeign(["work_order_id"]);
-        });
-
-        Schema::table("sup_work_orders", function (Blueprint $table) {
-            $table->dropForeign(["employee_id"]);
-            $table->dropForeign(["movement_id"]);
-            $table->dropForeign(["type_report_id"]);
-        });
-
         Schema::dropIfExists("sup_work_orders");
         Schema::dropIfExists("con_contracts");
-        Schema::dropIfExists("con_status");
-        Schema::dropIfExists("pla_plans");
         Schema::dropIfExists("con_discounts");
+        Schema::dropIfExists("pla_plans");
+        Schema::dropIfExists("con_status");
     }
 };

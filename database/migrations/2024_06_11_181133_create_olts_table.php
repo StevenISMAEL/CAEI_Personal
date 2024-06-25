@@ -16,7 +16,6 @@ return new class extends Migration {
             $table->string("olt_coordx", length: 25);
             $table->string("olt_coordy", length: 25);
             $table->integer("olt_ports");
-            // $table->timestamps();
         });
 
         Schema::create("ip_distribution_naps", function (Blueprint $table) {
@@ -27,7 +26,7 @@ return new class extends Migration {
             $table->string("distribution_nap_coordx", length: 25);
             $table->string("distribution_nap_coordy", length: 25);
             $table->integer("distribution_nap_splitter");
-
+            $table->integer("olt_ports");
             $table
                 ->foreign("olt_id")
                 ->references("olt_id")
@@ -35,6 +34,7 @@ return new class extends Migration {
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete();
         });
+
         Schema::create("ip_last_mile_naps", function (Blueprint $table) {
             $table->string("last_mile_nap_id", length: 8)->primary();
             $table->string("distribution_nap_id", length: 8);
@@ -43,6 +43,7 @@ return new class extends Migration {
             $table->string("last_mile_nap_coordx", length: 25);
             $table->string("last_mile_nap_coordy", length: 25);
             $table->integer("last_mile_nap_splitter");
+            $table->string("olt_id", 8);
 
             $table
                 ->foreign("distribution_nap_id")
@@ -70,18 +71,6 @@ return new class extends Migration {
      * Reverse the migrations.
      */
     public function down(): void {
-        Schema::table("ip_ip", function (Blueprint $table) {
-            $table->dropForeign(["last_mile_nap_id"]);
-        });
-
-        Schema::table("ip_last_mile_naps", function (Blueprint $table) {
-            $table->dropForeign(["distribution_nap_id"]);
-        });
-
-        Schema::table("ip_distribution_naps", function (Blueprint $table) {
-            $table->dropForeign(["olt_id"]);
-        });
-
         Schema::dropIfExists("ip_ip");
         Schema::dropIfExists("ip_last_mile_naps");
         Schema::dropIfExists("ip_distribution_naps");

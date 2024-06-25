@@ -87,26 +87,6 @@ return new class extends Migration {
      * Reverse the migrations.
      */
     public function down(): void {
-        Schema::table("con_phones", function (Blueprint $table) {
-            $table->dropForeign(["client_id"]);
-        });
-
-        Schema::table("con_clients", function (Blueprint $table) {
-            $table->dropForeign(["sector_id"]);
-        });
-
-        Schema::table("con_sector", function (Blueprint $table) {
-            $table->dropForeign(["parish_id"]);
-        });
-
-        Schema::table("con_parishes", function (Blueprint $table) {
-            $table->dropForeign(["canton_id"]);
-        });
-
-        Schema::table("con_cantons", function (Blueprint $table) {
-            $table->dropForeign(["province_id"]);
-        });
-
         Schema::dropIfExists("con_phones");
         Schema::dropIfExists("con_clients");
         Schema::dropIfExists("con_sector");
