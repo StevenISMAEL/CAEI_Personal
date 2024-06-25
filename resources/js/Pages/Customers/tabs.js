@@ -1,8 +1,8 @@
 import { IoPeopleSharp } from "react-icons/io5";
 import { FaPhone } from "react-icons/fa";
-import { FaHome } from "react-icons/fa";
-import { FaMapMarked } from "react-icons/fa";
-import { PiCityFill } from "react-icons/pi";
+import { FaMapMarkedAlt } from "react-icons/fa";
+import { TbBuildingEstate } from "react-icons/tb";
+import { FaMountainCity } from "react-icons/fa6";
 
 const tabs = [
     {
@@ -16,19 +16,19 @@ const tabs = [
         icon: FaPhone,
     },
     {
-        name: "Direcciones",
-        route: "addresses.index",
-        icon: FaHome,
+        name: "Sectores",
+        route: "sectors.index",
+        icon: FaMapMarkedAlt,
     },
     {
         name: "Parroquias",
         route: "parishes.index",
-        icon: FaMapMarked,
+        icon: TbBuildingEstate,
     },
     {
         name: "Cantones",
         route: "cantons.index",
-        icon: PiCityFill,
+        icon: FaMountainCity,
     },
 ];
 

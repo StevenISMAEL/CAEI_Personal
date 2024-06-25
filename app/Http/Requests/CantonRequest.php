@@ -29,8 +29,8 @@ class CantonRequest extends FormRequest {
             case "PATCH":
                 return [
                     "province_id" =>
-                        "sometimes|required|string|max:7|exists:con_provinces,province_id",
-                    "canton_name" => "sometimes|required|string|max:50",
+                        "required|string|max:7|exists:con_provinces,province_id",
+                    "canton_name" => "required|string|max:50",
                 ];
             case "DELETE":
                 return [

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Requests;
+use Illuminate\Validation\Rule;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -41,7 +42,10 @@ class PhoneRequest extends FormRequest {
                         "required",
                         "string",
                         "size:10",
-                        "unique:con_phones,phone_number",
+                        Rule::unique("con_phones", "phone_number")->ignore(
+                            $this->route("phone"),
+                            "phone_number"
+                        ),
                     ],
                     "client_id" => [
                         "sometimes",

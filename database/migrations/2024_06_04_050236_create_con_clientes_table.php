@@ -73,7 +73,7 @@ return new class extends Migration {
         Schema::create("con_phones", function (Blueprint $table) {
             $table->string("phone_number", 10)->primary();
             $table->string("client_id", 10);
-
+            $table->timestamp("created_at")->useCurrent();
             $table
                 ->foreign("client_id")
                 ->references("client_id")

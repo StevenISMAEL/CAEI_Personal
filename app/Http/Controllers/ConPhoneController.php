@@ -11,7 +11,7 @@ use Inertia\Inertia;
 class ConPhoneController extends Controller {
     public function index() {
         return Inertia::render("Customers/Phone", [
-            "Clients" => ConClient::all(),
+            "Clients" => ConClient::getClientInfo(),
             "Phones" => ConPhone::getPhones(),
         ]);
     }
@@ -21,9 +21,9 @@ class ConPhoneController extends Controller {
         return to_route("phones.index");
     }
 
-    public function update(PhoneRequest $phoneRequest, $id) {
-        $phone = ConPhone::findOrFail($id);
-        $phone->update($phoneRequest->validated());
+    public function update(PhoneRequest $phoneRequest, $phone) {
+        $phoneModel = ConPhone::findOrFail($phone);
+        $phoneModel->update($phoneRequest->validated());
         return to_route("phones.index");
     }
 

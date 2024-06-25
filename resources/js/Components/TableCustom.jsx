@@ -23,7 +23,7 @@ const TableCustom = ({
     onSelectAll,
 }) => {
     const styles =
-        "text-violet-600 shadow-sm focus:ring-violet-500 dark:focus:ring-violet-600";
+        "text-indigo-600 shadow-sm focus:ring-violet-500 dark:focus:ring-violet-600";
     const [searchValue, setSearchValue] = useState("");
     const [filteredData, setFilteredData] = useState(data);
     const [sortConfig, setSortConfig] = useState({

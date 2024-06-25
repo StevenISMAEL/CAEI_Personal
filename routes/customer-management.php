@@ -3,19 +3,17 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ConClientController;
 use App\Http\Controllers\ConCantonController;
 use App\Http\Controllers\ConParishController;
-use App\Http\Controllers\ConAddressController;
+use App\Http\Controllers\ConSectorController;
 use App\Http\Controllers\ConPhoneController;
 use App\Http\Controllers\IpOltsController;
 use App\Http\Controllers\IpDistributionController;
 use App\Http\Controllers\IpLastMileController;
 use Inertia\Inertia;
 
-// use App\Http\Controllers\Emplo
-
 Route::prefix("manage-customers")
     ->middleware(["auth", "verified", "role:vendedor"])
     ->group(function () {
-        Route::resource("clients", ConClientController::class)
+        Route::resource("/clients", ConClientController::class)
             ->except(["create", "show", "edit"])
             ->middleware("permission:manage clients");
 
@@ -34,16 +32,16 @@ Route::prefix("manage-customers")
             ->name("phones.multiple.destroy")
             ->middleware("permission:manage phones");
 
-        Route::resource("addresses", ConAddressController::class)
+        Route::resource("/sectors", ConSectorController::class)
             ->except(["create", "show", "edit"])
-            ->middleware("permission:manage addresses");
+            ->middleware("permission:manage sectors");
 
-        Route::delete("/addresses", [
-            ConAddressController::class,
+        Route::delete("/sectors", [
+            ConSectorController::class,
             "destroyMultiple",
         ])
-            ->name("addresses.multiple.destroy")
-            ->middleware("permission:manage addresses");
+            ->name("sectors.multiple.destroy")
+            ->middleware("permission:manage sectors");
 
         Route::resource("parishes", ConParishController::class)
             ->except(["create", "show", "edit"])

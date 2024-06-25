@@ -17,10 +17,22 @@ class ConPhone extends Model {
 
     public static function getPhones() {
         return self::with("client")
+            ->orderBy("created_at", "desc")
             ->get()
             ->map(function ($phone) {
                 return [
                     "phone_number" => $phone->phone_number,
+                    "client_id" => $phone->client_id,
+                    "client_name" => $phone->client->client_name,
+                ];
+            });
+    }
+
+    public static function getClients() {
+        return self::with("client")
+            ->get()
+            ->map(function ($phone) {
+                return [
                     "client_id" => $phone->client_id,
                     "client_name" => $phone->client->client_name,
                 ];

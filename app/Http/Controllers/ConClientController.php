@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\ConAddress;
+use App\Models\ConSector;
 use App\Http\Requests\ClientRequest;
 use App\Models\ConClient;
 use Inertia\Inertia;
@@ -11,7 +11,7 @@ use Inertia\Inertia;
 class ConClientController extends Controller {
     public function index() {
         return Inertia::render("Customers/Client", [
-            "Addresses" => ConAddress::all(),
+            "Sectors" => ConSector::all(),
             "Clients" => ConClient::getClients(),
         ]);
     }
@@ -21,8 +21,8 @@ class ConClientController extends Controller {
         return to_route("clients.index");
     }
 
-    public function update(ClientRequest $clientRequest, $id) {
-        $client = ConClient::findOrFail($id);
+    public function update(ClientRequest $clientRequest, $client) {
+        $client = ConClient::findOrFail($client);
         $client->update($clientRequest->validated());
         return to_route("clients.index");
     }

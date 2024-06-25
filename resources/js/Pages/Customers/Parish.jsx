@@ -13,6 +13,7 @@ import tabs from "./tabs";
 import DeleteModal from "@/Components/DeleteModal";
 import TableCustom from "@/Components/TableCustom";
 import CardsCustom from "@/Components/CardCustom";
+import { useNotify } from "@/Components/Toast";
 
 const Parish = ({ auth, Cantons, Parishes }) => {
     const {
@@ -24,8 +25,10 @@ const Parish = ({ auth, Cantons, Parishes }) => {
         reset,
         delete: destroy,
         patch,
+        clearErrors,
     } = useForm({
         canton_id: "",
+        canton_name: "",
         parish_name: "",
         ids: [],
     });
@@ -36,28 +39,41 @@ const Parish = ({ auth, Cantons, Parishes }) => {
     const [editData, setEditData] = useState(null);
     const [dataToDelete, setDataToDelete] = useState(null);
     const [selectedParishes, setSelectedParishes] = useState([]);
+    const notify = useNotify();
 
-    const closeModalCreate = () => setShowCreate(false);
+    const closeModalCreate = () => {
+        clearErrors();
+        setShowCreate(false);
+        reset();
+    };
+
     const openCreateModal = () => setShowCreate(true);
 
     const closeDeleteModal = () => {
         setShowDelete(false);
         setDataToDelete(null);
     };
+
     const openDeleteModal = (id) => {
         setShowDelete(true);
         setDataToDelete(id);
     };
 
     const closeEditModal = () => {
+        clearErrors();
         setShowEdit(false);
         setEditData(null);
+        reset();
     };
+
     const openEditModal = (parish) => {
         setShowEdit(true);
         setEditData(parish);
         setData({
             canton_id: parish.canton_id,
+            canton_name: Cantons.find(
+                (canton) => canton.canton_id === parish.canton_id,
+            )?.canton_name,
             parish_name: parish.parish_name,
         });
     };
@@ -67,9 +83,11 @@ const Parish = ({ auth, Cantons, Parishes }) => {
 
         post(route("parishes.store"), {
             preserveScroll: true,
-            onSuccess: () => closeModalCreate(),
-            onError: (error) => console.log(error),
-            onFinish: () => reset(),
+            onSuccess: () => {
+                closeModalCreate();
+                notify("success", "Parroquia agregada.");
+            },
+            onError: (error) => console.error(error.message),
         });
     };
 
@@ -78,9 +96,11 @@ const Parish = ({ auth, Cantons, Parishes }) => {
 
         patch(route("parishes.update", { id: editData.parish_id }), {
             preserveScroll: true,
-            onSuccess: () => closeEditModal(),
-            onError: (error) => console.log(error),
-            onFinish: () => reset(),
+            onSuccess: () => {
+                closeEditModal();
+                notify("success", "Parroquia actualizada.");
+            },
+            onError: (error) => console.error(error.message),
         });
     };
 
@@ -92,16 +112,18 @@ const Parish = ({ auth, Cantons, Parishes }) => {
                 onSuccess: () => {
                     setSelectedParishes([]);
                     closeDeleteModal();
+                    notify("success", "Parroquias eliminadas.");
                 },
-                onError: (error) => console.error(error),
-                onFinish: () => reset(),
+                onError: (error) => console.error(error.message),
             });
         } else {
             destroy(route("parishes.destroy", { id }), {
                 preserveScroll: true,
-                onSuccess: () => closeDeleteModal(),
+                onSuccess: () => {
+                    closeDeleteModal();
+                    notify("success", "Parroquia eliminada.");
+                },
                 onError: (error) => console.error(error),
-                onFinish: () => reset(),
             });
         }
     };
@@ -117,7 +139,7 @@ const Parish = ({ auth, Cantons, Parishes }) => {
             inputError: (
                 <InputError message={errors.canton_id} className="mt-2" />
             ),
-            defaultValue: data.canton_id,
+            defaultValue: data.canton_name,
         },
         {
             label: "Nombre de la Parroquia",
@@ -162,7 +184,7 @@ const Parish = ({ auth, Cantons, Parishes }) => {
     return (
         <Authenticated
             user={auth.user}
-            header={<Header subtitle="Manage Parishes" />}
+            header={<Header subtitle="Administrar Parroquias" />}
             roles={auth.user.roles.map((role) => role.name)}
         >
             <Head title="Parroquias" />
@@ -180,13 +202,14 @@ const Parish = ({ auth, Cantons, Parishes }) => {
                             data={Parishes}
                             searchColumns={searchColumns}
                             headers={theaders}
+                            fileName="Parroquias"
                         />
                     </div>
                 </Box>
                 <ModalCreate
                     showCreate={showCreate}
                     closeModalCreate={closeModalCreate}
-                    title={"Add Parishes"}
+                    title={"Añadir Parroquia"}
                     inputs={inputs}
                     processing={processing}
                     handleSubmitAdd={handleSubmitAdd}
@@ -194,12 +217,12 @@ const Parish = ({ auth, Cantons, Parishes }) => {
                 <DeleteModal
                     showDelete={showDelete}
                     closeDeleteModal={closeDeleteModal}
-                    title={"Delete Parishes"}
+                    title={"Borrar Parroquias"}
                     handleDelete={() => handleDelete(dataToDelete)}
                     processing={processing}
                 />
                 <ModalEdit
-                    title="Edit Parish"
+                    title="Editar Parroquia"
                     showEdit={showEdit}
                     closeEditModal={closeEditModal}
                     inputs={inputs}

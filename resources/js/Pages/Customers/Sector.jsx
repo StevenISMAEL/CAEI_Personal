@@ -13,8 +13,9 @@ import tabs from "./tabs";
 import DeleteModal from "@/Components/DeleteModal";
 import TableCustom from "@/Components/TableCustom";
 import CardsCustom from "@/Components/CardCustom";
+import { useNotify } from "@/Components/Toast";
 
-const Address = ({ auth, Parishes, Addresses }) => {
+const Sector = ({ auth, Parishes, Sectors }) => {
     const {
         data,
         setData,
@@ -24,11 +25,12 @@ const Address = ({ auth, Parishes, Addresses }) => {
         reset,
         delete: destroy,
         patch,
+        clearErrors,
     } = useForm({
         parish_id: "",
-        address: "",
-        reference: "",
-        neighborhood: "",
+        parish_name: "",
+        sector_name: "",
+        description: "",
         ids: [],
     });
 
@@ -37,91 +39,111 @@ const Address = ({ auth, Parishes, Addresses }) => {
     const [showEdit, setShowEdit] = useState(false);
     const [editData, setEditData] = useState(null);
     const [dataToDelete, setDataToDelete] = useState(null);
-    const [selectedAddresses, setSelectedAddresses] = useState([]);
+    const [selectedSectors, setSelectedSectors] = useState([]);
+    const notify = useNotify();
 
-    const closeModalCreate = () => setShowCreate(false);
+    const closeModalCreate = () => {
+        clearErrors();
+        setShowCreate(false);
+        reset();
+    };
+
     const openCreateModal = () => setShowCreate(true);
 
     const closeDeleteModal = () => {
         setShowDelete(false);
         setDataToDelete(null);
     };
+
     const openDeleteModal = (id) => {
         setShowDelete(true);
         setDataToDelete(id);
     };
 
     const closeEditModal = () => {
+        clearErrors();
         setShowEdit(false);
         setEditData(null);
+        reset();
     };
-    const openEditModal = (address) => {
+
+    const openEditModal = (sector) => {
         setShowEdit(true);
-        setEditData(address);
+        setEditData(sector);
         setData({
-            parish_id: address.parish_id,
-            address: address.address,
-            reference: address.reference,
-            neighborhood: address.neighborhood,
+            parish_id: sector.parish_id,
+            parish_name: Parishes.find(
+                (parish) => parish.parish_id === sector.parish_id,
+            )?.parish_name,
+            sector_name: sector.sector_name,
+            description: sector.description,
         });
     };
 
     const handleSubmitAdd = (e) => {
         e.preventDefault();
 
-        post(route("addresses.store"), {
+        post(route("sectors.store"), {
             preserveScroll: true,
-            onSuccess: () => closeModalCreate(),
-            onError: (error) => console.log(error),
-            onFinish: () => reset(),
+            onSuccess: () => {
+                closeModalCreate();
+                notify("success", "Sector agregado.");
+            },
+            onError: (error) => console.error(Object.values(error).join(", ")),
         });
     };
 
     const handleSubmitEdit = (e) => {
         e.preventDefault();
 
-        patch(route("addresses.update", { id: editData.address_id }), {
+        patch(route("sectors.update", { id: editData.sector_id }), {
             preserveScroll: true,
-            onSuccess: () => closeEditModal(),
-            onError: (error) => console.log(error),
-            onFinish: () => reset(),
+            onSuccess: () => {
+                closeEditModal();
+                notify("success", "Sector actualizado.");
+            },
+            onError: (error) => console.error(Object.values(error).join(", ")),
         });
     };
 
     const handleDelete = (id) => {
         if (Array.isArray(id)) {
             data.ids = id;
-            destroy(route("addresses.multiple.destroy"), {
+            destroy(route("sectors.multiple.destroy"), {
                 preserveScroll: true,
                 onSuccess: () => {
-                    setSelectedAddresses([]);
+                    setSelectedSectors([]);
                     closeDeleteModal();
+                    notify("success", "Sectores eliminados.");
                 },
-                onError: (error) => console.error(error),
-                onFinish: () => reset(),
+                onError: (error) =>
+                    console.error(Object.values(error).join(", ")),
             });
         } else {
-            destroy(route("addresses.destroy", { id }), {
+            destroy(route("sectors.destroy", { id }), {
                 preserveScroll: true,
-                onSuccess: () => closeDeleteModal(),
-                onError: (error) => console.error(error),
-                onFinish: () => reset(),
+                onSuccess: () => {
+                    closeDeleteModal();
+                    notify("success", "Sector eliminado.");
+                },
+                onError: (error) =>
+                    console.error(Object.values(error).join(", ")),
             });
         }
     };
 
     const inputs = [
         {
-            label: "Dirección",
-            id: "address",
+            label: "Nombre del Sector",
+            id: "sector_name",
             type: "text",
-            name: "address",
-            value: data.address,
-            onChange: (e) => setData("address", e.target.value),
+            name: "sector_name",
+            value: data.sector_name,
+            onChange: (e) => setData("sector_name", e.target.value),
             inputError: (
-                <InputError message={errors.address} className="mt-2" />
+                <InputError message={errors.sector_name} className="mt-2" />
             ),
-            defaultValue: data.address,
+            defaultValue: data.sector_name,
         },
         {
             placeholder: "Parroquia",
@@ -133,51 +155,32 @@ const Address = ({ auth, Parishes, Addresses }) => {
             inputError: (
                 <InputError message={errors.parish_id} className="mt-2" />
             ),
-            defaultValue: data.parish_id,
+            defaultValue: data.parish_name,
         },
         {
-            label: "Referencia",
-            id: "reference",
+            label: "Descripción",
+            id: "description",
             type: "text",
-            name: "reference",
-            value: data.reference,
-            onChange: (e) => setData("reference", e.target.value),
+            name: "description",
+            value: data.description,
+            onChange: (e) => setData("description", e.target.value),
             inputError: (
-                <InputError message={errors.reference} className="mt-2" />
+                <InputError message={errors.description} className="mt-2" />
             ),
-            defaultValue: data.reference,
-        },
-        {
-            label: "Vecindario",
-            id: "neighborhood",
-            type: "text",
-            name: "neighborhood",
-            value: data.neighborhood,
-            onChange: (e) => setData("neighborhood", e.target.value),
-            inputError: (
-                <InputError message={errors.neighborhood} className="mt-2" />
-            ),
-            defaultValue: data.neighborhood,
+            defaultValue: data.description,
         },
     ];
 
-    const theaders = [
-        "ID",
-        "Direccion",
-        "Parroquia",
-        "Referencias",
-        "Vecindario",
-    ];
+    const theaders = ["ID", "Nombre", "Parroquia", "Descripción"];
     const searchColumns = [
-        "address_id",
-        "address",
+        "sector_id",
+        "sector_name",
         "parish_name",
-        "reference",
-        "neighborhood",
+        "description",
     ];
 
     const handleCheckboxChange = (id) => {
-        setSelectedAddresses((prevSelected) => {
+        setSelectedSectors((prevSelected) => {
             if (prevSelected.includes(id)) {
                 return prevSelected.filter((item) => item !== id);
             } else {
@@ -187,46 +190,47 @@ const Address = ({ auth, Parishes, Addresses }) => {
     };
 
     const handleSelectAll = () => {
-        if (selectedAddresses.length === Addresses.length) {
-            setSelectedAddresses([]);
+        if (selectedSectors.length === Sectors.length) {
+            setSelectedSectors([]);
         } else {
-            setSelectedAddresses(Addresses.map((address) => address.address_id));
+            setSelectedSectors(Sectors.map((sector) => sector.sector_id));
         }
     };
 
     const openDeleteModalForSelected = () => {
         setShowDelete(true);
-        setDataToDelete(selectedAddresses);
+        setDataToDelete(selectedSectors);
     };
 
     return (
         <Authenticated
             user={auth.user}
-            header={<Header subtitle="Manage Addresses" />}
+            header={<Header subtitle="Administrar Sectores" />}
             roles={auth.user.roles.map((role) => role.name)}
         >
-            <Head title="Direcciones" />
+            <Head title="Sectores" />
             <Tab tabs={tabs}>
                 <Box>
                     <div className="flex flex-wrap items-center justify-center md:justify-between gap-2">
                         <div className="w-full sm:w-auto flex flex-wrap justify-center gap-2">
                             <AddButton onClick={openCreateModal} />
                             <DeleteButton
-                                disabled={selectedAddresses.length === 0}
+                                disabled={selectedSectors.length === 0}
                                 onClick={openDeleteModalForSelected}
                             />
                         </div>
                         <ExportData
-                            data={Addresses}
+                            data={Sectors}
                             searchColumns={searchColumns}
                             headers={theaders}
+                            fileName="Sectores"
                         />
                     </div>
                 </Box>
                 <ModalCreate
                     showCreate={showCreate}
                     closeModalCreate={closeModalCreate}
-                    title={"Add Addresses"}
+                    title={"Añadir Sector"}
                     inputs={inputs}
                     processing={processing}
                     handleSubmitAdd={handleSubmitAdd}
@@ -234,12 +238,12 @@ const Address = ({ auth, Parishes, Addresses }) => {
                 <DeleteModal
                     showDelete={showDelete}
                     closeDeleteModal={closeDeleteModal}
-                    title={"Delete Addresses"}
+                    title={"Borrar Sectores"}
                     handleDelete={() => handleDelete(dataToDelete)}
                     processing={processing}
                 />
                 <ModalEdit
-                    title="Edit Parish"
+                    title="Editar Sector"
                     showEdit={showEdit}
                     closeEditModal={closeEditModal}
                     inputs={inputs}
@@ -249,26 +253,26 @@ const Address = ({ auth, Parishes, Addresses }) => {
                 <Box className="mt-3 hidden md:block">
                     <TableCustom
                         headers={theaders}
-                        data={Addresses}
+                        data={Sectors}
                         searchColumns={searchColumns}
                         onDelete={openDeleteModal}
                         onEdit={openEditModal}
-                        idKey="address_id"
+                        idKey="sector_id"
                         onSelectChange={handleCheckboxChange}
-                        selectedItems={selectedAddresses}
+                        selectedItems={selectedSectors}
                         onSelectAll={handleSelectAll}
                     />
                 </Box>
                 <Box className="mt-3  md:hidden">
                     <CardsCustom
                         headers={theaders}
-                        data={Addresses}
+                        data={Sectors}
                         searchColumns={searchColumns}
                         onDelete={openDeleteModal}
                         onEdit={openEditModal}
-                        idKey="address_id"
+                        idKey="sector_id"
                         onSelectChange={handleCheckboxChange}
-                        selectedItems={selectedAddresses}
+                        selectedItems={selectedSectors}
                         onSelectAll={handleSelectAll}
                     />
                 </Box>
@@ -277,4 +281,4 @@ const Address = ({ auth, Parishes, Addresses }) => {
     );
 };
 
-export default Address;
+export default Sector;

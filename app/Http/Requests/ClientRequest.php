@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use App\Rules\ValidCedula;
+use Illuminate\Validation\Rule;
 
 class ClientRequest extends FormRequest {
     /**
@@ -27,18 +28,43 @@ class ClientRequest extends FormRequest {
                         "string",
                         "size:10",
                         new ValidCedula(),
+                        "unique:con_clients,client_id",
                     ],
-                    "address_id" =>
-                        "required|string|max:7|exists:con_address,address_id",
+                    "sector_id" => [
+                        "required",
+                        "string",
+                        "max:7",
+                        "exists:con_sector,sector_id",
+                    ],
                     "client_name" => "required|string|max:150",
                     "client_email" => "required|string|email|max:250",
+                    "address" => "required|string|max:100",
+                    "reference" => "required|string|max:250",
                 ];
             case "PATCH":
                 return [
-                    "address_id" =>
-                        "sometimes|required|string|max:7|exists:con_address,address_id",
+                    "client_id" => [
+                        "sometimes",
+                        "required",
+                        "string",
+                        "size:10",
+                        new ValidCedula(),
+                        Rule::unique("con_clients", "client_id")->ignore(
+                            $this->route("client"),
+                            "client_id"
+                        ),
+                    ],
+                    "sector_id" => [
+                        "sometimes",
+                        "required",
+                        "string",
+                        "max:7",
+                        "exists:con_sector,sector_id",
+                    ],
                     "client_name" => "sometimes|required|string|max:150",
                     "client_email" => "sometimes|required|string|email|max:250",
+                    "address" => "sometimes|required|string|max:100",
+                    "reference" => "sometimes|required|string|max:250",
                 ];
             case "DELETE":
                 return [

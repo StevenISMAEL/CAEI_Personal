@@ -9,7 +9,7 @@ import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 
 createInertiaApp({
-    title: (title) => `${title}`,
+    title: (title) => `${title} - Digitell`,
     resolve: (name) =>
         resolvePageComponent(
             `./Pages/${name}.jsx`,

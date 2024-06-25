@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Head, useForm, router } from "@inertiajs/react";
+import { Head, useForm } from "@inertiajs/react";
 import Header from "@/Components/Header";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import Tab from "@/Layouts/TabLayout";
@@ -46,12 +46,14 @@ const Canton = ({ auth, Provinces, Cantons }) => {
         setShowCreate(false);
         reset();
     };
+
     const openCreateModal = () => setShowCreate(true);
 
     const closeDeleteModal = () => {
         setShowDelete(false);
         setDataToDelete(null);
     };
+
     const openDeleteModal = (id) => {
         setShowDelete(true);
         setDataToDelete(id);
@@ -83,9 +85,9 @@ const Canton = ({ auth, Provinces, Cantons }) => {
             preserveScroll: true,
             onSuccess: () => {
                 closeModalCreate();
-                notify("success", "Cantón agregado correctamente.");
+                notify("success", "Cantón agregado.");
             },
-            onError: (error) => console.error(error.message),
+            onError: (error) => console.error(Object.values(error).join(", ")),
         });
     };
 
@@ -96,9 +98,9 @@ const Canton = ({ auth, Provinces, Cantons }) => {
             preserveScroll: true,
             onSuccess: () => {
                 closeEditModal();
-                notify("success", "Cantón actualizado correctamente.");
+                notify("success", "Cantón actualizado.");
             },
-            onError: (error) => console.error(error.message),
+            onError: (error) => console.error(Object.values(error).join(", ")),
         });
     };
 
@@ -110,19 +112,20 @@ const Canton = ({ auth, Provinces, Cantons }) => {
                 onSuccess: () => {
                     setSelectedCantons([]);
                     closeDeleteModal();
-                    notify("success", "Cantones eliminados correctamente.");
+                    notify("success", "Cantones eliminados.");
                 },
-                onError: (error) => console.error(error.message),
+                onError: (error) =>
+                    console.error(Object.values(error).join(", ")),
             });
         } else {
             destroy(route("cantons.destroy", { id }), {
                 preserveScroll: true,
                 onSuccess: () => {
                     closeDeleteModal();
-                    notify("success", "Cantón eliminado correctamente.");
+                    notify("success", "Cantón eliminado.");
                 },
-                onError: (error) => console.error(error),
-                onFinish: () => reset(),
+                onError: (error) =>
+                    console.error(Object.values(error).join(", ")),
             });
         }
     };
@@ -183,7 +186,7 @@ const Canton = ({ auth, Provinces, Cantons }) => {
     return (
         <Authenticated
             user={auth.user}
-            header={<Header subtitle="Administra Cantones" />}
+            header={<Header subtitle="Administrar Cantones" />}
             roles={auth.user.roles.map((role) => role.name)}
         >
             <Head title="Cantones" />
@@ -201,6 +204,7 @@ const Canton = ({ auth, Provinces, Cantons }) => {
                             data={Cantons}
                             searchColumns={searchColumns}
                             headers={theaders}
+                            fileName="Cantones"
                         />
                     </div>
                 </Box>
@@ -215,7 +219,7 @@ const Canton = ({ auth, Provinces, Cantons }) => {
                 <DeleteModal
                     showDelete={showDelete}
                     closeDeleteModal={closeDeleteModal}
-                    title={"Borrar Canton"}
+                    title={"Borrar Cantones"}
                     handleDelete={() => handleDelete(dataToDelete)}
                     processing={processing}
                 />

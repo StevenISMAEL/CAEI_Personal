@@ -13,6 +13,7 @@ import tabs from "./tabs";
 import DeleteModal from "@/Components/DeleteModal";
 import TableCustom from "@/Components/TableCustom";
 import CardsCustom from "@/Components/CardCustom";
+import { useNotify } from "@/Components/Toast";
 
 const Phone = ({ auth, Clients, Phones }) => {
     const {
@@ -24,9 +25,11 @@ const Phone = ({ auth, Clients, Phones }) => {
         reset,
         delete: destroy,
         patch,
+        clearErrors,
     } = useForm({
         phone_number: "",
         client_id: "",
+        client_name: "",
         ids: [],
     });
 
@@ -36,29 +39,42 @@ const Phone = ({ auth, Clients, Phones }) => {
     const [editData, setEditData] = useState(null);
     const [dataToDelete, setDataToDelete] = useState(null);
     const [selectedPhones, setSelectedPhones] = useState([]);
+    const notify = useNotify();
 
-    const closeModalCreate = () => setShowCreate(false);
+    const closeModalCreate = () => {
+        clearErrors();
+        setShowCreate(false);
+        reset();
+    };
+
     const openCreateModal = () => setShowCreate(true);
 
     const closeDeleteModal = () => {
         setShowDelete(false);
         setDataToDelete(null);
     };
+
     const openDeleteModal = (id) => {
         setShowDelete(true);
         setDataToDelete(id);
     };
 
     const closeEditModal = () => {
+        clearErrors();
         setShowEdit(false);
         setEditData(null);
+        reset();
     };
+
     const openEditModal = (phone) => {
         setShowEdit(true);
         setEditData(phone);
         setData({
             phone_number: phone.phone_number,
             client_id: phone.client_id,
+            client_name: Clients.find(
+                (client) => client.client_id === phone.client_id,
+            )?.client_name,
         });
     };
 
@@ -67,20 +83,24 @@ const Phone = ({ auth, Clients, Phones }) => {
 
         post(route("phones.store"), {
             preserveScroll: true,
-            onSuccess: () => closeModalCreate(),
-            onError: (error) => console.log(error),
-            onFinish: () => reset(),
+            onSuccess: () => {
+                closeModalCreate();
+                notify("success", "Télefono agregado.");
+            },
+            onError: (error) => console.error(Object.values(error).join(", ")),
         });
     };
 
     const handleSubmitEdit = (e) => {
         e.preventDefault();
 
-        patch(route("phones.update", { id: editData.phone_number }), {
+        patch(route("phones.update", { phone: editData.phone_number }), {
             preserveScroll: true,
-            onSuccess: () => closeEditModal(),
-            onError: (error) => console.log(error),
-            onFinish: () => reset(),
+            onSuccess: () => {
+                closeEditModal();
+                notify("success", "Télefono actualizado.");
+            },
+            onError: (error) => console.error(Object.values(error).join(", ")),
         });
     };
 
@@ -92,21 +112,35 @@ const Phone = ({ auth, Clients, Phones }) => {
                 onSuccess: () => {
                     setSelectedPhones([]);
                     closeDeleteModal();
+                    notify("success", "Télefonos eliminados.");
                 },
-                onError: (error) => console.error(error),
-                onFinish: () => reset(),
             });
         } else {
             destroy(route("phones.destroy", { id }), {
                 preserveScroll: true,
-                onSuccess: () => closeDeleteModal(),
-                onError: (error) => console.error(error),
-                onFinish: () => reset(),
+                onSuccess: () => {
+                    closeDeleteModal();
+                    notify("success", "Télefono eliminado.");
+                },
+                onError: (error) =>
+                    console.error(Object.values(error).join(", ")),
             });
         }
     };
 
     const inputs = [
+        {
+            placeholder: "Cliente",
+            type: "select",
+            labelKey: "client_name",
+            valueKey: "client_id",
+            options: Clients,
+            onSelect: (id) => setData("client_id", id),
+            inputError: (
+                <InputError message={errors.client_id} className="mt-2" />
+            ),
+            defaultValue: data.client_name,
+        },
         {
             label: "Número de telefono",
             id: "phone_number",
@@ -119,22 +153,10 @@ const Phone = ({ auth, Clients, Phones }) => {
             ),
             defaultValue: data.phone_number,
         },
-        {
-            placeholder: "Cliente",
-            type: "select",
-            labelKey: "client_id",
-            valueKey: "client_id",
-            options: Clients,
-            onSelect: (id) => setData("client_id", id),
-            inputError: (
-                <InputError message={errors.client_id} className="mt-2" />
-            ),
-            defaultValue: data.client_id,
-        },
     ];
 
-    const theaders = ["Número Telefono", "Cliente"];
-    const searchColumns = ["phone_number", "client_id"];
+    const theaders = ["Número Telefono", "Cédula", "Nombre"];
+    const searchColumns = ["phone_number", "client_id", "client_name"];
 
     const handleCheckboxChange = (id) => {
         setSelectedPhones((prevSelected) => {

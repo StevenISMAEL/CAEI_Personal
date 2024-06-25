@@ -11,10 +11,12 @@ import Box from "@/Layouts/Box";
 import ExportData from "@/Components/ExportData";
 import tabs from "./tabs";
 import DeleteModal from "@/Components/DeleteModal";
+import ConfirmationModal from "@/Components/ConfirmationModal";
 import TableCustom from "@/Components/TableCustom";
 import CardsCustom from "@/Components/CardCustom";
+import { useNotify } from "@/Components/Toast";
 
-const Client = ({ auth, Addresses, Clients }) => {
+const Client = ({ auth, Sectors, Clients }) => {
     const {
         data,
         setData,
@@ -24,11 +26,16 @@ const Client = ({ auth, Addresses, Clients }) => {
         reset,
         delete: destroy,
         patch,
+        clearErrors,
     } = useForm({
         client_id: "",
-        address_id: "",
+        sector_id: "",
+        sector_name: "",
         client_name: "",
         client_email: "",
+        address: "",
+        reference: "",
+        phone_number: "",
         ids: [],
     });
 
@@ -39,30 +46,45 @@ const Client = ({ auth, Addresses, Clients }) => {
     const [dataToDelete, setDataToDelete] = useState(null);
     const [selectedClients, setSelectedClients] = useState([]);
 
-    const closeModalCreate = () => setShowCreate(false);
+    const notify = useNotify();
+
+    const closeModalCreate = () => {
+        clearErrors();
+        setShowCreate(false);
+    };
+
     const openCreateModal = () => setShowCreate(true);
 
     const closeDeleteModal = () => {
         setShowDelete(false);
         setDataToDelete(null);
     };
+
     const openDeleteModal = (id) => {
         setShowDelete(true);
         setDataToDelete(id);
     };
 
     const closeEditModal = () => {
+        clearErrors();
         setShowEdit(false);
         setEditData(null);
+        reset();
     };
+
     const openEditModal = (client) => {
         setShowEdit(true);
         setEditData(client);
         setData({
             client_id: client.client_id,
-            address_id: client.address_id,
+            sector_id: client.sector_id,
+            sector_name: Sectors.find(
+                (sector) => sector.sector_id === client.sector_id,
+            )?.sector_name,
             client_name: client.client_name,
             client_email: client.client_email,
+            address: client.address,
+            reference: client.reference,
         });
     };
 
@@ -71,20 +93,24 @@ const Client = ({ auth, Addresses, Clients }) => {
 
         post(route("clients.store"), {
             preserveScroll: true,
-            onSuccess: () => closeModalCreate(),
-            onError: (error) => console.erro(error.message),
-            onFinish: () => reset(),
+            onSuccess: () => {
+                closeModalCreate();
+                setShowModalConfirm(true);
+            },
+            onError: (error) => console.error(Object.values(error).join(", ")),
         });
     };
 
     const handleSubmitEdit = (e) => {
         e.preventDefault();
 
-        patch(route("clients.update", { id: editData.client_id }), {
+        patch(route("clients.update", { client: editData.client_id }), {
             preserveScroll: true,
-            onSuccess: () => closeEditModal(),
-            onError: (error) => console.log(error),
-            onFinish: () => reset(),
+            onSuccess: () => {
+                closeEditModal();
+                notify("success", "Cliente actualizado.");
+            },
+            onError: (error) => console.error(Object.values(error).join(", ")),
         });
     };
 
@@ -96,16 +122,20 @@ const Client = ({ auth, Addresses, Clients }) => {
                 onSuccess: () => {
                     setSelectedClients([]);
                     closeDeleteModal();
+                    notify("success", "Clientes eliminados.");
                 },
-                onError: (error) => console.error(error),
-                onFinish: () => reset(),
+                onError: (error) =>
+                    console.error(Object.values(error).join(", ")),
             });
         } else {
             destroy(route("clients.destroy", { id }), {
                 preserveScroll: true,
-                onSuccess: () => closeDeleteModal(),
-                onError: (error) => console.error(error),
-                onFinish: () => reset(),
+                onSuccess: () => {
+                    closeDeleteModal();
+                    notify("success", "Cliente eliminado.");
+                },
+                onError: (error) =>
+                    console.error(Object.values(error).join(", ")),
             });
         }
     };
@@ -124,16 +154,16 @@ const Client = ({ auth, Addresses, Clients }) => {
             defaultValue: data.client_id,
         },
         {
-            placeholder: "Dirrecion",
+            placeholder: "Sector",
             type: "select",
-            labelKey: "address",
-            valueKey: "address_id",
-            options: Addresses,
-            onSelect: (id) => setData("address_id", id),
+            labelKey: "sector_name",
+            valueKey: "sector_id",
+            options: Sectors,
+            onSelect: (id) => setData("sector_id", id),
             inputError: (
-                <InputError message={errors.address_id} className="mt-2" />
+                <InputError message={errors.sector_id} className="mt-2" />
             ),
-            defaultValue: data.address_id,
+            defaultValue: data.sector_name,
         },
         {
             label: "Nombres",
@@ -159,14 +189,74 @@ const Client = ({ auth, Addresses, Clients }) => {
             ),
             defaultValue: data.client_email,
         },
+        {
+            label: "Dirección",
+            id: "address",
+            type: "text",
+            name: "address",
+            value: data.address,
+            onChange: (e) => setData("address", e.target.value),
+            inputError: (
+                <InputError message={errors.address} className="mt-2" />
+            ),
+            defaultValue: data.address,
+        },
+        {
+            label: "Referencia",
+            id: "reference",
+            type: "text",
+            name: "reference",
+            value: data.reference,
+            onChange: (e) => setData("reference", e.target.value),
+            inputError: (
+                <InputError message={errors.reference} className="mt-2" />
+            ),
+            defaultValue: data.reference,
+        },
     ];
 
-    const theaders = ["Cédula", "Nombres", "Direccion", "Email"];
+    const inputsPhone = [
+        {
+            placeholder: "Cliente",
+            type: "select",
+            labelKey: "client_name",
+            valueKey: "client_id",
+            options: Clients,
+            onSelect: (id) => setData("client_id", id),
+            inputError: (
+                <InputError message={errors.client_id} className="mt-2" />
+            ),
+            defaultValue: data.client_name,
+        },
+        {
+            label: "Número de telefono",
+            id: "phone_number",
+            type: "text",
+            name: "phone_number",
+            value: data.phone_number,
+            onChange: (e) => setData("phone_number", e.target.value),
+            inputError: (
+                <InputError message={errors.phone_number} className="mt-2" />
+            ),
+            defaultValue: data.phone_number,
+        },
+    ];
+
+    const theaders = [
+        "Cédula",
+        "Nombres",
+        "Sector",
+        "Email",
+        "Direccion",
+        "Referencia",
+    ];
     const searchColumns = [
         "client_id",
         "client_name",
-        "address",
+        "sector_name",
         "client_email",
+        "address",
+        "reference",
     ];
 
     const handleCheckboxChange = (id) => {
@@ -192,10 +282,40 @@ const Client = ({ auth, Addresses, Clients }) => {
         setDataToDelete(selectedClients);
     };
 
+    const [showCreatePhone, setShowCreatePhone] = useState(false);
+    const [showModalConfirm, setShowModalConfirm] = useState(false);
+    const closeModalConfirm = () => {
+        setShowModalConfirm(false);
+    };
+
+    const handleConfirm = () => {
+        closeModalConfirm();
+        setShowCreatePhone(true);
+    };
+
+    const closeModalCreatePhone = () => {
+        clearErrors();
+        setShowCreatePhone(false);
+        reset();
+    };
+
+    const handleSubmitAddPhone = (e) => {
+        e.preventDefault();
+
+        post(route("phones.store"), {
+            preserveScroll: true,
+            onSuccess: () => {
+                closeModalCreatePhone();
+                notify("success", "Télefono agregado.");
+            },
+            onError: (error) => console.error(Object.values(error).join(", ")),
+        });
+    };
+
     return (
         <Authenticated
             user={auth.user}
-            header={<Header subtitle="Manage Clients" />}
+            header={<Header subtitle="Administrar Clientes" />}
             roles={auth.user.roles.map((role) => role.name)}
         >
             <Head title="Clientes" />
@@ -213,13 +333,14 @@ const Client = ({ auth, Addresses, Clients }) => {
                             data={Clients}
                             searchColumns={searchColumns}
                             headers={theaders}
+                            fileName="Clientes"
                         />
                     </div>
                 </Box>
                 <ModalCreate
                     showCreate={showCreate}
                     closeModalCreate={closeModalCreate}
-                    title={"Add Clients"}
+                    title={"Añadir Cliente"}
                     inputs={inputs}
                     processing={processing}
                     handleSubmitAdd={handleSubmitAdd}
@@ -227,17 +348,33 @@ const Client = ({ auth, Addresses, Clients }) => {
                 <DeleteModal
                     showDelete={showDelete}
                     closeDeleteModal={closeDeleteModal}
-                    title={"Delete Clients"}
+                    title={"Borrar Clientes"}
                     handleDelete={() => handleDelete(dataToDelete)}
                     processing={processing}
                 />
                 <ModalEdit
-                    title="Edit Parish"
+                    title="Editar Cliente"
                     showEdit={showEdit}
                     closeEditModal={closeEditModal}
                     inputs={inputs}
                     processing={processing}
                     handleSubmitEdit={handleSubmitEdit}
+                />
+                <ConfirmationModal
+                    title="Agregar número de teléfono"
+                    message="El cliente se ha agregado con éxito. ¿Desea agregar un número de teléfono para este cliente?"
+                    show={showModalConfirm}
+                    onClose={closeModalConfirm}
+                    onConfirm={handleConfirm}
+                    processing={processing}
+                />
+                <ModalCreate
+                    showCreate={showCreatePhone}
+                    closeModalCreate={closeModalCreatePhone}
+                    title={"Añadir Teléfono"}
+                    inputs={inputsPhone}
+                    processing={processing}
+                    handleSubmitAdd={handleSubmitAddPhone}
                 />
                 <Box className="mt-3 hidden md:block">
                     <TableCustom

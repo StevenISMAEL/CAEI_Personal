@@ -34,7 +34,7 @@ class UserRoleSeeder extends Seeder {
         $permissions = [
             "manage clients",
             "manage phones",
-            "manage addresses",
+            "manage sectors",
             "manage parishes",
             "manage cantons",
         ];

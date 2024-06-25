@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class AddressRequest extends FormRequest {
+class SectorRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -23,21 +23,19 @@ class AddressRequest extends FormRequest {
                 return [
                     "parish_id" =>
                         "required|string|max:7|exists:con_parishes,parish_id",
-                    "address" => "required|string|max:100",
-                    "reference" => "required|string|max:100",
-                    "neighborhood" => "required|string|max:100",
+                    "sector_name" => "required|string|max:100",
+                    "description" => "required|string|max:250",
                 ];
             case "PATCH":
                 return [
                     "parish_id" =>
-                        "sometimes|required|string|max:7|exists:con_parishes,parish_id",
-                    "address" => "sometimes|required|string|max:100",
-                    "reference" => "nullable|string|max:100",
-                    "neighborhood" => "nullable|string|max:100",
+                        "required|string|max:7|exists:con_parishes,parish_id",
+                    "sector_name" => "required|string|max:100",
+                    "description" => "required|string|max:250",
                 ];
             case "DELETE":
                 return [
-                    "id" => "required|string|exists:con_address,address_id",
+                    "id" => "required|string|exists:con_sector,sector_id",
                 ];
             default:
                 return [];
