@@ -65,7 +65,7 @@ const Employee = ({ auth, roles, employees }) => {
             preserveScroll: true,
             onSuccess: () => {
                 closeEditModal();
-                notify("success", "Empleado actualizado correctamente.");
+                notify("success", "Empleado actualizado.");
             },
             onError: (error) => console.error(error.message),
         });
@@ -79,7 +79,7 @@ const Employee = ({ auth, roles, employees }) => {
                 onSuccess: () => {
                     setSelectedEmployees([]);
                     closeDeleteModal();
-                    notify("success", "Empleados eliminados correctamente.");
+                    notify("success", "Empleados eliminados.");
                 },
                 onError: (error) => console.error(error.message),
             });
@@ -88,7 +88,7 @@ const Employee = ({ auth, roles, employees }) => {
                 preserveScroll: true,
                 onSuccess: () => {
                     closeDeleteModal();
-                    notify("success", "Empleado eliminado correctamente.");
+                    notify("success", "Empleado eliminado.");
                 },
                 onError: (error) => console.error(error),
             });

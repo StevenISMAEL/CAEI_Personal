@@ -21,3 +21,12 @@
     npm install
     npm run dev
     
+## Usuarios del Sistema
+
+| Nombre         | Nombre de Usuario | Email               | Contraseña  |
+|----------------|-------------------|---------------------|-------------|
+| Super User     | superuser         | su@example.com      | password    |
+| Admin User     | admin             | admin@example.com   | password    |
+| Vendedor User  | vender            | vendedor@example.com| password    |
+| Tecnico User   | tecni             | tecnico@example.com | password    |
+| Auditor User   | audi              | auditor@example.com | password    |
