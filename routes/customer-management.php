@@ -66,9 +66,9 @@ Route::prefix("manage-customers")
             ->middleware("permission:manage cantons");
     });
 
-// Route::get("contracts", function () {
-//     return "Contratos";
-// })->name("contracts.index");
+Route::get("contracts", function () {
+    return "Contratos";
+})->name("contracts.index");
 
 Route::get("orden-trabajo", function () {
     return Inertia::render("OrdenTrabajo");
