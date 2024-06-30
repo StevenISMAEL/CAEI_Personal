@@ -52,27 +52,24 @@ class UserRoleSeeder extends Seeder {
         ]);
         $adminUser->assignRole($adminRole);
 
-        $vendedorUser = User::create([
+        $vendedorUser = User::factory()->create([
             "name" => "Vendedor User",
             "username" => "vender",
             "email" => "vendedor@example.com",
-            "password" => bcrypt("password"),
         ]);
         $vendedorUser->assignRole($vendedorRole);
 
-        $tecnicoUser = User::create([
+        $tecnicoUser = User::factory()->create([
             "name" => "Tecnico User",
             "username" => "tecni",
             "email" => "tecnico@example.com",
-            "password" => bcrypt("password"),
         ]);
         $tecnicoUser->assignRole([$tecnicoRole]);
 
-        $auditorUser = User::create([
+        $auditorUser = User::factory()->create([
             "name" => "Auditor User",
             "username" => "audi",
             "email" => "auditor@example.com",
-            "password" => bcrypt("password"),
         ]);
         $auditorUser->assignRole([$auditorRole]);
     }
