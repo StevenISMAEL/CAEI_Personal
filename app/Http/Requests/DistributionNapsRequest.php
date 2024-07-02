@@ -20,15 +20,14 @@ class DistributionNapsRequest extends FormRequest {
     public function rules(): array {
         switch ($this->method()) {
             case "POST":
-                echo("entre");
                 return [
-                   
                     "olt_id" => "required|string|max:8|exists:ip_olts,olt_id",
                     "distribution_nap_name" => "required|string|max:50",
                     "distribution_nap_address" => "required|string|max:100",
                     "distribution_nap_coordx" => "required|string|max:25",
                     "distribution_nap_coordy" => "required|string|max:25",
                     "distribution_nap_splitter" => "required|integer|between:0,24",
+                    "olt_ports" => "required|integer|min:0", 
                 ];
             case "PATCH":
                 return [
@@ -38,6 +37,7 @@ class DistributionNapsRequest extends FormRequest {
                     "distribution_nap_coordx" => "sometimes|required|string|max:25",
                     "distribution_nap_coordy" => "sometimes|required|string|max:25",
                     "distribution_nap_splitter" => "sometimes|required|integer|between:0,24",
+                    "olt_ports" => "sometimes|required|integer|min:0", 
                 ];
             case "DELETE":
                 return [

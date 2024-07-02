@@ -64,4 +64,9 @@ class IpLastMile extends Model
             "distribution_nap_id"
         );
     }
+    public function Ips() {
+        return $this->hasMany(Ips::class, "ip_address");
+    }
+
+    
 }

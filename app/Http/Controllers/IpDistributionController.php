@@ -7,9 +7,9 @@ use App\Http\Requests\DistributionNapsRequest;
 use App\Models\IpDistribution;
 use App\Models\IpOlts;
 
-class IpDistributionController extends Controller
-{
+class IpDistributionController extends Controller {
     public function index() {
+        //dd($this-> getAvailablePorts('OLT-01') );
         return Inertia::render("Ips/DistributionNaps", [
             "Olts" => IpOlts::all(),
             "DistributionNaps" => IpDistribution::getDistributionNaps(),
@@ -29,13 +29,27 @@ class IpDistributionController extends Controller
     }
 
     public function destroy($id) {
-        IpDistribution::findOrFail($id)->delete();
-        return redirect()->route("distributionNaps.index");
+        IpDistribution::find($id)->delete();
+        return to_route("distributionNaps.index");
     }
 
     public function destroyMultiple(Request $request) {
         $ids = $request->input("ids");
         IpDistribution::whereIn("distribution_nap_id", $ids)->delete();
         return redirect()->route("distributionNaps.index");
+    }
+
+    public function getAvailablePorts($oltId) {
+        $olt = IpOlts::findOrFail($oltId);
+        $totalPorts = $olt->olt_ports;
+
+        $usedPorts = IpDistribution::where("olt_id", $oltId)
+            ->pluck("olt_ports")
+            ->toArray();
+
+        $availablePorts = range(1, $totalPorts);
+        $availablePorts = array_diff($availablePorts, $usedPorts);
+
+        return $availablePorts;
     }
 }
