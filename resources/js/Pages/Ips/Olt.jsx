@@ -30,7 +30,15 @@ const Olts = ({ auth, Olts}) => {
     const [editData, setEditData] = useState(null);
     const [dataToDelete, setDataToDelete] = useState(null);
     const [selectedOlts, setSelectedOlts] = useState([]);
+    const [selectedOption, setSelectedOption] = useState("");
 
+   
+    const transformForCombobox = (arrays) => {
+        return arrays.map((array) => ({
+            value: array,
+            label: `${array}`,
+        }));
+    };
     const openCreateModal = () => {
         reset();
         setShowCreate(true);
@@ -65,7 +73,10 @@ const Olts = ({ auth, Olts}) => {
             olt_ports: olt.olt_ports,
         });
     };
-
+    const handleChange = (value) => {
+        setSelectedOption(value); // Actualiza el estado cuando cambia la selección
+        setData("olt_ports", value);
+    };
     const handleSubmitAdd = (e) => {
         e.preventDefault();
 
@@ -109,10 +120,11 @@ const Olts = ({ auth, Olts}) => {
             });
         }
     };
+    const comboboxports = transformForCombobox([4,8,16,24]);
 
     const inputs = [
         {
-            label: "OLT Nombre",
+            label: " Nombre",
             id: "olt_name",
             type: "text",
             name: "olt_name",
@@ -124,7 +136,7 @@ const Olts = ({ auth, Olts}) => {
             defaultValue: data.olt_name,
         },
         {
-            label: "OLT Dirección",
+            label: "Dirección",
             id: "olt_address",
             type: "text",
             name: "olt_address",
@@ -136,14 +148,16 @@ const Olts = ({ auth, Olts}) => {
             defaultValue: data.olt_address,
         },
         {
-            label: "OLT Coordenada X",
+            label: "Coordenada X",
             id: "olt_coordx",
             type: "text",
             name: "olt_coordx",
             value: data.olt_coordx,
             onChange: (e) => {
-                const inputValue = e.target.value;
-                const onlyNumbers = inputValue.replace(/[^0-9]/g, ''); // Eliminar todo lo que no sea número
+                let inputValue = e.target.value;
+                if (inputValue.length > 25) {
+            inputValue = inputValue.slice(0, 25);
+        }                const onlyNumbers = inputValue.replace(/[^0-9]/g, ''); // Eliminar todo lo que no sea número
                 setData("olt_coordx", onlyNumbers);
             },
             inputError: (
@@ -153,14 +167,16 @@ const Olts = ({ auth, Olts}) => {
             defaultValue: data.olt_coordx,
         },
         {
-            label: "OLT Coordenada Y",
+            label: "Coordenada Y",
             id: "olt_coordy",
             type: "text",
             name: "olt_coordy",
             value: data.olt_coordy,
             onChange: (e) => {
-                const inputValue = e.target.value;
-                const onlyNumbers = inputValue.replace(/[^0-9]/g, ''); // Eliminar todo lo que no sea número
+                let inputValue = e.target.value;
+                if (inputValue.length > 25) {
+            inputValue = inputValue.slice(0, 25);
+        }                const onlyNumbers = inputValue.replace(/[^0-9]/g, ''); // Eliminar todo lo que no sea número
                 setData("olt_coordy", onlyNumbers);
             },
             inputError: (
@@ -169,14 +185,11 @@ const Olts = ({ auth, Olts}) => {
             defaultValue: data.olt_coordy,
         },
         {
-            label: "OLT Puertos",
-            id: "olt_ports",
-            type: "number",
-            name: "olt_ports",
-            value: data.olt_ports,
-            onChange: (e) => setData("olt_ports", e.target.value),
-            min: "1",
-            max: "24",
+            type: "combobox",
+            label: "Puerto",
+            options: comboboxports,
+            value: selectedOption,
+            onChange: handleChange,
             inputError: (
                 <InputError message={errors.olt_ports} className="mt-2" />
             ),
@@ -186,12 +199,12 @@ const Olts = ({ auth, Olts}) => {
 
 
     const theaders = [
-        "OLT ID",
-        "OLT Nombre",
-        "OLT Direccion",
-        "OLT Coordenada X",
-        "OLT Coordenada Y",
-        "OLT Puertos",
+        " ID",
+        "Nombre",
+        " Direccion",
+        "Coordenada X",
+        "Coordenada Y",
+        "Puertos",
     ];
     
     const searchColumns = [
