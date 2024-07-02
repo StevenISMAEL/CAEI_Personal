@@ -8,6 +8,7 @@ use App\Http\Controllers\ConPhoneController;
 use App\Http\Controllers\IpOltsController;
 use App\Http\Controllers\IpDistributionController;
 use App\Http\Controllers\IpLastMileController;
+use App\Http\Controllers\IpsController;
 use Inertia\Inertia;
 
 Route::prefix("manage-customers")
@@ -91,6 +92,8 @@ Route::prefix("manage-ips")
             IpDistributionController::class
         )->except(["create", "show", "edit"]);
 
+        Route::get('/distributionNaps/{oltId}/available-ports', [IpDistributionController::class, 'getAvailablePorts']);
+
         Route::delete("/distributionNaps", [
             IpDistributionController::class,
             "destroyMultiple",
@@ -106,5 +109,10 @@ Route::prefix("manage-ips")
             IpLastMileController::class,
             "destroyMultiple",
         ])->name("lastmileNaps.multiple.destroy");
+
+        Route::resource("ips", IpsController::class)->except([
+            "show",
+            "edit",
+        ]);
     })
-    ->middleware(["auth", "verified"]);
+    ->middleware(["auth", "verified", "role:admin"]);
