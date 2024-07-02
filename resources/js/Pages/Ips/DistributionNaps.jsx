@@ -51,6 +51,7 @@ const distributionNap = ({ auth, Olts, DistributionNaps }) => {
     );
     useEffect(() => {
         if (selectedOlt) {
+            setSelectedOption(""); 
             fetchAvailablePorts(selectedOlt);
         }
     }, [selectedOlt]);
@@ -78,14 +79,17 @@ const distributionNap = ({ auth, Olts, DistributionNaps }) => {
     };
 
     const openCreateModal = () => {
-        setSelectedOption("");
         reset();
         setShowCreate(true);
+        setSelectedOption("");
+
     };
 
     const closeModalCreate = () => {
         setShowCreate(false);
         reset();
+        setSelectedOption(""); 
+        setData("olt_ports", "");
     };
 
     const closeEditModal = () => {
@@ -115,31 +119,43 @@ const distributionNap = ({ auth, Olts, DistributionNaps }) => {
 
     const handleSubmitAdd = (e) => {
         e.preventDefault();
-
+    
         post(route("distributionNaps.store"), {
             preserveScroll: true,
-            onSuccess: () => closeModalCreate(),
-
+            onSuccess: () => {
+                closeModalCreate();
+                setSelectedOption("");
+                if (data.olt_id) {
+                    fetchAvailablePorts(data.olt_id);
+                }
+            },
             onError: (error) => console.log(error),
             onFinish: () => reset(),
         });
         setSelectedSplitter("");
+        setSelectedOption(""); 
     };
 
     const handleSubmitEdit = (e) => {
         e.preventDefault();
-
+    
         patch(
             route("distributionNaps.update", {
                 id: editData.distribution_nap_id,
             }),
             {
                 preserveScroll: true,
-                onSuccess: () => closeEditModal(),
+                onSuccess: () => {
+                    closeEditModal();
+                    if (data.olt_id) {
+                        fetchAvailablePorts(data.olt_id);
+                    }
+                },
                 onError: (error) => console.log(error),
                 onFinish: () => reset(),
             },
         );
+        setSelectedOption(""); 
     };
 
     const handleDelete = (id) => {
@@ -150,6 +166,9 @@ const distributionNap = ({ auth, Olts, DistributionNaps }) => {
                 onSuccess: () => {
                     setSelectedDistributionNaps([]);
                     closeDeleteModal();
+                    if (data.olt_id) {
+                        fetchAvailablePorts(data.olt_id);
+                    }
                 },
                 onError: (error) => console.error(error),
                 onFinish: () => reset(),
@@ -157,11 +176,17 @@ const distributionNap = ({ auth, Olts, DistributionNaps }) => {
         } else {
             destroy(route("distributionNaps.destroy", { id }), {
                 preserveScroll: true,
-                onSuccess: () => closeDeleteModal(),
+                onSuccess: () => {
+                    closeDeleteModal();
+                    if (data.olt_id) {
+                        fetchAvailablePorts(data.olt_id);
+                    }
+                },
                 onError: (error) => console.error(error),
                 onFinish: () => reset(),
             });
         }
+        
     };
     const transformForCombobox = (arrays) => {
         return arrays.map((array) => ({
