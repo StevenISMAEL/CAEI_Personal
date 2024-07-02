@@ -8,16 +8,25 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 use Spatie\Permission\Models\Role;
+use Laravel\Fortify\TwoFactorAuthenticatable;
 
 class User extends Authenticatable implements MustVerifyEmail {
-    use HasFactory, Notifiable, HasRoles;
+    use HasFactory, Notifiable, HasRoles, TwoFactorAuthenticatable;
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
-    protected $fillable = ["name", "email", "username", "password"];
+    protected $fillable = [
+        "name",
+        "email",
+        "username",
+        "password",
+        "two_factor_secret",
+        "two_factor_recovery_codes",
+        "two_factor_confirmed_at",
+    ];
 
     /**
      * The attributes that should be hidden for serialization.
