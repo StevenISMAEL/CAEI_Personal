@@ -13,6 +13,7 @@ import tabs from "./tabs";
 import DeleteModal from "@/Components/DeleteModal";
 import TableCustom from "@/Components/TableCustom";
 import CardsCustom from "@/Components/CardCustom";
+import { useNotify } from "@/Components/Toast";
 
 const lastmileNaps = ({ auth, Olts, DistributionNaps, LastMileNaps }) => {
     const {
@@ -45,6 +46,7 @@ const lastmileNaps = ({ auth, Olts, DistributionNaps, LastMileNaps }) => {
     const [filteredDistributionNaps, setFilteredDistributionNaps] = useState(
         [],
     );
+    const notify = useNotify();
 
     const handleOltChange = (id) => {
         setSelectedOlt(id);
@@ -113,7 +115,9 @@ const lastmileNaps = ({ auth, Olts, DistributionNaps, LastMileNaps }) => {
 
         post(route("lastmileNaps.store"), {
             preserveScroll: true,
-            onSuccess: () => closeModalCreate(),
+            onSuccess: () => {
+                closeModalCreate(), notify("success", "Nap agregada.");
+            },
             onError: (error) => console.log(error),
             onFinish: () => reset(),
         });
@@ -128,7 +132,9 @@ const lastmileNaps = ({ auth, Olts, DistributionNaps, LastMileNaps }) => {
             }),
             {
                 preserveScroll: true,
-                onSuccess: () => closeEditModal(),
+                onSuccess: () => {
+                    closeEditModal(), notify("success", "Nap actualizada.");
+                },
                 onError: (error) => console.log(error),
                 onFinish: () => reset(),
             },
@@ -143,6 +149,7 @@ const lastmileNaps = ({ auth, Olts, DistributionNaps, LastMileNaps }) => {
                 onSuccess: () => {
                     setSelectedLastMileNaps([]);
                     closeDeleteModal();
+                    notify("success", "Naps eliminadas.");
                 },
                 onError: (error) => console.error(error),
                 onFinish: () => reset(),
@@ -150,7 +157,9 @@ const lastmileNaps = ({ auth, Olts, DistributionNaps, LastMileNaps }) => {
         } else {
             destroy(route("lastmileNaps.destroy", { id }), {
                 preserveScroll: true,
-                onSuccess: () => closeDeleteModal(),
+                onSuccess: () => {
+                    closeDeleteModal(), notify("success", "Nap eliminada.");
+                },
                 onError: (error) => console.error(error),
                 onFinish: () => reset(),
             });

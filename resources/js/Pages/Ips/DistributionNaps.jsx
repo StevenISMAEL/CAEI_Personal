@@ -14,6 +14,7 @@ import DeleteModal from "@/Components/DeleteModal";
 import TableCustom from "@/Components/TableCustom";
 import CardsCustom from "@/Components/CardCustom";
 import axios from "axios";
+import { useNotify } from "@/Components/Toast";
 
 const distributionNap = ({ auth, Olts, DistributionNaps }) => {
     const [selectedOlt, setSelectedOlt] = useState("");
@@ -49,6 +50,8 @@ const distributionNap = ({ auth, Olts, DistributionNaps }) => {
     const [selectedDistributionNaps, setSelectedDistributionNaps] = useState(
         [],
     );
+    const notify = useNotify();
+
     useEffect(() => {
         if (selectedOlt) {
             setSelectedOption(""); 
@@ -128,6 +131,8 @@ const distributionNap = ({ auth, Olts, DistributionNaps }) => {
                 if (data.olt_id) {
                     fetchAvailablePorts(data.olt_id);
                 }
+                notify("success", "Nap agregada.");
+
             },
             onError: (error) => console.log(error),
             onFinish: () => reset(),
@@ -150,6 +155,8 @@ const distributionNap = ({ auth, Olts, DistributionNaps }) => {
                     if (data.olt_id) {
                         fetchAvailablePorts(data.olt_id);
                     }
+                    notify("success", "Nap Actualizada.");
+
                 },
                 onError: (error) => console.log(error),
                 onFinish: () => reset(),
@@ -169,6 +176,7 @@ const distributionNap = ({ auth, Olts, DistributionNaps }) => {
                     if (data.olt_id) {
                         fetchAvailablePorts(data.olt_id);
                     }
+                    notify("success", "Naps Eliminadas.");
                 },
                 onError: (error) => console.error(error),
                 onFinish: () => reset(),
@@ -181,6 +189,8 @@ const distributionNap = ({ auth, Olts, DistributionNaps }) => {
                     if (data.olt_id) {
                         fetchAvailablePorts(data.olt_id);
                     }
+                    notify("success", "Nap eliminada.");
+
                 },
                 onError: (error) => console.error(error),
                 onFinish: () => reset(),
@@ -228,7 +238,7 @@ const distributionNap = ({ auth, Olts, DistributionNaps }) => {
             inputError: (
                 <InputError message={errors.olt_ports} className="mt-2" />
             ),
-            defaultValue: data.olt_ports,
+            defaultValue: disable,
         },
 
         {
