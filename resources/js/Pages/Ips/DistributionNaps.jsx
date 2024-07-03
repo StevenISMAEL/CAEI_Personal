@@ -112,7 +112,6 @@ const distributionNap = ({ auth, Olts, DistributionNaps }) => {
             distribution_nap_coordy: distributionNap.distribution_nap_coordy,
             distribution_nap_splitter:
                 distributionNap.distribution_nap_splitter,
-            olt_ports: distributionNap.olt_ports,
         });
         setSelectedOption(distributionNap.olt_ports);
         if (distributionNap.olt_id) {
@@ -238,7 +237,7 @@ const distributionNap = ({ auth, Olts, DistributionNaps }) => {
             inputError: (
                 <InputError message={errors.olt_ports} className="mt-2" />
             ),
-            defaultValue: disable,
+            defaultValue: data.olt_ports,
         },
 
         {
