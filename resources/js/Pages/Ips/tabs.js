@@ -17,6 +17,11 @@ const tabs = [
         route: "lastmileNaps.index",
         icon: LuNetwork,
     },
+    {
+        name: "Ips",
+        route: "ips.index",
+        icon: LuNetwork,
+    },
 ];
 
 export default tabs;

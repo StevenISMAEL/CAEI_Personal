@@ -14,8 +14,7 @@ import DeleteModal from "@/Components/DeleteModal";
 import TableCustom from "@/Components/TableCustom";
 import CardsCustom from "@/Components/CardCustom";
 
-const lastmileNaps = ({ auth,DistributionNaps, LastMileNaps }) => {
-    console.log(LastMileNaps);
+const lastmileNaps = ({ auth, Olts, DistributionNaps, LastMileNaps }) => {
     const {
         data,
         setData,
@@ -40,10 +39,23 @@ const lastmileNaps = ({ auth,DistributionNaps, LastMileNaps }) => {
     const [showEdit, setShowEdit] = useState(false);
     const [editData, setEditData] = useState(null);
     const [dataToDelete, setDataToDelete] = useState(null);
-    const [selectedLastMileNaps, setSelectedLastMileNaps] = useState([], );
+    const [selectedSplitter, setSelectedSplitter] = useState("");
+    const [selectedLastMileNaps, setSelectedLastMileNaps] = useState([]);
+    const [selectedOlt, setSelectedOlt] = useState("");
+    const [filteredDistributionNaps, setFilteredDistributionNaps] = useState(
+        [],
+    );
 
-   
+    const handleOltChange = (id) => {
+        setSelectedOlt(id);
+        const filteredNaps = DistributionNaps.filter(
+            (nap) => nap.olt_id === id,
+        );
+        setFilteredDistributionNaps(filteredNaps);
+        setData("distribution_nap_id", "");
+    };
     const openCreateModal = () => {
+        setSelectedSplitter("");
         reset();
         setShowCreate(true);
     };
@@ -63,8 +75,9 @@ const lastmileNaps = ({ auth,DistributionNaps, LastMileNaps }) => {
     const closeEditModal = () => {
         setShowEdit(false);
         setEditData(null);
+        reset();
     };
- 
+
     const openEditModal = (lastMileNap) => {
         setShowEdit(true);
         setEditData(lastMileNap);
@@ -76,6 +89,24 @@ const lastmileNaps = ({ auth,DistributionNaps, LastMileNaps }) => {
             last_mile_nap_coordy: lastMileNap.last_mile_nap_coordy,
             last_mile_nap_splitter: lastMileNap.last_mile_nap_splitter,
         });
+    };
+    const handleDistributionNapChange = (id) => {
+        setData("distribution_nap_id", id);
+        const distributionNap = DistributionNaps.find(
+            (nap) => nap.distribution_nap_id === id,
+        );
+        if (distributionNap) {
+            const lastMileCount = LastMileNaps.filter(
+                (nap) => nap.distribution_nap_id === id,
+            ).length;
+            if (lastMileCount >= distributionNap.distribution_nap_splitter) {
+                setData((prevData) => ({
+                    ...prevData,
+                    distribution_nap_error:
+                        "La NAP de distribución ya ha alcanzado el número máximo de NAPs de última milla permitidas.",
+                }));
+            }
+        }
     };
     const handleSubmitAdd = (e) => {
         e.preventDefault();
@@ -125,101 +156,17 @@ const lastmileNaps = ({ auth,DistributionNaps, LastMileNaps }) => {
             });
         }
     };
-
-    const inputs = [
-        {
-           
-            placeholder: "Distribution Nap",
-            type: "select",
-            labelKey: "distribution_nap_name",
-            valueKey: "distribution_nap_id",
-            options: DistributionNaps,
-            value: data.distribution_nap_id,  // Valor directamente ligado al estado
-            onSelect: (id) => setData("distribution_nap_id", id),  // Actualización del estado
-            inputError: (
-                <InputError message={errors.distribution_nap_id} className="mt-2" />
-            ),
-        },
-        {
-            label: "Nombre de la NAP ",
-            id: "last_mile_nap_name",
-            type: "text",
-            name: "last_mile_nap_name",
-            value: data.last_mile_nap_name,
-            onChange: (e) => setData("last_mile_nap_name", e.target.value),
-            inputError: (
-                <InputError
-                    message={errors.last_mile_nap_name}
-                    className="mt-2"
-                />
-            ),
-            defaultValue: data.last_mile_nap_name,
-        },
-        {
-            label: "Dirección de la NAP",
-            id: "last_mile_nap_address",
-            type: "text",
-            name: "last_mile_nap_address",
-            value: data.last_mile_nap_address,
-            onChange: (e) => setData("last_mile_nap_address", e.target.value),
-            inputError: (
-                <InputError
-                    message={errors.last_mile_nap_address}
-                    className="mt-2"
-                />
-            ),
-            defaultValue: data.last_mile_nap_address,
-        },
-        {label: "NAP Coordenada X",
-            id: "last_mile_nap_coordx",
-            type: "text",
-            name: "last_mile_nap_coordx",
-            value: data.last_mile_nap_coordx,
-            onChange: (e) => {
-                const inputValue = e.target.value;
-                const onlyNumbers = inputValue.replace(/[^0-9]/g, ''); // Eliminar todo lo que no sea número
-                setData("last_mile_nap_coordx", onlyNumbers);
-            },
-            inputError: (
-                <InputError message={errors.last_mile_nap_coordx} className="mt-2" />
-            ),
-            defaultValue: data.last_mile_nap_coordx,
-        },
-        {
-            label: "NAP Coordenada Y",
-            id: "last_mile_nap_coordy",
-            type: "text",
-            name: "last_mile_nap_coordy",
-            value: data.last_mile_nap_coordy,
-            onChange: (e) => {
-                const inputValue = e.target.value;
-                const onlyNumbers = inputValue.replace(/[^0-9]/g, ''); 
-                setData("last_mile_nap_coordy", onlyNumbers);
-            },
-            inputError: (
-                <InputError message={errors.last_mile_nap_coordy} className="mt-2" />
-            ),
-            defaultValue: data.last_mile_nap_coordy,
-        },
-        {
-            label: "NAP Splitter",
-            id: "last_mile_nap_splitter",
-            type: "number",
-            name: "last_mile_nap_splitter",
-            value: data.last_mile_nap_splitter,
-            onChange: (e) => setData("last_mile_nap_splitter", e.target.value),
-            min: "1",
-            max: "24",
-            inputError: (
-                <InputError message={errors.last_mile_nap_splitter} className="mt-2" />
-            ),
-            defaultValue: data.last_mile_nap_splitter,
-        },
-       
-    ];
-    const theaders = ["ID", "NAP distribución", "Nombre de la NAP", "Dirección", "Coord X", "Coord Y", "Splitter"];
-    const searchColumns = ["last_mile_nap_id", "distribution_nap_name", "last_mile_nap_name", "last_mile_nap_address", "last_mile_nap_coordx", "last_mile_nap_coordy", "last_mile_nap_splitter"];
-
+    const transformForCombobox = (arrays) => {
+        return arrays.map((array) => ({
+            value: array,
+            label: `${array}`,
+        }));
+    };
+    const handleChangeSplitter = (value) => {
+        setSelectedSplitter(value); // Actualiza el estado cuando cambia la selección del splitter
+        setData("last_mile_nap_splitter", value);
+    };
+    const comboboxspliter = transformForCombobox([8, 16]);
 
     const handleCheckboxChange = (id) => {
         setSelectedLastMileNaps((prevSelected) => {
@@ -236,9 +183,7 @@ const lastmileNaps = ({ auth,DistributionNaps, LastMileNaps }) => {
             setSelectedLastMileNaps([]);
         } else {
             setSelectedLastMileNaps(
-                LastMileNaps.map(
-                    (nap) => nap.last_mile_nap_id
-                ),
+                LastMileNaps.map((nap) => nap.last_mile_nap_id),
             );
         }
     };
@@ -247,6 +192,140 @@ const lastmileNaps = ({ auth,DistributionNaps, LastMileNaps }) => {
         setShowDelete(true);
         setDataToDelete(selectedLastMileNaps);
     };
+
+    const inputs = [
+        {
+            placeholder: "OLT",
+            type: "select",
+            labelKey: "olt_name",
+            valueKey: "olt_id",
+            options: Olts,
+            value: selectedOlt,
+            onSelect: handleOltChange,
+            inputError: <InputError message={errors.olt_id} className="mt-2" />,
+        },
+        {
+            placeholder: "Nap de Distribución",
+            type: "select",
+            labelKey: "distribution_nap_name",
+            valueKey: "distribution_nap_id",
+            options: filteredDistributionNaps,
+            value: data.distribution_nap_id,
+            onSelect: handleDistributionNapChange,
+            inputError: (
+                <InputError
+                    message={errors.distribution_nap_id}
+                    className="mt-2"
+                />
+            ),
+            disabled: !selectedOlt,
+        },
+        {
+            label: "Nombre ",
+            id: "last_mile_nap_name",
+            type: "text",
+            name: "last_mile_nap_name",
+            value: data.last_mile_nap_name,
+            onChange: (e) => setData("last_mile_nap_name", e.target.value),
+            inputError: (
+                <InputError
+                    message={errors.last_mile_nap_name}
+                    className="mt-2"
+                />
+            ),
+            defaultValue: data.last_mile_nap_name,
+        },
+        {
+            label: "Dirección",
+            id: "last_mile_nap_address",
+            type: "text",
+            name: "last_mile_nap_address",
+            value: data.last_mile_nap_address,
+            onChange: (e) => setData("last_mile_nap_address", e.target.value),
+            inputError: (
+                <InputError
+                    message={errors.last_mile_nap_address}
+                    className="mt-2"
+                />
+            ),
+            defaultValue: data.last_mile_nap_address,
+        },
+        {
+            label: "Coordenada X",
+            id: "last_mile_nap_coordx",
+            type: "text",
+            name: "last_mile_nap_coordx",
+            value: data.last_mile_nap_coordx,
+            onChange: (e) => {
+                let inputValue = e.target.value;
+                if (inputValue.length > 25) {
+                    inputValue = inputValue.slice(0, 25);
+                }
+                const onlyNumbers = inputValue.replace(/[^0-9]/g, "");
+                setData("last_mile_nap_coordx", onlyNumbers);
+            },
+            inputError: (
+                <InputError
+                    message={errors.last_mile_nap_coordx}
+                    className="mt-2"
+                />
+            ),
+            defaultValue: data.last_mile_nap_coordx,
+        },
+        {
+            label: "Coordenada Y",
+            id: "last_mile_nap_coordy",
+            type: "text",
+            name: "last_mile_nap_coordy",
+            value: data.last_mile_nap_coordy,
+            onChange: (e) => {
+                let inputValue = e.target.value;
+                if (inputValue.length > 25) {
+                    inputValue = inputValue.slice(0, 25);
+                }
+                const onlyNumbers = inputValue.replace(/[^0-9]/g, "");
+                setData("last_mile_nap_coordy", onlyNumbers);
+            },
+            inputError: (
+                <InputError
+                    message={errors.last_mile_nap_coordy}
+                    className="mt-2"
+                />
+            ),
+            defaultValue: data.last_mile_nap_coordy,
+        },
+        {
+            type: "combobox",
+            label: "Splitter",
+            options: comboboxspliter,
+            value: selectedSplitter,
+            onChange: handleChangeSplitter,
+            inputError: (
+                <InputError
+                    message={errors.last_mile_nap_splitter}
+                    className="mt-2"
+                />
+            ),
+        },
+    ];
+    const theaders = [
+        "ID",
+        "NAP de distribución",
+        "Nombre",
+        "Dirección",
+        "Coord X",
+        "Coord Y",
+        "Splitter",
+    ];
+    const searchColumns = [
+        "last_mile_nap_id",
+        "distribution_nap_name",
+        "last_mile_nap_name",
+        "last_mile_nap_address",
+        "last_mile_nap_coordx",
+        "last_mile_nap_coordy",
+        "last_mile_nap_splitter",
+    ];
 
     return (
         <Authenticated

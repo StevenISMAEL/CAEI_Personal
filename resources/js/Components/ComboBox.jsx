@@ -81,7 +81,7 @@ const Combobox = ({
                                 onMouseLeave={handleMouseLeave}
                                 className={`px-4 py-2 text-sm cursor-pointer ${
                                     focusedIndex === index
-                                        ? "text-green-800 hover:bg-gray-100 dark:hover:bg-gray-600"
+                                        ? "dark:text-white  text-green-800 hover:bg-gray-100 dark:hover:bg-gray-600"
                                         : "bg-green-100 dark:bg-green-300 dark:text-gray-800 dark:hover:text-white text-green-800"
                                 }  hover:bg-gray-100 dark:hover:bg-gray-600`}
                             >

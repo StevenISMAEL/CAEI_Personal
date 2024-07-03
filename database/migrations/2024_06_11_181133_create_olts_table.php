@@ -27,15 +27,17 @@ return new class extends Migration {
             $table->string("distribution_nap_coordy", length: 25);
             $table->integer("distribution_nap_splitter");
             $table->integer("olt_ports");
+            
             $table
                 ->foreign("olt_id")
                 ->references("olt_id")
                 ->on("ip_olts")
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete();
+                $table->unique(["olt_id", "olt_ports"]);
         });
-
-        Schema::create("ip_last_mile_naps", function (Blueprint $table) {
+        
+        Schema::create('ip_last_mile_naps', function (Blueprint $table) {
             $table->string("last_mile_nap_id", length: 8)->primary();
             $table->string("distribution_nap_id", length: 8);
             $table->string("last_mile_nap_name", length: 50);
@@ -43,8 +45,7 @@ return new class extends Migration {
             $table->string("last_mile_nap_coordx", length: 25);
             $table->string("last_mile_nap_coordy", length: 25);
             $table->integer("last_mile_nap_splitter");
-            $table->string("olt_id", 8);
-
+            
             $table
                 ->foreign("distribution_nap_id")
                 ->references("distribution_nap_id")
@@ -53,10 +54,18 @@ return new class extends Migration {
                 ->cascadeOnDelete();
         });
 
-        Schema::create("ip_ip", function (Blueprint $table) {
-            $table->string("ip_address", length: 15)->primary();
-            $table->string("last_mile_nap_id", length: 8);
-            $table->boolean("ip_status");
+        Schema::create('ip_ip', function (Blueprint $table) {
+            $table->string("ip_address", 15)->primary();
+            $table->string("distribution_nap_id", 8);
+            $table->string("last_mile_nap_id", 8)->nullable(); // Campo opcional
+            $table->boolean('ip_status');
+
+            $table
+                ->foreign("distribution_nap_id")
+                ->references("distribution_nap_id")
+                ->on("ip_distribution_naps")
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
 
             $table
                 ->foreign("last_mile_nap_id")
