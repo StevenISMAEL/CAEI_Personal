@@ -9,8 +9,10 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
 import TextInput from "@/Components/TextInput";
 
-export default function TwoFactorAuthenticationForm({ requiresConfirmation }) {
-    const { auth } = usePage().props;
+export default function TwoFactorAuthenticationForm({
+    user,
+    requiresConfirmation,
+}) {
     const [enabling, setEnabling] = useState(false);
     const [disabling, setDisabling] = useState(false);
     const [qrCode, setQrCode] = useState(null);
@@ -20,7 +22,7 @@ export default function TwoFactorAuthenticationForm({ requiresConfirmation }) {
     const confirmationForm = useForm({
         code: "",
     });
-    const twoFactorEnabled = !enabling && auth?.user?.two_factor_enabled;
+    const twoFactorEnabled = !enabling && user?.two_factor_secret;
 
     function enableTwoFactorAuthentication() {
         setEnabling(true);
@@ -59,6 +61,10 @@ export default function TwoFactorAuthenticationForm({ requiresConfirmation }) {
                 setConfirming(false);
                 setQrCode(null);
                 setSetupKey(null);
+                user.two_factor_enabled = true;
+            },
+            onError: (errors) => {
+                console.error("Error al confirmar 2FA:", errors);
             },
         });
     }

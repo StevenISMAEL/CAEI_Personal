@@ -4,10 +4,14 @@ import UpdatePasswordForm from "./Partials/UpdatePasswordForm";
 import UpdateProfileInformationForm from "./Partials/UpdateProfileInformationForm";
 import TwoFactorAuthenticationForm from "./Partials/TwoFactorAuthenticationForm";
 
-import { Head, usePage } from "@inertiajs/react";
+import { Head } from "@inertiajs/react";
 
-export default function Edit({ auth, mustVerifyEmail, status }) {
-    const { confirmsTwoFactorAuthentication } = usePage().props;
+export default function Edit({
+    auth,
+    mustVerifyEmail,
+    status,
+    hasTwoFactorEnabled,
+}) {
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -36,9 +40,8 @@ export default function Edit({ auth, mustVerifyEmail, status }) {
 
                     <div className="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
                         <TwoFactorAuthenticationForm
-                            requiresConfirmation={
-                                confirmsTwoFactorAuthentication
-                            }
+                            user={auth.user}
+                            requiresConfirmation={hasTwoFactorEnabled}
                         />
                     </div>
 

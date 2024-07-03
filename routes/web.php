@@ -70,3 +70,93 @@ require __DIR__ . "/customer-management.php";
 require __DIR__ . "/customer-support.php";
 require __DIR__ . "/inventory-management.php";
 require __DIR__ . "/securities.php";
+
+use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
+use Laravel\Fortify\Http\Controllers\TwoFactorAuthenticatedSessionController;
+use Laravel\Fortify\Http\Controllers\TwoFactorAuthenticationController;
+use Laravel\Fortify\Http\Controllers\ConfirmedTwoFactorAuthenticationController;
+use Laravel\Fortify\Http\Controllers\ConfirmedPasswordStatusController;
+use Laravel\Fortify\Http\Controllers\ConfirmablePasswordController;
+use Laravel\Fortify\Http\Controllers\TwoFactorQrCodeController;
+use Laravel\Fortify\Http\Controllers\TwoFactorSecretKeyController;
+use Laravel\Fortify\Http\Controllers\RecoveryCodeController;
+
+Route::group(
+    ["middleware" => config("fortify.middleware", ["web"])],
+    function () {
+        Route::get("/user/confirmed-password-status", [
+            ConfirmedPasswordStatusController::class,
+            "show",
+        ])
+            ->middleware("auth")
+            ->name("password.confirmation");
+
+        Route::post("/user/confirm-password", [
+            ConfirmablePasswordController::class,
+            "store",
+        ])
+            ->middleware(["auth", "throttle:6,1"])
+            ->name("password.confirm");
+
+        Route::get("/two-factor-challenge", [
+            TwoFactorAuthenticatedSessionController::class,
+            "create",
+        ])
+            ->middleware("guest")
+            ->name("two-factor.login");
+
+        Route::post("/two-factor-challenge", [
+            TwoFactorAuthenticatedSessionController::class,
+            "store",
+        ])
+            ->middleware(["guest", "throttle:6,1"])
+            ->name("two-factor.login");
+
+        Route::post("/user/two-factor-authentication", [
+            TwoFactorAuthenticationController::class,
+            "store",
+        ])
+            ->middleware(["auth", "password.confirm"])
+            ->name("two-factor.enable");
+
+        Route::post("/user/confirmed-two-factor-authentication", [
+            ConfirmedTwoFactorAuthenticationController::class,
+            "store",
+        ])
+            ->middleware(["auth", "password.confirm"])
+            ->name("two-factor.confirm");
+
+        Route::delete("/user/two-factor-authentication", [
+            TwoFactorAuthenticationController::class,
+            "destroy",
+        ])
+            ->middleware(["auth", "password.confirm"])
+            ->name("two-factor.disable");
+
+        Route::get("/user/two-factor-qr-code", [
+            TwoFactorQrCodeController::class,
+            "show",
+        ])
+            ->middleware(["auth", "password.confirm"])
+            ->name("two-factor.qr-code");
+
+        Route::get("/user/two-factor-secret-key", [
+            TwoFactorSecretKeyController::class,
+            "show",
+        ])
+            ->middleware(["auth", "password.confirm"])
+            ->name("two-factor.secret-key");
+
+        Route::get("/user/two-factor-recovery-codes", [
+            RecoveryCodeController::class,
+            "index",
+        ])
+            ->middleware(["auth", "password.confirm"])
+            ->name("two-factor.recovery-codes");
+
+        Route::post("/user/two-factor-recovery-codes", [
+            RecoveryCodeController::class,
+            "store",
+        ])->middleware(["auth", "password.confirm"]);
+    }
+);

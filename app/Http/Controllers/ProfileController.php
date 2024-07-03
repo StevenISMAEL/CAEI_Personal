@@ -20,6 +20,9 @@ class ProfileController extends Controller {
         return Inertia::render("Profile/Edit", [
             "mustVerifyEmail" => $request->user() instanceof MustVerifyEmail,
             "status" => session("status"),
+            "hasTwoFactorEnabled" => !is_null(
+                $request->user()->two_factor_secret
+            ),
         ]);
     }
 
@@ -57,35 +60,4 @@ class ProfileController extends Controller {
 
         return Redirect::to("/");
     }
-
-    // //2FA Fortify
-    // public function enableTwoFactorAuthentication(Request $request) {
-    //     $user = $request->user();
-    //     $provider = app(TwoFactorAuthenticationProvider::class);
-    //     $user
-    //         ->forceFill([
-    //             "two_factor_secret" => $provider->generateSecretKey(),
-    //             "two_factor_recovery_codes" => $provider->generateRecoveryCodes(),
-    //         ])
-    //         ->save();
-
-    //     return response()->json([
-    //         "svg" => $provider->qrCodeSvg($user),
-    //         "recovery_codes" => $provider->getRecoveryCodes($user),
-    //     ]);
-    // }
-
-    // public function disableTwoFactorAuthentication(Request $request) {
-    //     $user = $request->user();
-    //     $user
-    //         ->forceFill([
-    //             "two_factor_secret" => null,
-    //             "two_factor_recovery_codes" => null,
-    //         ])
-    //         ->save();
-
-    //     return response()->json([
-    //         "message" => "Two factor authentication disabled.",
-    //     ]);
-    // }
 }

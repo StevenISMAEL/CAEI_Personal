@@ -1,11 +1,9 @@
 import { Head, useForm } from "@inertiajs/react";
-import classNames from "clsx";
 import React, { useRef, useState } from "react";
 import GuestLayout from "@/Layouts/GuestLayout";
-import InputLabel from "@/Components/InputLabel";
 import PrimaryButton from "@/Components/PrimaryButton";
-import TextInput from "@/Components/TextInput";
 import InputError from "@/Components/InputError";
+import FloatInputText from "@/Components/FloatInputText";
 
 const TwoFactorChallenge = () => {
     const [recovery, setRecovery] = useState(false);
@@ -34,26 +32,24 @@ const TwoFactorChallenge = () => {
 
     const onSubmit = (e) => {
         e.preventDefault();
-        form.post(route("two-factor-challenge"));
+        form.post(route("two-factor.login"));
     };
 
     return (
         <GuestLayout>
-            <Head title="Two-Factor Confirmation" />
+            <Head title="Confirmación de dos factores" />
 
-            <div className="mb-4 text-sm text-gray-600">
+            <div className="mb-4 text-sm text-gray-600 dark:text-gray-300">
                 {recovery
-                    ? "Please confirm access to your account by entering one of your emergency recovery codes."
-                    : "Please confirm access to your account by entering the authentication code provided by your authenticator application."}
+                    ? "Por favor, confirma el acceso a tu cuenta ingresando uno de tus códigos de recuperación de emergencia."
+                    : "Por favor, confirma el acceso a tu cuenta ingresando el código de autenticación proporcionado por tu aplicación de autenticación."}
             </div>
 
             <form onSubmit={onSubmit}>
                 {recovery ? (
                     <div>
-                        <InputLabel htmlFor="recovery_code">
-                            Recovery Code
-                        </InputLabel>
-                        <TextInput
+                        <FloatInputText
+                            label="Código Recuperación"
                             id="recovery_code"
                             type="text"
                             className="mt-1 block w-full"
@@ -74,8 +70,8 @@ const TwoFactorChallenge = () => {
                     </div>
                 ) : (
                     <div>
-                        <InputLabel htmlFor="code">Code</InputLabel>
-                        <TextInput
+                        <FloatInputText
+                            label="Código"
                             id="code"
                             type="text"
                             inputMode="numeric"
@@ -95,24 +91,19 @@ const TwoFactorChallenge = () => {
                     </div>
                 )}
 
-                <div className="mt-4 flex items-center justify-end">
+                <div className="mt-4 flex items-center justify-end gap-3">
                     <button
                         type="button"
-                        className="cursor-pointer text-sm text-gray-600 underline hover:text-gray-900"
+                        className="cursor-pointer text-sm text-gray-600 underline hover:text-gray-900 dark:text-gray-300"
                         onClick={toggleRecovery}
                     >
                         {recovery
-                            ? "Use an authentication code"
-                            : "Use a recovery code"}
+                            ? "Usa un código de autenticación"
+                            : "Usa un código de recuperación"}
                     </button>
 
-                    <PrimaryButton
-                        className={classNames("ml-4", {
-                            "opacity-25": form.processing,
-                        })}
-                        disabled={form.processing}
-                    >
-                        Log in
+                    <PrimaryButton disabled={form.processing}>
+                        Iniciar Sesión
                     </PrimaryButton>
                 </div>
             </form>

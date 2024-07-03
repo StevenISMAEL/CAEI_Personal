@@ -7,6 +7,7 @@ use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -28,9 +29,20 @@ class AuthenticatedSessionController extends Controller {
     public function store(LoginRequest $request): RedirectResponse {
         $request->authenticate();
 
-        $request->session()->regenerate();
-
         $user = Auth::user();
+
+        if ($user && $this->isTwoFactorAuthenticationEnabled($user)) {
+            Auth::logout(); 
+
+            $request->session()->put([
+                "login.id" => $user->id,
+                "login.remember" => $request->boolean("remember"),
+            ]);
+
+            return redirect()->route("two-factor.login");
+        }
+
+        $request->session()->regenerate();
 
         if ($user->roles->isEmpty()) {
             Auth::logout();
@@ -46,7 +58,16 @@ class AuthenticatedSessionController extends Controller {
                 ->with("type", "warning");
         }
 
-        return redirect()->intended(route("dashboard", absolute: false));
+        return redirect()->intended(route("dashboard"));
+    }
+
+    private function isTwoFactorAuthenticationEnabled($user): bool {
+        return $user->two_factor_secret &&
+            $user->two_factor_confirmed_at &&
+            in_array(
+                \Laravel\Fortify\TwoFactorAuthenticatable::class,
+                class_uses_recursive($user)
+            );
     }
 
     /**

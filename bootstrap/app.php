@@ -30,9 +30,11 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->respond(function (Response $response) {
             if ($response->getStatusCode() === 419) {
-                return back()->with([
-                    "message" => "La página expiró, inténtalo de nuevo.",
-                ]);
+                return back()
+                    ->with([
+                        "message" => "La página expiró, inténtalo de nuevo.",
+                    ])
+                    ->with("type", "warning");
             }
 
             return $response;
