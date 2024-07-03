@@ -10,7 +10,6 @@ export default function Edit({
     auth,
     mustVerifyEmail,
     status,
-    hasTwoFactorEnabled,
 }) {
     return (
         <AuthenticatedLayout
@@ -41,7 +40,6 @@ export default function Edit({
                     <div className="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
                         <TwoFactorAuthenticationForm
                             user={auth.user}
-                            requiresConfirmation={hasTwoFactorEnabled}
                         />
                     </div>
 

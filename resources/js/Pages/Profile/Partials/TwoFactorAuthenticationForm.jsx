@@ -4,15 +4,13 @@ import React, { useState } from "react";
 import ConfirmsPassword from "@/Components/ConfirmsPassword";
 import DangerButton from "@/Components/DangerButton";
 import InputError from "@/Components/InputError";
-import InputLabel from "@/Components/InputLabel";
 import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
-import TextInput from "@/Components/TextInput";
+import FloatInputText from "@/Components/FloatInputText";
+import { useNotify } from "@/Components/Toast";
 
-export default function TwoFactorAuthenticationForm({
-    user,
-    requiresConfirmation,
-}) {
+export default function TwoFactorAuthenticationForm() {
+    const { auth } = usePage().props;
     const [enabling, setEnabling] = useState(false);
     const [disabling, setDisabling] = useState(false);
     const [qrCode, setQrCode] = useState(null);
@@ -22,7 +20,11 @@ export default function TwoFactorAuthenticationForm({
     const confirmationForm = useForm({
         code: "",
     });
-    const twoFactorEnabled = !enabling && user?.two_factor_secret;
+    const twoFactorEnabled =
+        !enabling &&
+        auth.user?.two_factor_secret &&
+        auth.user?.two_factor_confirmed_at;
+    const notify = useNotify();
 
     function enableTwoFactorAuthentication() {
         setEnabling(true);
@@ -41,7 +43,7 @@ export default function TwoFactorAuthenticationForm({
                 },
                 onFinish() {
                     setEnabling(false);
-                    setConfirming(requiresConfirmation);
+                    setConfirming(true);
                 },
             },
         );
@@ -61,7 +63,7 @@ export default function TwoFactorAuthenticationForm({
                 setConfirming(false);
                 setQrCode(null);
                 setSetupKey(null);
-                user.two_factor_enabled = true;
+                notify("success", "2FA Habilitada.")
             },
             onError: (errors) => {
                 console.error("Error al confirmar 2FA:", errors);
@@ -100,14 +102,18 @@ export default function TwoFactorAuthenticationForm({
     return (
         <>
             {(() => {
-                if (twoFactorEnabled && !confirming) {
+                if (twoFactorEnabled) {
                     return (
                         <h3 className="text-lg font-medium text-gray-900">
                             Has habilitado la autenticación de dos factores.
                         </h3>
                     );
                 }
-                if (confirming) {
+                if (
+                    confirming ||
+                    (auth.user?.two_factor_secret &&
+                        !auth.user?.two_factor_confirmed_at)
+                ) {
                     return (
                         <h3 className="text-lg font-medium text-gray-900">
                             Termina de habilitar la autenticación de dos
@@ -166,7 +172,7 @@ export default function TwoFactorAuthenticationForm({
                             {setupKey && (
                                 <div className="mt-4 max-w-xl text-sm text-gray-600">
                                     <p className="font-semibold">
-                                        Setup Key:{" "}
+                                        Clave de configuración:{" "}
                                         <span
                                             dangerouslySetInnerHTML={{
                                                 __html: setupKey || "",
@@ -176,33 +182,35 @@ export default function TwoFactorAuthenticationForm({
                                 </div>
                             )}
 
-                            {confirming && (
-                                <div className="mt-4">
-                                    <InputLabel htmlFor="code" value="Code" />
+                            {confirming &&
+                                !auth.user.two_factor_confirmed_at && (
+                                    <div className="mt-4">
+                                        <FloatInputText
+                                            label="Código"
+                                            id="code"
+                                            type="text"
+                                            name="code"
+                                            className="mt-1 block w-1/2"
+                                            inputMode="numeric"
+                                            autoFocus={true}
+                                            autoComplete="one-time-code"
+                                            value={confirmationForm.data.code}
+                                            onChange={(e) =>
+                                                confirmationForm.setData(
+                                                    "code",
+                                                    e.currentTarget.value,
+                                                )
+                                            }
+                                        />
 
-                                    <TextInput
-                                        id="code"
-                                        type="text"
-                                        name="code"
-                                        className="mt-1 block w-1/2"
-                                        inputMode="numeric"
-                                        autoFocus={true}
-                                        autoComplete="one-time-code"
-                                        value={confirmationForm.data.code}
-                                        onChange={(e) =>
-                                            confirmationForm.setData(
-                                                "code",
-                                                e.currentTarget.value,
-                                            )
-                                        }
-                                    />
-
-                                    <InputError
-                                        message={confirmationForm.errors.code}
-                                        className="mt-2"
-                                    />
-                                </div>
-                            )}
+                                        <InputError
+                                            message={
+                                                confirmationForm.errors.code
+                                            }
+                                            className="mt-2"
+                                        />
+                                    </div>
+                                )}
                         </div>
                     ) : null}
 
@@ -235,7 +243,10 @@ export default function TwoFactorAuthenticationForm({
                             <ConfirmsPassword
                                 onConfirm={confirmTwoFactorAuthentication}
                             >
-                                <PrimaryButton className="" disabled={enabling}>
+                                <PrimaryButton
+                                    className="me-2"
+                                    disabled={enabling}
+                                >
                                     Confirmar
                                 </PrimaryButton>
                             </ConfirmsPassword>
