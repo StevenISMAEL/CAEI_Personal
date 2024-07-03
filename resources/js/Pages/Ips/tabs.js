@@ -1,6 +1,7 @@
 
 import { TbCloudNetwork } from "react-icons/tb";
 import { LuNetwork } from "react-icons/lu";
+import { FaLocationPinLock } from "react-icons/fa6";
 const tabs = [
     {
         name: "Olts",
@@ -20,7 +21,7 @@ const tabs = [
     {
         name: "Ips",
         route: "ips.index",
-        icon: LuNetwork,
+        icon: FaLocationPinLock,
     },
 ];
 
