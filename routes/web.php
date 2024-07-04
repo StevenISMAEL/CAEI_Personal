@@ -4,9 +4,17 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
-
+use Illuminate\Http\Request;
 use App\Http\Controllers\InvProductController;
 use App\Http\Controllers\PlansController;
+use Laravel\Fortify\Http\Controllers\TwoFactorAuthenticatedSessionController;
+use Laravel\Fortify\Http\Controllers\TwoFactorAuthenticationController;
+use Laravel\Fortify\Http\Controllers\ConfirmedTwoFactorAuthenticationController;
+use Laravel\Fortify\Http\Controllers\ConfirmedPasswordStatusController;
+use Laravel\Fortify\Http\Controllers\ConfirmablePasswordController;
+use Laravel\Fortify\Http\Controllers\TwoFactorQrCodeController;
+use Laravel\Fortify\Http\Controllers\TwoFactorSecretKeyController;
+use Laravel\Fortify\Http\Controllers\RecoveryCodeController;
 
 Route::get("/", function () {
     return Auth::check()
@@ -64,22 +72,26 @@ Route::prefix("manage-plans")
     })
     ->middleware(["auth", "verified"]);
 
-require __DIR__ . "/auth.php";
-require __DIR__ . "/audit.php";
-require __DIR__ . "/customer-management.php";
-require __DIR__ . "/customer-support.php";
-require __DIR__ . "/inventory-management.php";
-require __DIR__ . "/securities.php";
+Route::get("/check-session", function (Request $request) {
+    if (Auth::check()) {
+        // El usuario está autenticado, verifica si la sesión ha expirado
+        $lastActivity = $request->session()->get("last_activity");
+        $sessionLifetime = config("session.lifetime") * 60; // Convierte minutos a segundos
 
-use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
-use Laravel\Fortify\Http\Controllers\TwoFactorAuthenticatedSessionController;
-use Laravel\Fortify\Http\Controllers\TwoFactorAuthenticationController;
-use Laravel\Fortify\Http\Controllers\ConfirmedTwoFactorAuthenticationController;
-use Laravel\Fortify\Http\Controllers\ConfirmedPasswordStatusController;
-use Laravel\Fortify\Http\Controllers\ConfirmablePasswordController;
-use Laravel\Fortify\Http\Controllers\TwoFactorQrCodeController;
-use Laravel\Fortify\Http\Controllers\TwoFactorSecretKeyController;
-use Laravel\Fortify\Http\Controllers\RecoveryCodeController;
+        if ($lastActivity && time() - $lastActivity > $sessionLifetime) {
+            // La sesión ha expirado
+            Auth::logout();
+            return response()->json(["authenticated" => false]);
+        }
+
+        // La sesión está activa, actualiza el tiempo de última actividad
+        $request->session()->put("last_activity", time());
+        return response()->json(["authenticated" => true]);
+    }
+
+    // El usuario no está autenticado
+    return response()->json(["authenticated" => false]);
+});
 
 Route::group(
     ["middleware" => config("fortify.middleware", ["web"])],
@@ -160,3 +172,10 @@ Route::group(
         ])->middleware(["auth", "password.confirm"]);
     }
 );
+
+require __DIR__ . "/auth.php";
+require __DIR__ . "/audit.php";
+require __DIR__ . "/customer-management.php";
+require __DIR__ . "/customer-support.php";
+require __DIR__ . "/inventory-management.php";
+require __DIR__ . "/securities.php";
