@@ -88,11 +88,11 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
             roles: ["admin"],
         },
         {
-            title: "Suporte",
-            route: "work-orders.index",
+            title: "Soporte",
+            route: "typereport.index",
             subroute: "/manage-orders/",
             icon: <TiDocumentText />,
-            roles: ["tecnico"],
+            roles: ["tecnico","vendedor"],
         },
         {
             title: "Plans",
