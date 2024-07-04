@@ -57,4 +57,7 @@ class ConClient extends Model {
     public function phones() {
         return $this->hasMany(ConPhone::class, "client_id", "client_id");
     }
+    public function contracts() {
+        return $this->hasMany(ConContract::class, "client_id", "client_id");
+    }
 }
