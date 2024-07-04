@@ -9,6 +9,7 @@ use App\Http\Controllers\IpOltsController;
 use App\Http\Controllers\IpDistributionController;
 use App\Http\Controllers\IpLastMileController;
 use App\Http\Controllers\IpsController;
+use App\Http\Controllers\ConContractController;
 use Inertia\Inertia;
 
 Route::prefix("manage-customers")
@@ -67,9 +68,17 @@ Route::prefix("manage-customers")
             ->middleware("permission:manage cantons");
     });
 
-Route::get("contracts", function () {
-    return "Contratos";
-})->name("contracts.index");
+Route::prefix("manage-contracts")->group(function () {
+    Route::resource("contracts", ConContractController::class)->except([
+        "create",
+        "show",
+        "edit",
+    ]);
+    Route::delete("/contracts", [
+        ConContractController::class,
+        "destroyMultiple",
+    ])->name("contracts.multiple.destroy");
+});
 
 Route::get("orden-trabajo", function () {
     return Inertia::render("OrdenTrabajo");
@@ -92,7 +101,10 @@ Route::prefix("manage-ips")
             IpDistributionController::class
         )->except(["create", "show", "edit"]);
 
-        Route::get('/distributionNaps/{oltId}/available-ports', [IpDistributionController::class, 'getAvailablePorts']);
+        Route::get("/distributionNaps/{oltId}/available-ports", [
+            IpDistributionController::class,
+            "getAvailablePorts",
+        ]);
 
         Route::delete("/distributionNaps", [
             IpDistributionController::class,
@@ -110,9 +122,6 @@ Route::prefix("manage-ips")
             "destroyMultiple",
         ])->name("lastmileNaps.multiple.destroy");
 
-        Route::resource("ips", IpsController::class)->except([
-            "show",
-            "edit",
-        ]);
+        Route::resource("ips", IpsController::class)->except(["show", "edit"]);
     })
     ->middleware(["auth", "verified", "role:admin"]);
