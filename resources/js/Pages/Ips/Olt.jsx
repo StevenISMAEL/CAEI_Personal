@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Head, useForm } from "@inertiajs/react";
 import Header from "@/Components/Header";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
@@ -31,7 +31,12 @@ const Olts = ({ auth, Olts}) => {
     const [dataToDelete, setDataToDelete] = useState(null);
     const [selectedOlts, setSelectedOlts] = useState([]);
     const [selectedOption, setSelectedOption] = useState("");
-
+    
+    useEffect(() => {
+        if (editData) {
+            setSelectedOption(editData.olt_ports);
+        }
+    }, [editData]);
    
     const transformForCombobox = (arrays) => {
         return arrays.map((array) => ({

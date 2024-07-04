@@ -57,8 +57,16 @@ const distributionNap = ({ auth, Olts, DistributionNaps }) => {
             setSelectedOption(""); 
             fetchAvailablePorts(selectedOlt);
         }
+       
     }, [selectedOlt]);
-
+    useEffect(() => {
+        if (editData) {
+            setSelectedOption(editData.olt_ports);
+        }
+    }, [editData]);
+    useEffect(() => {
+        console.log("Datos del contrato para editar:", data);
+    }, [data]);
     const fetchAvailablePorts = (oltId) => {
         axios
             .get(`/manage-ips/distributionNaps/${oltId}/available-ports`)
@@ -110,13 +118,17 @@ const distributionNap = ({ auth, Olts, DistributionNaps }) => {
             distribution_nap_address: distributionNap.distribution_nap_address,
             distribution_nap_coordx: distributionNap.distribution_nap_coordx,
             distribution_nap_coordy: distributionNap.distribution_nap_coordy,
+            olt_ports: distributionNap.olt_ports,
             distribution_nap_splitter:
                 distributionNap.distribution_nap_splitter,
         });
         setSelectedOption(distributionNap.olt_ports);
         if (distributionNap.olt_id) {
-            fetchAvailablePorts(distributionNap.olt_id);
+            fetchAvailablePorts(distributionNap.olt_id)
         }
+        
+        console.log(distributionNap.olt_ports);
+        setSelectedSplitter(distributionNap.distribution_nap_splitter);
     };
 
     const handleSubmitAdd = (e) => {
@@ -234,10 +246,8 @@ const distributionNap = ({ auth, Olts, DistributionNaps }) => {
             options: availablePorts,
             value: selectedOption,
             onChange: handleChange,
-            inputError: (
-                <InputError message={errors.olt_ports} className="mt-2" />
-            ),
-            defaultValue: data.olt_ports,
+            inputError: <InputError message={errors.olt_ports} className="mt-2" />,
+            defaultValue: data.olt_ports, 
         },
 
         {
