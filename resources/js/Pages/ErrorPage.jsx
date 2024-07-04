@@ -1,3 +1,4 @@
+import { router } from "@inertiajs/react";
 export default function ErrorPage({ status }) {
     const title = {
         503: "503: Servicio No Disponible",
@@ -12,13 +13,13 @@ export default function ErrorPage({ status }) {
         404: "Lo siento, no se pudo encontrar la página que estás buscando.",
         403: "Lo siento, no tienes permiso para acceder a esta página.",
     }[status];
-
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
             <div className="bg-white p-6 rounded-lg shadow-md text-center">
                 <h1 className="text-4xl font-bold text-red-500 mb-4">
                     {title}
                 </h1>
+
                 <p className="text-gray-700">{description}</p>
             </div>
         </div>

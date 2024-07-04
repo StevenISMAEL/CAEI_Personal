@@ -35,6 +35,9 @@ class HandleInertiaRequests extends Middleware {
                 "message" => fn() => $request->session()->get("message"),
                 "type" => fn() => $request->session()->get("type"),
             ],
+            "env" => [
+                "SESSION_LIFETIME" => config("session.lifetime"),
+            ],
         ];
     }
 }

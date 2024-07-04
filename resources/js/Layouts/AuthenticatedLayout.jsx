@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { MdKeyboardArrowLeft } from "react-icons/md";
 import { RiDashboard2Fill } from "react-icons/ri";
 import LinkCustom from "@/Components/LinkCustom";
-import { Link } from "@inertiajs/react";
+import { Link, usePage } from "@inertiajs/react";
 import Dropdown from "@/Components/Dropdown";
 import ApplicationLogo from "@/Components/ApplicationLogo";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
@@ -16,7 +16,20 @@ import { MdOutlineNetworkWifi } from "react-icons/md";
 import { FaUsersGear } from "react-icons/fa6";
 import { FaFileContract } from "react-icons/fa6";
 import { TbTableOptions } from "react-icons/tb";
+import SessionExpiredModal from "@/Components/SessionExpiredModal";
+import useSessionChecker from "@/Hooks/useSessionChecker";
+
 const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
+    const { env } = usePage().props;
+    const { sessionActive } = useSessionChecker(env.SESSION_LIFETIME);
+    const [showSessionModal, setShowSessionModal] = useState(false);
+
+    useEffect(() => {
+        if (!sessionActive) {
+            setShowSessionModal(true);
+        }
+    }, [sessionActive]);
+
     const getSidebarStatus = () => {
         const value = localStorage.getItem("open");
         return value === "true" || value === null;
@@ -92,6 +105,10 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
 
     return (
         <div className="flex min-h-screen  bg-gray-100 dark:bg-gray-900">
+            <SessionExpiredModal
+                show={showSessionModal}
+                closeModal={() => setShowSessionModal(false)}
+            />
             <div
                 className={` ${
                     open ? "w-60" : "w-28 "
