@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { stringify } from "csv-stringify/browser/esm/sync";
-import { ExportButton } from "./CustomButtons";
+import Dropdown from "@/Components/Dropdown";
+import { ExportButton } from "@/Components/CustomButtons";
 
 const ExportData = ({ data, searchColumns, headers, fileName = "Data" }) => {
     const [isExporting, setIsExporting] = useState(false);
 
-    const handleExport = () => {
+    const exportCSV = () => {
         setIsExporting(true);
 
         try {
@@ -59,12 +60,25 @@ const ExportData = ({ data, searchColumns, headers, fileName = "Data" }) => {
         }
     };
 
+    const exportPDF = () => {
+        // Implementa la lógica para exportar a PDF aquí
+        console.log("Exportando a PDF...");
+    };
+
     return (
-        <ExportButton
-            onClick={handleExport}
-            disabled={data.length === 0 || isExporting}
-            isLoading={isExporting}
-        />
+        <Dropdown>
+            <Dropdown.Trigger>
+                <ExportButton disabled={data.length === 0 || isExporting} />
+            </Dropdown.Trigger>
+            <Dropdown.Content width="36">
+                <Dropdown.Link onClick={exportCSV} disabled={isExporting}>
+                    CSV
+                </Dropdown.Link>
+                <Dropdown.Link onClick={exportPDF} disabled={isExporting}>
+                    PDF
+                </Dropdown.Link>
+            </Dropdown.Content>
+        </Dropdown>
     );
 };
 

@@ -4,12 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class ConCanton extends Model {
+class ConCanton extends Model implements Auditable {
     use HasFactory;
+    use \OwenIt\Auditing\Auditable;
 
+    
     protected $table = "con_cantons";
-
+    
+    protected $auditStrict = true;
     protected $primaryKey = "canton_id";
     public $incrementing = false;
     protected $keyType = "string";

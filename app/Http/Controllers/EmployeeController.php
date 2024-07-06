@@ -22,9 +22,12 @@ class EmployeeController extends Controller {
         ]);
 
         $user = User::findOrFail($userId);
-        $roles = Role::whereIn("id", $request->role_id)->get();
-        $user->syncRoles($roles);
 
+        $newRoles = Role::whereIn("id", $request->role_id)
+            ->pluck("name")
+            ->toArray();
+
+        $user->auditRoleChange($newRoles);
         return to_route("employees.index");
     }
 

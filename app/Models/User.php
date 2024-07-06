@@ -9,9 +9,11 @@ use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 use Spatie\Permission\Models\Role;
 use Laravel\Fortify\TwoFactorAuthenticatable;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class User extends Authenticatable implements MustVerifyEmail {
+class User extends Authenticatable implements MustVerifyEmail, Auditable {
     use HasFactory, Notifiable, HasRoles, TwoFactorAuthenticatable;
+    use \OwenIt\Auditing\Auditable;
 
     /**
      * The attributes that are mass assignable.
@@ -27,6 +29,13 @@ class User extends Authenticatable implements MustVerifyEmail {
         "two_factor_recovery_codes",
         "two_factor_confirmed_at",
     ];
+
+    /**
+     * Attributes to exclude from the Audit.
+     *
+     * @var array
+     */
+    protected $auditExclude = ["remember_token"];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -83,5 +92,26 @@ class User extends Authenticatable implements MustVerifyEmail {
                     }),
                 ];
             });
+    }
+
+    public function auditRoleChange($newRoles) {
+        $oldRoles = $this->roles->pluck("name")->toArray();
+
+        // Realizar el cambio de roles
+        $this->syncRoles($newRoles);
+
+        // Preparar los datos de auditoría
+        $auditData = [
+            "event" => "role_change",
+            "old_values" => ["roles" => $oldRoles],
+            "new_values" => [
+                "roles" => is_array($newRoles) ? $newRoles : [$newRoles],
+            ],
+            "auditable_id" => $this->getKey(),
+            "auditable_type" => get_class($this),
+        ];
+
+        // Crear la auditoría manualmente
+        \OwenIt\Auditing\Models\Audit::create($auditData);
     }
 }

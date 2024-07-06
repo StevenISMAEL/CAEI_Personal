@@ -18,6 +18,7 @@ import { FaFileContract } from "react-icons/fa6";
 import { TbTableOptions } from "react-icons/tb";
 import SessionExpiredModal from "@/Components/SessionExpiredModal";
 import useSessionChecker from "@/Hooks/useSessionChecker";
+import { AiOutlineAudit } from "react-icons/ai";
 
 const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
     const { env } = usePage().props;
@@ -100,6 +101,12 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
             subroute: "/manage-plans/",
             icon: <TbTableOptions />,
             roles: ["admin", "vendedor"],
+        },
+        {
+            title: "Auditoria",
+            route: "audit.index",
+            icon: <AiOutlineAudit />,
+            roles: ["auditor"],
         },
     ];
 
