@@ -1,80 +1,123 @@
+import { useState, useEffect } from "react";
 import { Head } from "@inertiajs/react";
 import Header from "@/Components/Header";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import Box from "@/Layouts/Box";
 import ExportData from "@/Components/ExportData";
+import TableCustomViewOnly from "@/Components/AuditTable";
+import CardsCustomOnlyView from "@/Components/AuditCard";
 
 const Audit = ({ auth, audits }) => {
-    console.log(audits);
-    const sampleData = [
-        {
-            id: 1,
-            name: "John Doe",
-            email: "john.doe@example.com",
-            roles: [{ role_name: "Admin" }, { role_name: "Editor" }],
-            created_at: "2024-07-05T10:30:00Z",
-        },
-        {
-            id: 2,
-            name: "Jane Smith",
-            email: "jane.smith@example.com",
-            roles: [{ role_name: "User" }],
-            created_at: "2024-07-04T14:45:00Z",
-        },
-        {
-            id: 3,
-            name: "Bob Johnson",
-            email: "bob.johnson@example.com",
-            roles: [{ role_name: "Editor" }],
-            created_at: "2024-07-03T09:15:00Z",
-        },
-        {
-            id: 4,
-            name: "Alice Brown",
-            email: "alice.brown@example.com",
-            roles: [{ role_name: "Admin" }],
-            created_at: "2024-07-02T16:20:00Z",
-        },
-        {
-            id: 5,
-            name: "Charlie Wilson",
-            email: "charlie.wilson@example.com",
-            roles: [{ role_name: "User" }, { role_name: "Editor" }],
-            created_at: "2024-07-01T11:00:00Z",
-        },
-    ];
-
-    const searchColumns = ["id", "name", "email", "roles", "created_at"];
+    const [formattedAudits, setFormattedAudits] = useState([]);
+    console.log(formattedAudits);
+    useEffect(() => {
+        if (audits?.length) {
+            setFormattedAudits(
+                audits.map((audit) => ({
+                    ...audit,
+                    user: audit.user?.name ?? "Registro de nuevo usuario",
+                    user_roles:
+                        audit.user_roles.length < 1
+                            ? "sin rol"
+                            : audit.user_roles.join(", "),
+                    modified_table: `${audit.modified_table.table_name} (${audit.modified_table.record_id})`,
+                    event: auditEvent(audit.event),
+                    created_at: new Date(audit.created_at).toLocaleString(
+                        "es-ES",
+                        {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                            hour: "numeric",
+                            minute: "numeric",
+                            second: "numeric",
+                        },
+                    ),
+                    new_values: JSON.stringify(audit.new_values, null, 2),
+                    old_values: JSON.stringify(audit.old_values, null, 2),
+                })),
+            );
+        }
+    }, [audits]);
 
     const headers = [
-        "ID",
-        "Nombre",
-        "Correo electrónico",
+        "Usuario",
         "Roles",
-        "Fecha de creación",
+        "Tabla Modificada",
+        "Tipo de Evento",
+        "Fecha y Hora",
+    ];
+    const searchColumns = [
+        "user",
+        "user_roles",
+        "modified_table",
+        "event",
+        "created_at",
     ];
 
-    const fileName = "Users_Export";
     return (
         <AuthenticatedLayout
             header={<Header subtitle="Auditoria" />}
             user={auth.user}
             roles={auth.user.roles.map((role) => role.name)}
         >
-            <Head title="Auditoria" />
+            <Head title="Auditoría" />
 
             <Box className="mt-3">
                 <div className="flex flex-wrap items-center justify-center md:justify-between gap-2">
                     <div></div>
                     <ExportData
-                        data={sampleData}
-                        searchColumns={searchColumns}
-                        headers={headers}
-                        fileName={fileName}
+                        data={formattedAudits}
+                        searchColumns={[
+                            ...searchColumns,
+                            "old_values",
+                            "new_values",
+                        ]}
+                        headers={[
+                            ...headers,
+                            "Datos Anteriores",
+                            "Datos Nuevos",
+                        ]}
+                        fileName="Auditoría"
                     />
                 </div>
+            </Box>
+
+            <Box className="mt-3 hidden md:block">
+                <TableCustomViewOnly
+                    headers={headers}
+                    data={formattedAudits}
+                    searchColumns={searchColumns}
+                    idKey="id"
+                />
+            </Box>
+            <Box className="mt-3  md:hidden">
+                <CardsCustomOnlyView
+                    headers={headers}
+                    data={formattedAudits}
+                    searchColumns={searchColumns}
+                    idKey="id"
+                />
             </Box>
         </AuthenticatedLayout>
     );
 };
+
+const auditEvent = (event) => {
+    switch (event) {
+        case "created":
+            return "creado";
+        case "updated":
+            return "actualizado";
+        case "deleted":
+            return "eliminado";
+        case "restored":
+            return "restaurado";
+        case "role_change":
+            return "cambio de rol";
+        default:
+            return event;
+    }
+};
+
 export default Audit;

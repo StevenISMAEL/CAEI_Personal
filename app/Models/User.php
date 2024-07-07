@@ -6,6 +6,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Traits\HasRoles;
 use Spatie\Permission\Models\Role;
 use Laravel\Fortify\TwoFactorAuthenticatable;
@@ -97,21 +98,21 @@ class User extends Authenticatable implements MustVerifyEmail, Auditable {
     public function auditRoleChange($newRoles) {
         $oldRoles = $this->roles->pluck("name")->toArray();
 
-        // Realizar el cambio de roles
         $this->syncRoles($newRoles);
+        $user = Auth::user();
 
-        // Preparar los datos de auditoría
         $auditData = [
             "event" => "role_change",
             "old_values" => ["roles" => $oldRoles],
             "new_values" => [
                 "roles" => is_array($newRoles) ? $newRoles : [$newRoles],
             ],
-            "auditable_id" => $this->getKey(),
+            "auditable_id" => $this->id,
             "auditable_type" => get_class($this),
+            "user_type" => get_class($user),
+            "user_id" => $user->id,
         ];
 
-        // Crear la auditoría manualmente
-        \OwenIt\Auditing\Models\Audit::create($auditData);
+        Audit::create($auditData);
     }
 }

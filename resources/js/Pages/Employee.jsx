@@ -95,8 +95,8 @@ const Employee = ({ auth, roles, employees }) => {
         }
     };
 
-    const theaders = ["Empleado", "Roles"];
-    const searchColumns = ["user_name", "roles"];
+    const theaders = ["ID", "Empleado", "Roles"];
+    const searchColumns = ["user_id", "user_name", "roles"];
 
     const handleCheckboxChange = (id) => {
         setSelectedEmployees((prevSelected) => {
