@@ -6,6 +6,7 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import FloatInputText from "@/Components/FloatInputText";
 import { Head, Link, useForm, usePage } from "@inertiajs/react";
 import { useNotify } from "@/Components/Toast";
+import LoadingSpinner from "@/Components/LoadingSpinner";
 
 export default function Login({ status, canResetPassword }) {
     const { flash } = usePage().props;
@@ -57,6 +58,7 @@ export default function Login({ status, canResetPassword }) {
 
             <form onSubmit={submit}>
                 <div>
+                    
                     <FloatInputText
                         label="Email o Nombre de usuario"
                         id="login"
