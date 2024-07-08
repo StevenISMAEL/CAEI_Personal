@@ -34,12 +34,6 @@ return new class extends Migration {
             $table->integer("last_activity")->index();
         });
 
-        Schema::create("aud_audit", function (Blueprint $table) {
-            $table->string("audit_id", 8)->primary();
-            $table->timestamp("audit_date")->useCurrent();
-            $table->string("audit_table_name", 50);
-            $table->string("audit_action", 100);
-        });
     }
 
     /**

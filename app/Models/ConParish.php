@@ -4,11 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class ConParish extends Model {
+class ConParish extends Model implements Auditable {
     use HasFactory;
-    protected $table = "con_parishes";
+    use \OwenIt\Auditing\Auditable;
 
+    
+    protected $auditStrict = true;
+
+    protected $table = "con_parishes";
     protected $primaryKey = "parish_id";
     public $incrementing = false;
     protected $keyType = "string";

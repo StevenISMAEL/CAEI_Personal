@@ -103,7 +103,11 @@ const TwoFactorChallenge = () => {
                     </button>
 
                     <PrimaryButton disabled={form.processing}>
-                        Iniciar Sesión
+                        {form.processing ? (
+                            <LoadingSpinner text="Iniciando..." />
+                        ) : (
+                            "Iniciar Sesión."
+                        )}
                     </PrimaryButton>
                 </div>
             </form>

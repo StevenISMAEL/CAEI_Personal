@@ -38,6 +38,7 @@ class HandleInertiaRequests extends Middleware {
             "env" => [
                 "SESSION_LIFETIME" => config("session.lifetime"),
             ],
+            "logoDectell" => asset("images/dectell.png"),
         ];
     }
 }

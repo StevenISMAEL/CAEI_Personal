@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import Modal from "@/Components/Modal";
 import PrimaryButton from "@/Components/PrimaryButton";
 import { router } from "@inertiajs/react";
+import { TbLoaderQuarter } from "react-icons/tb";
+import LoadingSpinner from "./LoadingSpinner";
 
 const SessionExpiredModal = ({ show, closeModal }) => {
     const [isProcessing, setIsProcessing] = useState(false);
@@ -35,9 +37,11 @@ const SessionExpiredModal = ({ show, closeModal }) => {
                         onClick={handleRedirectToLogin}
                         disabled={isProcessing}
                     >
-                        {isProcessing
-                            ? "Redirigiendo..."
-                            : "Ir a iniciar sesión"}
+                        {isProcessing ? (
+                            <LoadingSpinner text="Redirigiendo..." />
+                        ) : (
+                            "Ir a iniciar sesión"
+                        )}
                     </PrimaryButton>
                 </div>
             </div>
