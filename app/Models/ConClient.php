@@ -9,7 +9,6 @@ use OwenIt\Auditing\Contracts\Auditable;
 class ConClient extends Model implements Auditable {
     use HasFactory;
 
-    use HasFactory;
     use \OwenIt\Auditing\Auditable;
 
     protected $table = "con_clients";
