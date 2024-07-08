@@ -112,6 +112,7 @@ const TableCustomViewOnly = ({ headers, data, searchColumns, idKey }) => {
                         </div>
                         <FloatInputText
                             label="Buscar..."
+                            id="search-audit-table"
                             onChange={handleSearch}
                             value={searchValue}
                         />

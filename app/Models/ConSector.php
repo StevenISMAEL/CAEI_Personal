@@ -4,11 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class ConSector extends Model {
+class ConSector extends Model implements Auditable {
     use HasFactory;
-    protected $table = "con_sector";
+    use \OwenIt\Auditing\Auditable;
 
+    protected $auditStrict = true;
+
+    protected $table = "con_sector";
     protected $primaryKey = "sector_id";
     public $incrementing = false;
     protected $keyType = "string";

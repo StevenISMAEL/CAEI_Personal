@@ -38,7 +38,11 @@ class ConCantonController extends Controller {
 
     public function destroyMultiple(Request $request) {
         $ids = $request->input("ids");
-        ConCanton::whereIn("canton_id", $ids)->delete();
+        $cantons = ConCanton::whereIn("canton_id", $ids)->get();
+
+        foreach ($cantons as $canton) {
+            $canton->delete();
+        }
         return to_route("cantons.index");
     }
 }

@@ -9,7 +9,7 @@ Route::group(["middleware" => ["auth", "verified", "role:admin"]], function () {
         "destroy",
     ]);
 
-    Route::delete("employees/destroy-multiple", [
+    Route::delete("/employees", [
         EmployeeController::class,
         "destroyMultiple",
     ])->name("employees.destroyMultiple");

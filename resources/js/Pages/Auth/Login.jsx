@@ -58,7 +58,6 @@ export default function Login({ status, canResetPassword }) {
 
             <form onSubmit={submit}>
                 <div>
-                    
                     <FloatInputText
                         label="Email o Nombre de usuario"
                         id="login"
@@ -106,7 +105,11 @@ export default function Login({ status, canResetPassword }) {
 
                 <div className="flex justify-center items-center mt-4 w-full">
                     <PrimaryButton className="px-16" disabled={processing}>
-                        Iniciar Sesión
+                        {processing ? (
+                            <LoadingSpinner text="Iniciando..." />
+                        ) : (
+                            "Iniciar Sesión."
+                        )}
                     </PrimaryButton>
                 </div>
 

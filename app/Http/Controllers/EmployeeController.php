@@ -38,7 +38,13 @@ class EmployeeController extends Controller {
 
     public function destroyMultiple(Request $request) {
         $ids = $request->input("ids");
-        User::whereIn("id", $ids)->delete();
+
+        $users = User::whereIn("id", $ids)->get();
+
+        foreach ($users as $user) {
+            $user->delete();
+        }
+
         return to_route("employees.index");
     }
 }

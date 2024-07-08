@@ -74,7 +74,7 @@ const Employee = ({ auth, roles, employees }) => {
     const handleDelete = (id) => {
         if (Array.isArray(id)) {
             data.ids = id;
-            destroy(route("employees.multiple.destroy"), {
+            destroy(route("employees.destroyMultiple"), {
                 preserveScroll: true,
                 onSuccess: () => {
                     setSelectedEmployees([]);

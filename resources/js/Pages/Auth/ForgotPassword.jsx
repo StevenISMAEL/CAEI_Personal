@@ -54,7 +54,12 @@ export default function ForgotPassword({ status }) {
                         Regresar
                     </Link>
                     <PrimaryButton className="ms-4" disabled={processing}>
-                        Restablecer contraseña
+                        {processing ? (
+                            <LoadingSpinner text="Cargando..." />
+                        ) : (
+                            "Restablecer contraseña."
+                        )}
+                        
                     </PrimaryButton>
                 </div>
             </form>

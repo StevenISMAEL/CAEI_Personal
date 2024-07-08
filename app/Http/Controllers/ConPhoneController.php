@@ -31,10 +31,15 @@ class ConPhoneController extends Controller {
         ConPhone::find($id)->delete();
         return to_route("phones.index");
     }
-
     public function destroyMultiple(Request $request) {
         $phoneNumbers = $request->input("ids");
-        ConPhone::whereIn("phone_number", $phoneNumbers)->delete();
+
+        $phones = ConPhone::whereIn("phone_number", $phoneNumbers)->get();
+
+        foreach ($phones as $phone) {
+            $phone->delete();
+        }
+
         return to_route("phones.index");
     }
 }

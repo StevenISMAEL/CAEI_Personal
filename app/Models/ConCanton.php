@@ -11,9 +11,9 @@ class ConCanton extends Model implements Auditable {
     use \OwenIt\Auditing\Auditable;
 
     
-    protected $table = "con_cantons";
-    
     protected $auditStrict = true;
+    
+    protected $table = "con_cantons";
     protected $primaryKey = "canton_id";
     public $incrementing = false;
     protected $keyType = "string";

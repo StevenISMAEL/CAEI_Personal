@@ -34,7 +34,13 @@ class ConSectorController extends Controller {
 
     public function destroyMultiple(Request $request) {
         $ids = $request->input("ids");
-        ConSector::whereIn("sector_id", $ids)->delete();
+
+        $sectors = ConSector::whereIn("sector_id", $ids)->get();
+
+        foreach ($sectors as $sector) {
+            $sector->delete();
+        }
+
         return to_route("sectors.index");
     }
 }
