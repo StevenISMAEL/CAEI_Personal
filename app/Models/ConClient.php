@@ -37,6 +37,32 @@ class ConClient extends Model {
                 ];
             });
     }
+    public static function getClientAllInfo(): array {
+        // Cargar clientes con relaciones anidadas
+        $clients = self::with("sector.parish.canton.province")->get();
+
+        // Mapear los resultados para estructurar la salida deseada
+        return $clients
+            ->map(function ($client) {
+                return [
+                    "client_id" => $client->client_id,
+                    "client_name" => $client->client_name,
+                    "client_email" => $client->client_email,
+                    "address" => $client->address,
+                    "reference" => $client->reference,
+                    "sector_id" => $client->sector_id,
+                    "sector_name" => $client->sector->sector_name,
+                    "parish_name" => $client->sector->parish->parish_name,
+                    "canton_name" =>
+                        $client->sector->parish->canton->canton_name,
+                    "province_name" =>
+                        $client->sector->parish->canton->province
+                            ->province_name,
+                ];
+            })
+            ->toArray(); // Convertir la colección a un array para retorno
+    }
+
     public static function getClientInfo(): array {
         $clients = self::all();
 
