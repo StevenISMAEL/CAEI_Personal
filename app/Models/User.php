@@ -11,9 +11,14 @@ use Spatie\Permission\Traits\HasRoles;
 use Spatie\Permission\Models\Role;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use OwenIt\Auditing\Contracts\Auditable;
+use Bluecloud\SecurityQuestionHelpers\HasSecurityQuestions;
 
 class User extends Authenticatable implements MustVerifyEmail, Auditable {
-    use HasFactory, Notifiable, HasRoles, TwoFactorAuthenticatable;
+    use HasFactory,
+        Notifiable,
+        HasRoles,
+        TwoFactorAuthenticatable,
+        HasSecurityQuestions;
     use \OwenIt\Auditing\Auditable;
 
     /**

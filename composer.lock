@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "719b26a2ee01352ade6b36eb718a092e",
+    "content-hash": "a5b91603b9df925f0df61b6071323fc9",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -59,6 +59,59 @@
                 "source": "https://github.com/Bacon/BaconQrCode/tree/v3.0.0"
             },
             "time": "2024-04-18T11:16:25+00:00"
+        },
+        {
+            "name": "bluecloud/laravel-security-question",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ykalinde/laravel-security-question.git",
+                "reference": "9e6a770aa76e6a0e680e9e09cf3938bddd97c048"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ykalinde/laravel-security-question/zipball/9e6a770aa76e6a0e680e9e09cf3938bddd97c048",
+                "reference": "9e6a770aa76e6a0e680e9e09cf3938bddd97c048",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.4|^8.0"
+            },
+            "require-dev": {
+                "laravel/framework": "^8.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Bluecloud\\SecurityQuestionHelpers\\SecurityQuestionHelpersProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/Utilities/functions.php"
+                ],
+                "psr-4": {
+                    "Bluecloud\\SecurityQuestionHelpers\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Yamikani Kalinde",
+                    "email": "yamikanikalinde@gmail.com"
+                }
+            ],
+            "description": "Helpers for managing security questions within your Laravel project",
+            "support": {
+                "issues": "https://github.com/ykalinde/laravel-security-question/issues",
+                "source": "https://github.com/ykalinde/laravel-security-question/tree/v1.0.0"
+            },
+            "time": "2023-08-22T19:44:50+00:00"
         },
         {
             "name": "brick/math",

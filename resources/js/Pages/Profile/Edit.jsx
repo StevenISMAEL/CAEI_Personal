@@ -5,12 +5,9 @@ import UpdateProfileInformationForm from "./Partials/UpdateProfileInformationFor
 import TwoFactorAuthenticationForm from "./Partials/TwoFactorAuthenticationForm";
 
 import { Head } from "@inertiajs/react";
+import UpdateSecurityQuestions from "./Partials/UpdateSecurityQuestions";
 
-export default function Edit({
-    auth,
-    mustVerifyEmail,
-    status,
-}) {
+export default function Edit({ auth, mustVerifyEmail, status }) {
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -38,9 +35,10 @@ export default function Edit({
                     </div>
 
                     <div className="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                        <TwoFactorAuthenticationForm
-                            user={auth.user}
-                        />
+                        <TwoFactorAuthenticationForm user={auth.user} />
+                    </div>
+                    <div className="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+                        <UpdateSecurityQuestions />
                     </div>
 
                     <div className="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">

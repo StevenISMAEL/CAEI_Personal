@@ -75,7 +75,7 @@ Route::prefix("manage-plans")
 Route::get("/check-session", function (Request $request) {
     if (Auth::check()) {
         $lastActivity = $request->session()->get("last_activity");
-        $sessionLifetime = config("session.lifetime") * 60; 
+        $sessionLifetime = config("session.lifetime") * 60;
 
         if ($lastActivity && time() - $lastActivity > $sessionLifetime) {
             Auth::logout();
@@ -175,3 +175,4 @@ require __DIR__ . "/customer-management.php";
 require __DIR__ . "/customer-support.php";
 require __DIR__ . "/inventory-management.php";
 require __DIR__ . "/securities.php";
+require __DIR__ . "/security_questions.php";
