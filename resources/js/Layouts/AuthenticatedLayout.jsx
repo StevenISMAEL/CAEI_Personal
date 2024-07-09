@@ -93,7 +93,7 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
             route: "typereport.index",
             subroute: "/manage-orders/",
             icon: <TiDocumentText />,
-            roles: ["tecnico","vendedor"],
+            roles: ["tecnico", "vendedor"],
         },
         {
             title: "Plans",
@@ -267,7 +267,7 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
                                             </span>
                                         </Dropdown.Trigger>
 
-                                        <Dropdown.Content>
+                                        <Dropdown.Content width="36">
                                             <Dropdown.Link
                                                 href={route("profile.edit")}
                                             >
