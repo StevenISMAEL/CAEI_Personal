@@ -4,6 +4,7 @@ import InputError from "@/Components/InputError";
 import PrimaryButton from "@/Components/PrimaryButton";
 import { Head, useForm } from "@inertiajs/react";
 import FloatInputText from "@/Components/FloatInputText";
+import LoadingSpinner from "@/Components/LoadingSpinner";
 
 export default function ResetPassword({ token, email }) {
     const { data, setData, post, processing, errors, reset } = useForm({
