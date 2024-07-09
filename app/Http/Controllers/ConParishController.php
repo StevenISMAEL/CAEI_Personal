@@ -34,7 +34,13 @@ class ConParishController extends Controller {
 
     public function destroyMultiple(Request $request) {
         $ids = $request->input("ids");
-        ConParish::whereIn("parish_id", $ids)->delete();
+
+        $parishes = ConParish::whereIn("parish_id", $ids)->get();
+
+        foreach ($parishes as $parish) {
+            $parish->delete();
+        }
+
         return to_route("parishes.index");
     }
 }

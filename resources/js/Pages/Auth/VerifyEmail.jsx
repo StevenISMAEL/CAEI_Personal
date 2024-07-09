@@ -1,6 +1,7 @@
 import GuestLayout from "@/Layouts/GuestLayout";
 import PrimaryButton from "@/Components/PrimaryButton";
 import { Head, Link, useForm } from "@inertiajs/react";
+import LoadingSpinner from "@/Components/LoadingSpinner";
 
 export default function VerifyEmail({ status }) {
     const { post, processing } = useForm({});
@@ -32,7 +33,11 @@ export default function VerifyEmail({ status }) {
             <form onSubmit={submit}>
                 <div className="mt-4 flex items-center justify-between">
                     <PrimaryButton disabled={processing}>
-                        Reenviar correo de verificación
+                        {processing ? (
+                            <LoadingSpinner text="Reenviando..." />
+                        ) : (
+                            "Reenviar correo de verificación"
+                        )}
                     </PrimaryButton>
 
                     <Link

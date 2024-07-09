@@ -6,6 +6,7 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import FloatInputText from "@/Components/FloatInputText";
 import { Head, Link, useForm, usePage } from "@inertiajs/react";
 import { useNotify } from "@/Components/Toast";
+import LoadingSpinner from "@/Components/LoadingSpinner";
 
 export default function Login({ status, canResetPassword }) {
     const { flash } = usePage().props;
@@ -104,7 +105,11 @@ export default function Login({ status, canResetPassword }) {
 
                 <div className="flex justify-center items-center mt-4 w-full">
                     <PrimaryButton className="px-16" disabled={processing}>
-                        Iniciar Sesión
+                        {processing ? (
+                            <LoadingSpinner text="Iniciando..." />
+                        ) : (
+                            "Iniciar Sesión."
+                        )}
                     </PrimaryButton>
                 </div>
 

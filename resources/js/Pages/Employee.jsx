@@ -74,7 +74,7 @@ const Employee = ({ auth, roles, employees }) => {
     const handleDelete = (id) => {
         if (Array.isArray(id)) {
             data.ids = id;
-            destroy(route("employees.multiple.destroy"), {
+            destroy(route("employees.destroyMultiple"), {
                 preserveScroll: true,
                 onSuccess: () => {
                     setSelectedEmployees([]);
@@ -95,8 +95,8 @@ const Employee = ({ auth, roles, employees }) => {
         }
     };
 
-    const theaders = ["Empleado", "Roles"];
-    const searchColumns = ["user_name", "roles"];
+    const theaders = ["ID", "Empleado", "Roles"];
+    const searchColumns = ["user_id", "user_name", "roles"];
 
     const handleCheckboxChange = (id) => {
         setSelectedEmployees((prevSelected) => {

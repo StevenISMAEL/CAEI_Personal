@@ -4,6 +4,7 @@ import InputError from "@/Components/InputError";
 import PrimaryButton from "@/Components/PrimaryButton";
 import FloatInputText from "@/Components/FloatInputText";
 import { Head, Link, useForm } from "@inertiajs/react";
+import LoadingSpinner from "@/Components/LoadingSpinner";
 
 export default function Register() {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -124,7 +125,7 @@ export default function Register() {
                     </Link>
 
                     <PrimaryButton className="ms-4" disabled={processing}>
-                        Registrar
+                        {processing ? <LoadingSpinner text="Registrando..." /> : "Registrar"}
                     </PrimaryButton>
                 </div>
             </form>

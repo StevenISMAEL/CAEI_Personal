@@ -34,7 +34,13 @@ class ConClientController extends Controller {
 
     public function destroyMultiple(Request $request) {
         $ids = $request->input("ids");
-        ConClient::whereIn("client_id", $ids)->delete();
+
+        $clients = ConClient::whereIn("client_id", $ids)->get();
+
+        foreach ($clients as $client) {
+            $client->delete();
+        }
+
         return to_route("clients.index");
     }
 }
