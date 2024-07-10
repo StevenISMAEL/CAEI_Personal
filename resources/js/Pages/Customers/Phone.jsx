@@ -130,7 +130,7 @@ const Phone = ({ auth, Clients, Phones }) => {
 
     const inputs = [
         {
-            placeholder: "Cliente",
+            placeholder: "Cliente cédula",
             type: "select",
             labelKey: "client_name",
             valueKey: "client_id",
@@ -142,7 +142,7 @@ const Phone = ({ auth, Clients, Phones }) => {
             defaultValue: data.client_name,
         },
         {
-            label: "Número de telefono",
+            label: "Número de teléfono",
             id: "phone_number",
             type: "text",
             name: "phone_number",

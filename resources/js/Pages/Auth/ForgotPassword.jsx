@@ -3,6 +3,7 @@ import InputError from "@/Components/InputError";
 import PrimaryButton from "@/Components/PrimaryButton";
 import { Head, useForm, Link } from "@inertiajs/react";
 import FloatInputText from "@/Components/FloatInputText";
+import LoadingSpinner from "@/Components/LoadingSpinner";
 
 export default function ForgotPassword({ status }) {
     const { data, setData, post, processing, errors } = useForm({
@@ -57,7 +58,7 @@ export default function ForgotPassword({ status }) {
                         {processing ? (
                             <LoadingSpinner text="Cargando..." />
                         ) : (
-                            "Restablecer contraseña."
+                            "Restablecer contraseña"
                         )}
                         
                     </PrimaryButton>

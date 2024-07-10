@@ -27,6 +27,8 @@ return Application::configure(basePath: dirname(__DIR__))
                 \Spatie\Permission\Middleware\PermissionMiddleware::class,
             "role_or_permission" =>
                 \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
+            "throttle" =>
+                \Illuminate\Routing\Middleware\ThrottleRequests::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
@@ -47,7 +49,8 @@ return Application::configure(basePath: dirname(__DIR__))
             } elseif ($response->getStatusCode() === 419) {
                 return back()
                     ->with([
-                        "message" => "La página ha caducado, por favor inténtalo de nuevo.",
+                        "message" =>
+                            "La página ha caducado, por favor inténtalo de nuevo.",
                     ])
                     ->with("type", "warning");
             }
