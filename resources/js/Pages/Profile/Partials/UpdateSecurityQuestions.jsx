@@ -1,57 +1,72 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import InputError from "@/Components/InputError";
 import PrimaryButton from "@/Components/PrimaryButton";
 import { useForm, usePage } from "@inertiajs/react";
 import { Transition } from "@headlessui/react";
 import FloatInputText from "@/Components/FloatInputText";
-import axios from "axios";
+import { useNotify } from "@/Components/Toast";
+import DeleteModal from "@/Components/DeleteModal";
 
 export default function UpdateSecurityQuestions({ className = "" }) {
-    const { securityQuestions, auth } = usePage().props;
-    const [userQuestions, setUserQuestions] = useState([]);
-
-    const { data, setData, post, errors, processing, recentlySuccessful } =
-        useForm({
-            security_question_id: "",
-            answer: "",
-        });
-
-    useEffect(() => {
-        axios.get(route("security-question-entries.index")).then((response) => {
-            setUserQuestions(response.data.entries);
-        });
-    }, []);
+    const { entries, questions } = usePage().props;
+    const [userQuestions, setUserQuestions] = useState(entries);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [questionToDelete, setQuestionToDelete] = useState(null);
+    const notify = useNotify();
+    const {
+        data,
+        setData,
+        post,
+        errors,
+        processing,
+        recentlySuccessful,
+        reset,
+        delete: destroy,
+    } = useForm({
+        security_question_id: "",
+        answer: "",
+    });
 
     const submit = (e) => {
         e.preventDefault();
-        post(route("security-question-entries.store"), {
+        post(route("profile.storeSecurityQuestion"), {
             preserveScroll: true,
-            onSuccess: () => {
-                setData("security_question_id", "");
-                setData("answer", "");
-                axios
-                    .get(route("security-question-entries.index"))
-                    .then((response) => {
-                        setUserQuestions(response.data.entries);
-                    });
+            onSuccess: (response) => {
+                reset();
+                notify("success", "Pregunta de seguridad añadida.");
+                setUserQuestions(response?.props?.entries);
+            },
+            onError: (error) => {
+                console.error(error.message);
             },
         });
     };
 
-    const deleteQuestion = (entryId) => {
-        if (
-            confirm(
-                "¿Estás seguro de que quieres eliminar esta pregunta de seguridad?",
-            )
-        ) {
-            axios
-                .delete(route("security-question-entries.destroy", entryId))
-                .then(() => {
-                    setUserQuestions(
-                        userQuestions.filter((q) => q.id !== entryId),
-                    );
-                });
-        }
+    const deleteQuestion = () => {
+        destroy(route("profile.destroySecurityQuestion", questionToDelete), {
+            preserveScroll: true,
+            onSuccess: () => {
+                setUserQuestions(
+                    userQuestions.filter((q) => q.id !== questionToDelete),
+                );
+                setShowDeleteModal(false);
+                setQuestionToDelete(null);
+                notify("success", "Pregunta de seguridad eliminada.");
+            },
+            onError: (error) => {
+                console.error(error.message);
+            },
+        });
+    };
+
+    const openDeleteModal = (entryId) => {
+        setQuestionToDelete(entryId);
+        setShowDeleteModal(true);
+    };
+
+    const closeDeleteModal = () => {
+        setShowDeleteModal(false);
+        setQuestionToDelete(null);
     };
 
     return (
@@ -66,24 +81,32 @@ export default function UpdateSecurityQuestions({ className = "" }) {
             </header>
 
             <div className="mt-6">
-                <h3 className="text-md font-medium text-gray-900 dark:text-gray-100">
+                <h3
+                    className={`text-md font-medium text-gray-900 dark:text-gray-100`}
+                >
                     Preguntas actuales:
                 </h3>
                 <ul className="mt-2 space-y-2">
-                    {userQuestions.map((entry) => (
-                        <li
-                            key={entry.id}
-                            className="flex justify-between items-center"
-                        >
-                            <span>{entry.question.name}</span>
-                            <button
-                                onClick={() => deleteQuestion(entry.id)}
-                                className="text-red-600 hover:text-red-800"
-                            >
-                                Eliminar
-                            </button>
+                    {userQuestions.length === 0 ? (
+                        <li className="text-sm text-gray-500">
+                            Aún no hay preguntas de seguridad configuradas.
                         </li>
-                    ))}
+                    ) : (
+                        userQuestions.map((entry) => (
+                            <li
+                                key={entry.id}
+                                className="flex justify-between items-center"
+                            >
+                                <span>{entry.question.name}</span>
+                                <button
+                                    onClick={() => openDeleteModal(entry.id)}
+                                    className="text-red-600 hover:text-red-800"
+                                >
+                                    Eliminar
+                                </button>
+                            </li>
+                        ))
+                    )}
                 </ul>
             </div>
 
@@ -97,7 +120,7 @@ export default function UpdateSecurityQuestions({ className = "" }) {
                     </label>
                     <select
                         id="security_question_id"
-                        className="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                        className="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:border-green-600 focus:ring-green-600 sm:text-sm h-12"
                         value={data.security_question_id}
                         onChange={(e) =>
                             setData("security_question_id", e.target.value)
@@ -105,7 +128,7 @@ export default function UpdateSecurityQuestions({ className = "" }) {
                         required
                     >
                         <option value="">Seleccione una pregunta</option>
-                        {securityQuestions.map((question) => (
+                        {questions.map((question) => (
                             <option key={question.id} value={question.id}>
                                 {question.name}
                             </option>
@@ -147,6 +170,14 @@ export default function UpdateSecurityQuestions({ className = "" }) {
                     </Transition>
                 </div>
             </form>
+
+            <DeleteModal
+                title="Eliminar pregunta"
+                showDelete={showDeleteModal}
+                closeDeleteModal={closeDeleteModal}
+                handleDelete={deleteQuestion}
+                processing={false}
+            />
         </section>
     );
 }

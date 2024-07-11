@@ -42,6 +42,14 @@ Route::middleware([
     Route::delete("/profile", [ProfileController::class, "destroy"])->name(
         "profile.destroy"
     );
+    Route::post("/profile/security-question", [
+        ProfileController::class,
+        "storeSecurityQuestion",
+    ])->name("profile.storeSecurityQuestion");
+    Route::delete("/profile/security-question/{id}", [
+        ProfileController::class,
+        "destroySecurityQuestion",
+    ])->name("profile.destroySecurityQuestion");
 });
 
 Route::prefix("manage-orders")

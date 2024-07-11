@@ -1,11 +1,9 @@
 import GuestLayout from "@/Layouts/GuestLayout";
 import InputError from "@/Components/InputError";
 import PrimaryButton from "@/Components/PrimaryButton";
-import { Head, useForm } from "@inertiajs/react";
+import { Head, useForm, Link } from "@inertiajs/react";
 import FloatInputText from "@/Components/FloatInputText";
 import LoadingSpinner from "@/Components/LoadingSpinner";
-import { useEffect, useState } from "react";
-import axios from "axios";
 
 export default function SecurityQuestionVerification({ securityQuestions }) {
     const { data, setData, post, processing, errors } = useForm({
@@ -53,7 +51,7 @@ export default function SecurityQuestionVerification({ securityQuestions }) {
                     </label>
                     <select
                         id="security_question_id"
-                        className="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                        className="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:border-green-600 focus:ring-green-600 sm:text-sm h-12"
                         value={data.security_question_id}
                         onChange={(e) =>
                             setData("security_question_id", e.target.value)
@@ -89,6 +87,12 @@ export default function SecurityQuestionVerification({ securityQuestions }) {
                 </div>
 
                 <div className="flex items-center justify-end mt-4">
+                    <Link
+                        href={route("password.request")}
+                        className="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 dark:focus:ring-offset-gray-800"
+                    >
+                        Regresar
+                    </Link>
                     <PrimaryButton className="ms-4" disabled={processing}>
                         {processing ? (
                             <LoadingSpinner text="Verificando..." />

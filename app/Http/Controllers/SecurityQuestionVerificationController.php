@@ -7,6 +7,7 @@ use Bluecloud\SecurityQuestionHelpers\SecurityQuestion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
 use Bluecloud\SecurityQuestionHelpers\SecurityQuestionEntry;
+use Illuminate\Support\Facades\Crypt;
 
 class SecurityQuestionVerificationController extends Controller {
     public function create() {
@@ -38,20 +39,20 @@ class SecurityQuestionVerificationController extends Controller {
             ->where("security_question_id", $request->security_question_id)
             ->first();
 
-        if (
-            !$securityQuestionEntry ||
-            $securityQuestionEntry->answer !== $request->answer
-        ) {
+        $decryptedAnswer = Crypt::decryptString($securityQuestionEntry->answer);
+        if (preg_match('/^s:\d+:"(.+)";$/', $decryptedAnswer, $matches)) {
+            $decryptedAnswer = $matches[1];
+        }
+
+        if ($decryptedAnswer !== $request->answer) {
             return back()->withErrors([
                 "answer" =>
                     "La respuesta a la pregunta de seguridad es incorrecta.",
             ]);
         }
 
-        // Generar un token de restablecimiento de contraseña
         $token = Password::createToken($user);
 
-        // Redirigir a la vista de restablecimiento de contraseña con el token
         return redirect()->route("password.reset", [
             "token" => $token,
             "email" => $user->email,
