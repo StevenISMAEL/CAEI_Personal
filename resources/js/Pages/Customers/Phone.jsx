@@ -130,7 +130,7 @@ const Phone = ({ auth, Clients, Phones }) => {
 
     const inputs = [
         {
-            placeholder: "Cliente",
+            placeholder: "Cliente cédula",
             type: "select",
             labelKey: "client_name",
             valueKey: "client_id",
@@ -142,7 +142,7 @@ const Phone = ({ auth, Clients, Phones }) => {
             defaultValue: data.client_name,
         },
         {
-            label: "Número de telefono",
+            label: "Número de teléfono",
             id: "phone_number",
             type: "text",
             name: "phone_number",
@@ -155,7 +155,7 @@ const Phone = ({ auth, Clients, Phones }) => {
         },
     ];
 
-    const theaders = ["Número Telefono", "Cédula", "Nombre"];
+    const theaders = ["Número Teléfono", "Cédula", "Nombre"];
     const searchColumns = ["phone_number", "client_id", "client_name"];
 
     const handleCheckboxChange = (id) => {
@@ -202,6 +202,7 @@ const Phone = ({ auth, Clients, Phones }) => {
                             data={Phones}
                             searchColumns={searchColumns}
                             headers={theaders}
+                            fileName="Teléfonos"
                         />
                     </div>
                 </Box>

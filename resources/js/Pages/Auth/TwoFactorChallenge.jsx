@@ -4,6 +4,7 @@ import GuestLayout from "@/Layouts/GuestLayout";
 import PrimaryButton from "@/Components/PrimaryButton";
 import InputError from "@/Components/InputError";
 import FloatInputText from "@/Components/FloatInputText";
+import LoadingSpinner from "@/Components/LoadingSpinner";
 
 const TwoFactorChallenge = () => {
     const [recovery, setRecovery] = useState(false);
@@ -103,7 +104,11 @@ const TwoFactorChallenge = () => {
                     </button>
 
                     <PrimaryButton disabled={form.processing}>
-                        Iniciar Sesión
+                        {form.processing ? (
+                            <LoadingSpinner text="Iniciando..." />
+                        ) : (
+                            "Iniciar Sesión."
+                        )}
                     </PrimaryButton>
                 </div>
             </form>

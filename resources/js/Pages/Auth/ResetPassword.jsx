@@ -4,6 +4,7 @@ import InputError from "@/Components/InputError";
 import PrimaryButton from "@/Components/PrimaryButton";
 import { Head, useForm } from "@inertiajs/react";
 import FloatInputText from "@/Components/FloatInputText";
+import LoadingSpinner from "@/Components/LoadingSpinner";
 
 export default function ResetPassword({ token, email }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -83,7 +84,11 @@ export default function ResetPassword({ token, email }) {
 
                 <div className="flex items-center justify-end mt-4">
                     <PrimaryButton className="ms-4" disabled={processing}>
-                        Restablecer la contraseña
+                        {processing ? (
+                            <LoadingSpinner text="Restableciendo..." />
+                        ) : (
+                            "Restablecer la contraseña."
+                        )}
                     </PrimaryButton>
                 </div>
             </form>

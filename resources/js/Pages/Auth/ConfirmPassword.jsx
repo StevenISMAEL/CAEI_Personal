@@ -4,6 +4,7 @@ import InputError from "@/Components/InputError";
 import PrimaryButton from "@/Components/PrimaryButton";
 import { Head, useForm } from "@inertiajs/react";
 import FloatInputText from "@/Components/FloatInputText";
+import LoadingSpinner from "@/Components/LoadingSpinner";
 
 export default function ConfirmPassword() {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -49,7 +50,11 @@ export default function ConfirmPassword() {
 
                 <div className="flex items-center justify-end mt-4">
                     <PrimaryButton className="ms-4" disabled={processing}>
-                        Confirmar
+                        {processing ? (
+                            <LoadingSpinner text="Cargando..." />
+                        ) : (
+                            "Confirmar"
+                        )}
                     </PrimaryButton>
                 </div>
             </form>

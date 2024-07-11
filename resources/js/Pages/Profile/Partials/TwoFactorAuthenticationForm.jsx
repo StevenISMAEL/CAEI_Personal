@@ -95,6 +95,7 @@ export default function TwoFactorAuthenticationForm() {
             onSuccess() {
                 setDisabling(false);
                 setConfirming(false);
+                notify("success", "2FA Deshabilitada.")
             },
         });
     }
@@ -276,7 +277,7 @@ export default function TwoFactorAuthenticationForm() {
                                     className=""
                                     disabled={disabling}
                                 >
-                                    Cancel
+                                    Cancelar
                                 </SecondaryButton>
                             </ConfirmsPassword>
                         ) : (

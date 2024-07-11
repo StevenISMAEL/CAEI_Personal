@@ -42,6 +42,14 @@ Route::middleware([
     Route::delete("/profile", [ProfileController::class, "destroy"])->name(
         "profile.destroy"
     );
+    Route::post("/profile/security-question", [
+        ProfileController::class,
+        "storeSecurityQuestion",
+    ])->name("profile.storeSecurityQuestion");
+    Route::delete("/profile/security-question/{id}", [
+        ProfileController::class,
+        "destroySecurityQuestion",
+    ])->name("profile.destroySecurityQuestion");
 });
 
 Route::prefix("manage-orders")
@@ -74,22 +82,18 @@ Route::prefix("manage-plans")
 
 Route::get("/check-session", function (Request $request) {
     if (Auth::check()) {
-        // El usuario está autenticado, verifica si la sesión ha expirado
         $lastActivity = $request->session()->get("last_activity");
-        $sessionLifetime = config("session.lifetime") * 60; // Convierte minutos a segundos
+        $sessionLifetime = config("session.lifetime") * 60;
 
         if ($lastActivity && time() - $lastActivity > $sessionLifetime) {
-            // La sesión ha expirado
             Auth::logout();
             return response()->json(["authenticated" => false]);
         }
 
-        // La sesión está activa, actualiza el tiempo de última actividad
         $request->session()->put("last_activity", time());
         return response()->json(["authenticated" => true]);
     }
 
-    // El usuario no está autenticado
     return response()->json(["authenticated" => false]);
 });
 
@@ -179,3 +183,4 @@ require __DIR__ . "/customer-management.php";
 require __DIR__ . "/customer-support.php";
 require __DIR__ . "/inventory-management.php";
 require __DIR__ . "/securities.php";
+require __DIR__ . "/security_questions.php";

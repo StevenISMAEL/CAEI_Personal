@@ -22,9 +22,12 @@ class EmployeeController extends Controller {
         ]);
 
         $user = User::findOrFail($userId);
-        $roles = Role::whereIn("id", $request->role_id)->get();
-        $user->syncRoles($roles);
 
+        $newRoles = Role::whereIn("id", $request->role_id)
+            ->pluck("name")
+            ->toArray();
+
+        $user->auditRoleChange($newRoles);
         return to_route("employees.index");
     }
 
@@ -35,7 +38,13 @@ class EmployeeController extends Controller {
 
     public function destroyMultiple(Request $request) {
         $ids = $request->input("ids");
-        User::whereIn("id", $ids)->delete();
+
+        $users = User::whereIn("id", $ids)->get();
+
+        foreach ($users as $user) {
+            $user->delete();
+        }
+
         return to_route("employees.index");
     }
 }

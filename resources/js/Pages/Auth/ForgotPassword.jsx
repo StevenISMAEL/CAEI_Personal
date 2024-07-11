@@ -3,6 +3,7 @@ import InputError from "@/Components/InputError";
 import PrimaryButton from "@/Components/PrimaryButton";
 import { Head, useForm, Link } from "@inertiajs/react";
 import FloatInputText from "@/Components/FloatInputText";
+import LoadingSpinner from "@/Components/LoadingSpinner";
 
 export default function ForgotPassword({ status }) {
     const { data, setData, post, processing, errors } = useForm({
@@ -53,8 +54,18 @@ export default function ForgotPassword({ status }) {
                     >
                         Regresar
                     </Link>
+                    <Link
+                        href={route("password.security-questions")}
+                        className="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 dark:focus:ring-offset-gray-800 ms-4"
+                    >
+                        Preguntas Seg.
+                    </Link>
                     <PrimaryButton className="ms-4" disabled={processing}>
-                        Restablecer contraseña
+                        {processing ? (
+                            <LoadingSpinner text="Cargando..." />
+                        ) : (
+                            "Restablecer contraseña"
+                        )}
                     </PrimaryButton>
                 </div>
             </form>

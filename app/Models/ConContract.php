@@ -24,28 +24,13 @@ class ConContract extends Model {
     ];
     public $timestamps = false;
 
-    protected static function booted() {
-        static::creating(function ($model) {
-            $latestContractNum = static::max("contract_num");
-            $nextNumber = $latestContractNum
-                ? intval(substr($latestContractNum, -5)) + 1
-                : 1;
-
-            $contractNum =
-                "001-001-" . str_pad($nextNumber, 5, "0", STR_PAD_LEFT);
-            $contractId = "DEC-" . str_pad($nextNumber, 4, "0", STR_PAD_LEFT);
-
-            $model->contract_num = $contractNum;
-            $model->contract_id = $contractId;
-        });
-    }
-
     public static function getContracts() {
         return self::with("client", "statu", "plan", "ipaddress") // Incluir relaciones
             ->get()
             ->map(function ($contract) {
                 return [
                     "contract_num" => $contract->contract_num,
+                    "contract_id" => $contract->contract_id,
                     "client_id" => $contract->client->client_id,
                     "client_name" => $contract->client->client_name,
 

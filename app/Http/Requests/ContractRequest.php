@@ -21,6 +21,8 @@ class ContractRequest extends FormRequest {
         switch ($this->method()) {
             case "POST":
                 return [
+                    "contract_num" => "required| string| size:13",
+                    "contract_id" => "required| string| size:8",
                     "client_id" => "required| string| size:10",
                     "ip_address" => "required|string|max:15",
                     "plan_id" => "required|string|max:8",
@@ -28,6 +30,7 @@ class ContractRequest extends FormRequest {
                     "status_id" => "required|string|max:8",
                     "installation_date" => "required|date",
                     "maximum_date" => "required|string|max:2",
+                    "last_mile_nap_id" => "required|string|max:8",
                 ];
             case "PATCH":
                 return [
@@ -38,6 +41,7 @@ class ContractRequest extends FormRequest {
                     "status_id" => "sometimes|required|string|max:8",
                     "installation_date" => "sometimes|required|date",
                     "maximum_date" => "sometimes|required|string|max:2",
+                    "last_mile_nap_id" => "sometimes|required|string|max:8",
                 ];
             case "DELETE":
                 return [
