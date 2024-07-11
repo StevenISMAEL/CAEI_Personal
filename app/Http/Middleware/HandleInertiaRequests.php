@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use Bluecloud\SecurityQuestionHelpers\SecurityQuestion;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -39,6 +40,7 @@ class HandleInertiaRequests extends Middleware {
                 "SESSION_LIFETIME" => config("session.lifetime"),
             ],
             "logoDectell" => asset("images/dectell.png"),
+            'securityQuestions' => SecurityQuestion::all(),
         ];
     }
 }
