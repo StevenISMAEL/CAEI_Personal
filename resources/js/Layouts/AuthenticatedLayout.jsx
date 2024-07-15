@@ -130,7 +130,9 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
                     className={`flex items-center gap-x-4 py-3 px-4 h-16 ${!open && " justify-center"} cursor-pointer hover:bg-green-50 dark:hover:bg-green-500 dark:hover:bg-opacity-5 rounded-sm group`}
                 >
                     <ApplicationLogo
-                        className={`cursor-pointer duration-500 text-2xl text-gray-800 dark:text-gray-200 `}
+                        className={`cursor-pointer duration-500 ${
+                            open && "rotate-[360deg]"
+                        }`}
                     />
                     <h1
                         className={`text-gray-800 dark:text-gray-200 origin-left text-3xl ${
@@ -225,10 +227,10 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
                                 <div className="shrink-0 flex items-center">
                                     <Link
                                         href="/"
-                                        className={`flex gap-x-4 px-4  ${open ? "items-center" : "justify-center"} cursor-pointer`}
+                                        className={`flex gap-x-4 py-3 px-4 h-16 ${open ? "items-center" : "justify-center"} cursor-pointer`}
                                     >
                                         <ApplicationLogo
-                                            className={`cursor-pointer duration-500   text-2xl text-gray-800 dark:text-gray-200 ${
+                                            className={`cursor-pointer duration-500 ${
                                                 open && "rotate-[360deg]"
                                             }`}
                                         />

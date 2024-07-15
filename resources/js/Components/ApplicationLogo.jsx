@@ -1,37 +1,23 @@
 import React from "react";
 
-export default function ApplicationLogo({ width = "50px", height = "50px" }) {
+export default function ApplicationLogo({ className, ...props }) {
     return (
         <svg
+            className={`w-12 h-12 ${className}`}
+            {...props}
             version="1.1"
             id="Capa_1"
             xmlns="http://www.w3.org/2000/svg"
             xmlnsXlink="http://www.w3.org/1999/xlink"
             x="0px"
             y="0px"
-            width={width}
-            height={height}
             viewBox="0 0 200 200"
-            enableBackground="new 0 0 200 200"
+            preserveAspectRatio="xMidYMid meet"
             xmlSpace="preserve"
         >
             <g>
-                <linearGradient
-                    id="SVGID_1_"
-                    gradientUnits="userSpaceOnUse"
-                    x1="13.1035"
-                    y1="169.4248"
-                    x2="92.7852"
-                    y2="44.3106"
-                >
-                    <stop offset="0" stopColor="#581c87" />
-                    <stop offset="0.3102" stopColor="#581c87" />
-                    <stop offset="0.6304" stopColor="#581c87" />
-                    <stop offset="0.8701" stopColor="#581c87" />
-                    <stop offset="1" stopColor="#581c87" />
-                </linearGradient>
                 <path
-                    fill="url(#SVGID_1_)"
+                    fill="#581c87"
                     d="M131.501,59.971H4.279c-1.609,0-2.966,1.198-3.165,2.794L0.6,66.881
 		c-1.284,10.274,6.729,19.348,17.083,19.348h28.651l-10.551,87.869c-0.409,3.407,2.251,6.406,5.684,6.406h1.351
 		c9.953,0,18.335-7.438,19.522-17.318l9.241-76.957h73.041c1.608,0,2.965-1.198,3.166-2.794l0.549-4.396

@@ -8,7 +8,7 @@ export default function Guest({ children }) {
         <div className="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gradient-to-b from-violet-500 dark:from-violet-950 dark:bg-gray-900">
             <div>
                 <button onClick={toggleDarkMode}>
-                    <ApplicationLogo width={150} height={150}/>
+                    <ApplicationLogo className="w-40 h-40"/>
                 </button>
             </div>
 
