@@ -23,11 +23,13 @@
     },
     "dependencies": {
         "apexcharts": "^3.49.1",
+        "chart.js": "^4.4.3",
         "csv-stringify": "^6.5.0",
         "jspdf": "^2.5.1",
         "jspdf-autotable": "^3.8.2",
         "lodash": "^4.17.21",
         "react-apexcharts": "^1.4.1",
+        "react-chartjs-2": "^5.2.0",
         "react-icons": "^5.2.1",
         "react-toastify": "^10.0.5"
     }

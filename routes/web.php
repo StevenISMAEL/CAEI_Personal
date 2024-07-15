@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\InvProductController;
 use App\Http\Controllers\PlansController;
 use Laravel\Fortify\Http\Controllers\TwoFactorAuthenticatedSessionController;
+use App\Models\Audit;
 use Laravel\Fortify\Http\Controllers\TwoFactorAuthenticationController;
 use Laravel\Fortify\Http\Controllers\ConfirmedTwoFactorAuthenticationController;
 use Laravel\Fortify\Http\Controllers\ConfirmedPasswordStatusController;
@@ -23,7 +24,8 @@ Route::get("/", function () {
 });
 
 Route::get("/dashboard", function () {
-    return Inertia::render("Dashboard");
+    $audits = Audit::getAll();
+    return Inertia::render("Dashboard", ["audits" => $audits]);
 })
     ->middleware(["auth", "verified", "role:admin|vendedor|tecnico|auditor"])
     ->name("dashboard");

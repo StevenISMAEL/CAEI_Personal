@@ -7,7 +7,7 @@ use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -30,9 +30,12 @@ class AuthenticatedSessionController extends Controller {
         $request->authenticate();
 
         $user = Auth::user();
+        if ($user instanceof User) {
+            $user->disableAuditing();
+        }
 
         if ($user && $this->isTwoFactorAuthenticationEnabled($user)) {
-            Auth::logout(); 
+            Auth::logout();
 
             $request->session()->put([
                 "login.id" => $user->id,
@@ -57,7 +60,6 @@ class AuthenticatedSessionController extends Controller {
                 )
                 ->with("type", "warning");
         }
-
         return redirect()->intended(route("dashboard"));
     }
 
@@ -74,11 +76,21 @@ class AuthenticatedSessionController extends Controller {
      * Destroy an authenticated session.
      */
     public function destroy(Request $request): RedirectResponse {
+        $user = Auth::user();
+
+        if ($user instanceof User) {
+            $user->disableAuditing();
+        }
+
         Auth::guard("web")->logout();
 
         $request->session()->invalidate();
 
         $request->session()->regenerateToken();
+
+        if ($user instanceof User) {
+            $user->enableAuditing();
+        }
 
         return redirect("/");
     }
