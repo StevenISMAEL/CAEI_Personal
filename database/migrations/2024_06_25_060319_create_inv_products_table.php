@@ -22,7 +22,7 @@ return new class extends Migration {
         Schema::create("inv_movements", function (Blueprint $table) {
             $table->string("movement_id", length: 8)->primary();
             $table->string("product_id", length: 8);
-            $table->string("work_order_id", 8);
+            $table->string("work_order_id", 8)->nullable();
             $table->date("movement_date");
             $table->bigInteger("movement_quantity");
             $table->decimal("movement_total", total: 8, places: 2);

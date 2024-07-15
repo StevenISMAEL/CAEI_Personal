@@ -5,6 +5,7 @@ use App\Http\Controllers\InvMovementController;
 use App\Http\Controllers\InvProductController;
 
 Route::prefix("manage-inventory")
+->middleware(["auth", "verified", "role:admin"])
     ->group(function () {
         Route::resource("products", InvProductController::class)->except([
             "create",
@@ -35,5 +36,5 @@ Route::prefix("manage-inventory")
             InvMovementController::class,
             "destroyMultiple",
         ])->name("movements.multiple.destroy");
-    })
-    ->middleware(["auth", "verified"]);
+    });
+   

@@ -4,9 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class InvMovement extends Model {
+class InvMovement extends Model implements Auditable {
     use HasFactory;
+    use \OwenIt\Auditing\Auditable;
+
+    
+    protected $auditStrict = true;
     protected $table = "inv_movements";
     protected $primaryKey = "movement_id";
     public $incrementing = false;
@@ -14,6 +19,7 @@ class InvMovement extends Model {
     protected $fillable = [
         "movement_id",
         "product_id",
+        "work_order_id",
         "movement_date",
         "movement_quantity",
         "movement_total",
@@ -42,6 +48,7 @@ class InvMovement extends Model {
                     "product_quantity" => $movement->product->product_quantity,
                     "product_vat" => $movement->product->product_vat,
                     "product_name" => $movement->product->product_name,
+                    "work_order_id" => $movement->work_order_id,
                     "movement_date" => $movement->movement_date,
                     "movement_quantity" => $movement->movement_quantity,
                     "movement_total" => $movement->movement_total,
@@ -49,14 +56,14 @@ class InvMovement extends Model {
                 ];
             });
     }
-    /*
+
     public function order() {
         return $this->belongsTo(
-            SupWorkOrders::class,
+            SupWorkOrder::class,
             "work_order_id",
             "work_order_id"
         );
-    }*/
+    }
     public function product() {
         return $this->belongsTo(InvProduct::class, "product_id", "product_id");
     }

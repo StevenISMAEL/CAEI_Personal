@@ -68,7 +68,10 @@ Route::prefix("manage-customers")
             ->middleware("permission:manage cantons");
     });
 
-Route::prefix("manage-contracts")->group(function () {
+Route::prefix("manage-contracts")
+->middleware(["auth", "verified", "role:vendedor"])
+->group(function () {
+    
     Route::resource("contracts", ConContractController::class)->except([
         "create",
         "show",
@@ -80,11 +83,8 @@ Route::prefix("manage-contracts")->group(function () {
     ])->name("contracts.multiple.destroy");
 });
 
-Route::get("orden-trabajo", function () {
-    return Inertia::render("OrdenTrabajo");
-})->middleware(["auth", "verified", "role:vendedor"]);
-
 Route::prefix("manage-ips")
+    ->middleware(["auth", "verified", "role:admin"])
     ->group(function () {
         Route::resource("olts", IpOltsController::class)->except([
             "create",
@@ -123,5 +123,4 @@ Route::prefix("manage-ips")
         ])->name("lastmileNaps.multiple.destroy");
 
         Route::resource("ips", IpsController::class)->except(["show", "edit"]);
-    })
-    ->middleware(["auth", "verified", "role:admin"]);
+    });

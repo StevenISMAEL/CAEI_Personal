@@ -1,4 +1,4 @@
-import Modal from "./ModalContra";
+import Modal from "./Modalorder";
 import FloatInputText from "./FloatInputText";
 import SearchDropdown from "./SearchInput";
 import SecondaryButton from "./SecondaryButton";
@@ -7,24 +7,17 @@ import ComboBox from "./ComboBox";
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
 
-const ModalEdit = ({
-    showEdit,
-    closeEditModal,
+const ModalCreateOrder = ({
+    showCreate,
+    closeModalCreate,
     contractInputs,
-    clientInfoInputs,
-    technicalInfoInputs,
+    supportInputs,
     processing,
-    handleSubmitEdit,
-    numContract,
+    handleSubmitAdd,
+    numOrder,
 }) => {
     const handleDownloadPDF = () => {
         const doc = new jsPDF();
-        /*const { logoDectell, auth } = usePage().props;
-        if (logoDectell) {
-            doc.addImage(logoDectell, "PNG", 73, 5, 60, 20, "Dectell Logo");
-        }
-*/
-
         const generateTableRows = (inputs) => {
             return inputs.map((input) => [input.label, input.value]);
         };
@@ -32,8 +25,7 @@ const ModalEdit = ({
         const tableStyles = {
             headStyles: {
                 fontSize: 12,
-
-                halign: "center", // Centrar texto
+                halign: "center",
             },
             bodyStyles: {
                 fillColor: [255, 255, 255],
@@ -49,8 +41,7 @@ const ModalEdit = ({
 
         const allInputs = [
             { section: "Contrato", inputs: contractInputs },
-            { section: "Información de Cliente", inputs: clientInfoInputs },
-            { section: "Información Técnica", inputs: technicalInfoInputs },
+            { section: "Información de soporte", inputs: supportInputs },
         ];
 
         const generateSectionRows = (section) => {
@@ -83,28 +74,26 @@ const ModalEdit = ({
         });
 
         const signatureStartY = doc.lastAutoTable.finalY + 30;
-        doc.setTextColor(0, 0, 0); // Color negro para las firmas
+        doc.setTextColor(0, 0, 0);
         doc.setFontSize(12);
 
-        // Firma del Vendedor
-        doc.line(20, signatureStartY - 5, 80, signatureStartY - 5); // Línea encima de la firma del vendedor
-        doc.text("Firma del Vendedor", 33, signatureStartY + 8);
+        doc.line(20, signatureStartY - 5, 80, signatureStartY - 5);
+        doc.text("Nombre", 33, signatureStartY + 8);
 
-        // Firma del Cliente
         doc.line(120, signatureStartY - 5, 180, signatureStartY - 5);
-        doc.text("Firma del Cliente", 133, signatureStartY + 8);
+        doc.text("Firma", 133, signatureStartY + 8);
 
-        doc.save(`contract_${numContract}.pdf`);
+        doc.save(`soporte_${numOrder}.pdf`);
     };
+
     return (
-        <Modal show={showEdit} onClose={closeEditModal}>
-            <form onSubmit={handleSubmitEdit} className="p-3 pt-0">
-                {/* Sección de Contrato */}
-                <div className="mt-4 border-t border-l border-r rounded-t-lg p-4 ">
+        <Modal show={showCreate} onClose={closeModalCreate}>
+            <form onSubmit={handleSubmitAdd} className="p-3 pt-0">
+                <div className="mt-4 border-t border-l border-r rounded-t-lg p-4">
                     <h4 className="text-md font-medium text-white bg-green-600 text-center mb-2 py-2 rounded-lg">
-                        Contrato
+                        Orden de trabajo
                     </h4>
-                    <div className="grid grid-cols-4 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                         {contractInputs &&
                             contractInputs.map((input, index) => (
                                 <div key={index}>
@@ -134,14 +123,13 @@ const ModalEdit = ({
                     </div>
                 </div>
 
-                {/* Sección de Información de Cliente */}
                 <div className="mt-0 border-l border-r p-4 pt-1">
                     <h4 className="text-md font-medium text-white bg-green-600 text-center mb-2 py-2 rounded-lg">
-                        Información de Cliente
+                        Soporte
                     </h4>
-                    <div className="grid grid-cols-4 gap-4">
-                        {clientInfoInputs &&
-                            clientInfoInputs.map((input, index) => (
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        {supportInputs &&
+                            supportInputs.map((input, index) => (
                                 <div key={index}>
                                     {input.type === "select" ? (
                                         <SearchDropdown
@@ -169,56 +157,24 @@ const ModalEdit = ({
                     </div>
                 </div>
 
-                {/* Sección de Información Técnica */}
-                <div className="mt-0 border-b border-l border-r rounded-b-lg p-4 pt-1">
-                    <h4 className="text-md font-medium text-white bg-green-600 text-center mb-2 py-2 rounded-lg">
-                        Información Técnica
-                    </h4>
-                    <div className="grid grid-cols-2 gap-4">
-                        {technicalInfoInputs &&
-                            technicalInfoInputs.map((input, index) => (
-                                <div key={index}>
-                                    {input.type === "select" ? (
-                                        <SearchDropdown
-                                            {...input}
-                                            className="mt-2 mb-0 block w-full"
-                                        />
-                                    ) : input.type === "combobox" ? (
-                                        <ComboBox
-                                            {...input}
-                                            className="mt-2 mb-0 block w-full"
-                                        />
-                                    ) : (
-                                        <FloatInputText
-                                            {...input}
-                                            className="mt-2 mb-0 block w-full"
-                                        />
-                                    )}
-                                    {input.inputError && (
-                                        <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-                                            {input.inputError}
-                                        </p>
-                                    )}
-                                </div>
-                            ))}
-                    </div>
-                </div>
-
-                {/* Botones de Cancelar y Actualizar */}
-                <div className="mt-6 flex justify-end">
-                    <SecondaryButton onClick={closeEditModal}>
+               
+                {/* Botones de Cancelar, Guardar y Convertir a PDF */}
+                <div className="mt-6 flex flex-col md:flex-row md:items-center md:justify-end">
+                    <SecondaryButton className="mb-2 md:mb-0 "onClick={closeModalCreate}>
                         Cancelar
                     </SecondaryButton>
-                    <PrimaryButton className="ms-3" disabled={processing}>
-                        Actualizar
-                    </PrimaryButton>
-                    <PrimaryButton className="ms-3" onClick={handleDownloadPDF}>
-                        Convertir a PDF
-                    </PrimaryButton>
+                    <div className="flex flex-col md:flex-row gap-3  md:ml-4 ">
+                        <PrimaryButton disabled={processing}>
+                            Guardar
+                        </PrimaryButton>
+                        <PrimaryButton onClick={handleDownloadPDF}>
+                            Convertir a PDF
+                        </PrimaryButton>
+                    </div>
                 </div>
             </form>
         </Modal>
     );
 };
 
-export default ModalEdit;
+export default ModalCreateOrder;
