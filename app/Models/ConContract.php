@@ -4,9 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class ConContract extends Model {
+class ConContract extends Model implements Auditable {
     use HasFactory;
+    use \OwenIt\Auditing\Auditable;
+    
+    protected $auditStrict = true;
+
     protected $table = "con_contracts";
     protected $primaryKey = "contract_num";
     public $incrementing = false;

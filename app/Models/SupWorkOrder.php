@@ -78,18 +78,22 @@ class SupWorkOrder extends Model implements Auditable
         return $this->belongsTo(SupTypeReport::class, "type_report_id", "type_report_id");
     }
 
-    public function employee()
-    {
+    public function employee() {
         return $this->belongsTo(User::class, "employee_id", "id");
     }
 
-    public function contract()
-    {
-        return $this->belongsTo(ConContract::class, "contract_num", "contract_num");
+    public function contract() {
+        return $this->belongsTo(
+            ConContract::class,
+            "contract_num",
+            "contract_num"
+        );
     }
-    public function movements()
-    {
-        return $this->hasMany(InvMovement::class, "work_order_id", "work_order_id");
+    public function movements() {
+        return $this->hasMany(
+            InvMovement::class,
+            "work_order_id",
+            "work_order_id"
+        );
     }
-    
 }

@@ -68,7 +68,10 @@ Route::prefix("manage-customers")
             ->middleware("permission:manage cantons");
     });
 
-Route::prefix("manage-contracts")->group(function () {
+Route::prefix("manage-contracts")
+->middleware(["auth", "verified", "role:vendedor"])
+->group(function () {
+    
     Route::resource("contracts", ConContractController::class)->except([
         "create",
         "show",

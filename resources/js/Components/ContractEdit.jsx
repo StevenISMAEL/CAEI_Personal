@@ -1,12 +1,13 @@
-import Modal from "./Modal";
+import Modal from "./ModalContra";
 import FloatInputText from "./FloatInputText";
 import SearchDropdown from "./SearchInput";
 import SecondaryButton from "./SecondaryButton";
 import PrimaryButton from "./PrimaryButton";
 import ComboBox from "./ComboBox";
+import { jsPDF } from "jspdf";
+import "jspdf-autotable";
 
 const ModalEdit = ({
-    title,
     showEdit,
     closeEditModal,
     contractInputs,
@@ -14,7 +15,87 @@ const ModalEdit = ({
     technicalInfoInputs,
     processing,
     handleSubmitEdit,
+    numContract,
 }) => {
+    const handleDownloadPDF = () => {
+        const doc = new jsPDF();
+        /*const { logoDectell, auth } = usePage().props;
+        if (logoDectell) {
+            doc.addImage(logoDectell, "PNG", 73, 5, 60, 20, "Dectell Logo");
+        }
+*/
+
+        const generateTableRows = (inputs) => {
+            return inputs.map((input) => [input.label, input.value]);
+        };
+
+        const tableStyles = {
+            headStyles: {
+                fontSize: 12,
+
+                halign: "center", // Centrar texto
+            },
+            bodyStyles: {
+                fillColor: [255, 255, 255],
+                textColor: [75, 85, 99],
+                fontSize: 10,
+            },
+            alternateRowStyles: {
+                fillColor: [243, 244, 246],
+                textColor: [75, 85, 99],
+                fontSize: 10,
+            },
+        };
+
+        const allInputs = [
+            { section: "Contrato", inputs: contractInputs },
+            { section: "Información de Cliente", inputs: clientInfoInputs },
+            { section: "Información Técnica", inputs: technicalInfoInputs },
+        ];
+
+        const generateSectionRows = (section) => {
+            return [
+                [
+                    {
+                        content: section.section,
+                        colSpan: 2,
+                        styles: {
+                            fillColor: [237, 233, 254],
+                            textColor: [55, 65, 81],
+                            fontSize: 12,
+                            fontStyle: "bold",
+                            halign: "center",
+                        },
+                    },
+                ],
+                ...generateTableRows(section.inputs),
+            ];
+        };
+
+        const allRows = allInputs.reduce((rows, section) => {
+            return rows.concat(generateSectionRows(section));
+        }, []);
+
+        doc.autoTable({
+            startY: 20,
+            body: allRows,
+            ...tableStyles,
+        });
+
+        const signatureStartY = doc.lastAutoTable.finalY + 30;
+        doc.setTextColor(0, 0, 0); // Color negro para las firmas
+        doc.setFontSize(12);
+
+        // Firma del Vendedor
+        doc.line(20, signatureStartY - 5, 80, signatureStartY - 5); // Línea encima de la firma del vendedor
+        doc.text("Firma del Vendedor", 33, signatureStartY + 8);
+
+        // Firma del Cliente
+        doc.line(120, signatureStartY - 5, 180, signatureStartY - 5);
+        doc.text("Firma del Cliente", 133, signatureStartY + 8);
+
+        doc.save(`contract_${numContract}.pdf`);
+    };
     return (
         <Modal show={showEdit} onClose={closeEditModal}>
             <form onSubmit={handleSubmitEdit} className="p-3 pt-0">
@@ -130,6 +211,9 @@ const ModalEdit = ({
                     </SecondaryButton>
                     <PrimaryButton className="ms-3" disabled={processing}>
                         Actualizar
+                    </PrimaryButton>
+                    <PrimaryButton className="ms-3" onClick={handleDownloadPDF}>
+                        Convertir a PDF
                     </PrimaryButton>
                 </div>
             </form>

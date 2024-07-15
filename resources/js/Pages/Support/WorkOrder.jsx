@@ -888,6 +888,20 @@ const WorkOrder = ({
             ),
             defaultValue: data.value_due,
         },
+        {
+            type: "combobox",
+            label: "Precedentes",
+            options:comboboxpreced,
+            value: preceOptions,
+            onChange: handleChangepreceO,
+            inputError: (
+                <InputError
+                    message={errors.order_precedents}
+                    className="mt-2"
+                />
+            ),
+            defaultValue: data.order_precedents,
+        },
     ];
 
     const theaders = ["ID", "Empleado", "Tipo de Reporte", "Cliente", "Estado"];
