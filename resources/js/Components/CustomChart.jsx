@@ -12,7 +12,7 @@ import {
     LineElement,
     Title,
 } from "chart.js";
-import { DarkModeContext } from "@/Components/DarkModeContext"; 
+import { DarkModeContext } from "@/Components/DarkModeContext";
 
 ChartJS.register(
     ArcElement,
@@ -99,17 +99,22 @@ export const RoleActivityChart = ({ data }) => {
 
 export const EntityActivityChart = ({ data }) => {
     const { isDarkMode } = useContext(DarkModeContext);
-
+    const height = Math.max(data.labels.length * 40, 400);
     return (
         <div className="w-full h-full">
             <div className="bg-white dark:bg-gray-700 p-4 rounded-lg shadow-lg h-full">
-                <Bar
-                    data={data}
-                    options={{
-                        ...chartOptions("Actividad por Entidad", isDarkMode),
-                        indexAxis: "y",
-                    }}
-                />
+                <div className="relative" style={{ height: `${height}px` }}>
+                    <Bar
+                        data={data}
+                        options={{
+                            ...chartOptions(
+                                "Actividad por Entidad",
+                                isDarkMode,
+                            ),
+                            indexAxis: "y",
+                        }}
+                    />
+                </div>
             </div>
         </div>
     );
@@ -117,17 +122,19 @@ export const EntityActivityChart = ({ data }) => {
 
 export const TimelineChart = ({ data }) => {
     const { isDarkMode } = useContext(DarkModeContext);
-
+    const height = Math.max(data.labels.length * 40, 400);
     return (
         <div className="w-full h-full">
             <div className="bg-white dark:bg-gray-700 dark:text-white p-4 rounded-lg shadow-lg h-full">
-                <Line
-                    data={data}
-                    options={chartOptions(
-                        "Línea de Tiempo de Actividad",
-                        isDarkMode,
-                    )}
-                />
+                <div className="relative" style={{ height: `${height}px` }}>
+                    <Line
+                        data={data}
+                        options={chartOptions(
+                            "Línea de Tiempo de Actividad",
+                            isDarkMode,
+                        )}
+                    />
+                </div>
             </div>
         </div>
     );

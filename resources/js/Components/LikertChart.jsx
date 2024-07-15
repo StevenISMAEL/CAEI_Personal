@@ -8,7 +8,7 @@ import {
     Tooltip,
     Legend,
 } from "chart.js";
-import { DarkModeContext } from "./DarkModeContext"; // Ajusta la ruta según sea necesario
+import { DarkModeContext } from "@/Components/DarkModeContext"; // Ajusta la ruta según sea necesario
 
 Chart.register(
     BarController,
