@@ -37,8 +37,14 @@ class PlansController extends Controller
 
     public function destroyMultiple(Request $request)
     {
-        $ids = $request->input('ids');
-        Plans::whereIn('plan_id', $ids)->delete();
+        $ids = $request->input("ids");
+        $plans = Plans::whereIn("plan_id", $ids)->get();
+
+        foreach ($plans as $pla) {
+            $pla->delete();
+        }
         return to_route("plans.index");
+
+        
     }
 }

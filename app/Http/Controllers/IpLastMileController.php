@@ -36,9 +36,14 @@ class IpLastMileController extends Controller {
     }
 
     public function destroyMultiple(Request $request) {
-        $ids = $request->input("ids");
-        IpLastMile::whereIn("last_mile_nap_id", $ids)->delete();
-        return redirect()->route("lastmileNaps.index");
+
+          $ids = $request->input("ids");
+        $lastmi = IpLastMile::whereIn("last_mile_nap_id", $ids)->get();
+
+        foreach ($lastmi as $las) {
+            $las->delete();
+        }
+        return to_route("lastmileNaps.index");
     }
 
 }

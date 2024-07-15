@@ -45,6 +45,7 @@ const Olts = ({ auth, Olts}) => {
         }));
     };
     const openCreateModal = () => {
+        setSelectedOption("");
         reset();
         setShowCreate(true);
     };
@@ -207,8 +208,6 @@ const Olts = ({ auth, Olts}) => {
         " ID",
         "Nombre",
         " Direccion",
-        "Coordenada X",
-        "Coordenada Y",
         "Puertos",
     ];
     
@@ -216,8 +215,6 @@ const Olts = ({ auth, Olts}) => {
         "olt_id",
         "olt_name",
         "olt_address",
-        "olt_coordx",
-        "olt_coordy",
         "olt_ports",
     ];
 
@@ -248,6 +245,7 @@ const Olts = ({ auth, Olts}) => {
         <Authenticated
             user={auth.user}
             header={<Header subtitle="Aministrar Olts" />}
+            roles={auth.user.roles.map((role) => role.name)}
         >
             <Head title="Olts" />
             <Tab tabs={tabs}>

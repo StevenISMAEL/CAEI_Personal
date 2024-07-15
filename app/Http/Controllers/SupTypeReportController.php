@@ -35,8 +35,13 @@ class SupTypeReportController extends Controller
     }
 
     public function destroyMultiple(Request $request) {
+
         $ids = $request->input("ids");
-        SupTypeReport::whereIn("type_report_id", $ids)->delete();
+        $supty = SupTypeReport::whereIn("type_report_id", $ids)->get();
+
+        foreach ($supty as $repor) {
+            $repor->delete();
+        }
         return to_route("typereport.index");
     }
 }

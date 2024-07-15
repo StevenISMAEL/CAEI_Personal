@@ -36,8 +36,12 @@ class IpOltsController extends Controller
 
     public function destroyMultiple(Request $request)
     {
-        $ids = $request->input('ids');
-        IpOlts::whereIn('olt_id', $ids)->delete();
+        $ids = $request->input("ids");
+        $oltss = IpOlts::whereIn("olt_id", $ids)->get();
+
+        foreach ($oltss as $olt) {
+            $olt->delete();
+        }
         return to_route("olts.index");
     }
 

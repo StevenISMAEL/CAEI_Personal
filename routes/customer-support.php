@@ -5,6 +5,7 @@ use App\Http\Controllers\SupWorkOrderController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix("manage-orders")
+    ->middleware(["auth", "verified", "role:admin|vendedor|tecnico"])
     ->group(function () {
         Route::resource("typereport", SupTypeReportController::class)->except([
             "create",
@@ -22,11 +23,13 @@ Route::prefix("manage-orders")
             "show",
             "edit",
         ]);
-        
-        Route::delete("/workorder", [SupWorkOrderController::class, "destroyMultiple"])
-            ->name("workorder.multiple.destroy")
-            ->middleware(["auth", "verified", "role:tecnico"]);
-    })
-    ->middleware(["auth", "verified", "role:vendedor"]);
 
-
+        Route::delete("/workorder", [
+            SupWorkOrderController::class,
+            "destroyMultiple",
+        ])->name("workorder.multiple.destroy");
+        Route::post("/work-orders/update-status", [
+            SupWorkOrderController::class,
+            "updateStatus",
+        ])->name("work-orders.update-status");
+    });

@@ -1,4 +1,4 @@
-import Modal from "./Modal";
+import Modal from "./Modalorder";
 import FloatInputText from "./FloatInputText";
 import SearchDropdown from "./SearchInput";
 import SecondaryButton from "./SecondaryButton";
@@ -17,16 +17,15 @@ const ModalEdit = ({
     return (
         <Modal show={showEdit} onClose={closeEditModal}>
             <form onSubmit={handleSubmitEdit} className="p-3 pt-0">
-                {/* Sección de Contrato */}
-                <div className="mt-4 border-t border-l border-r rounded-t-lg p-4">
-                    <h4 className="text-md font-medium text-white bg-blue-600 text-center mb-2 py-2 rounded-lg">
-                        Información del Contrato
+                {/* Sección de Orden */}
+                <div className="mt-4 border-t border-l border-r rounded-t-lg p-4 ">
+                    <h4 className="text-md font-medium text-white bg-green-600 text-center mb-2 py-2 rounded-lg">
+                        Orden de trabajo
                     </h4>
-                    <div className="grid grid-cols-4 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
                         {contractInputs &&
                             contractInputs.map((input, index) => (
                                 <div key={index}>
-                                    <label className="block text-sm font-medium text-gray-700">{input.placeholder}</label>
                                     {input.type === "select" ? (
                                         <SearchDropdown
                                             {...input}
@@ -53,16 +52,15 @@ const ModalEdit = ({
                     </div>
                 </div>
 
-                {/* Sección de Soporte */}
-                <div className="mt-0 border-l border-r p-4 pt-1">
-                    <h4 className="text-md font-medium text-white bg-blue-600 text-center mb-2 py-2 rounded-lg">
-                        Soporte
+                {/* Sección de Información de soporte */}
+                <div className="mt-4 border-l border-r p-4 pt-1">
+                    <h4 className="text-md font-medium text-white bg-green-600 text-center mb-2 py-2 rounded-lg">
+                        Información de soporte
                     </h4>
-                    <div className="grid grid-cols-4 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
                         {supportInputs &&
                             supportInputs.map((input, index) => (
                                 <div key={index}>
-                                    <label className="block text-sm font-medium text-gray-700">{input.placeholder}</label>
                                     {input.type === "select" ? (
                                         <SearchDropdown
                                             {...input}
@@ -89,12 +87,18 @@ const ModalEdit = ({
                     </div>
                 </div>
 
-                <div className="mt-6 flex justify-end">
-                    <SecondaryButton onClick={closeEditModal}>
+                {/* Botones de Cancelar y Actualizar */}
+                <div className="mt-6 sm:flex sm:justify-end">
+                    <SecondaryButton
+                        className="w-full sm:w-auto mb-2 sm:mb-0 sm:mr-2"
+                        onClick={closeEditModal}
+                    >
                         Cancelar
                     </SecondaryButton>
-
-                    <PrimaryButton className="ms-3" disabled={processing}>
+                    <PrimaryButton
+                        className="w-full sm:w-auto"
+                        disabled={processing}
+                    >
                         Actualizar
                     </PrimaryButton>
                 </div>

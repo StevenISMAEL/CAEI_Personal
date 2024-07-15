@@ -52,21 +52,10 @@ Route::middleware([
     ])->name("profile.destroySecurityQuestion");
 });
 
-Route::prefix("manage-orders")
-    ->group(function () {
-        Route::resource("work-orders", InvProductController::class)->except([
-            "create",
-            "show",
-            "edit",
-        ]);
-        Route::delete("/work-orders", [
-            InvProductController::class,
-            "destroyMultiple",
-        ])->name("work-orders.multiple.destroy");
-    })
-    ->middleware(["auth", "verified"]);
+
 
 Route::prefix("manage-plans")
+    ->middleware(["auth", "verified", "role:admin"])
     ->group(function () {
         Route::resource("plans", PlansController::class)->except([
             "create",
@@ -77,8 +66,7 @@ Route::prefix("manage-plans")
             PlansController::class,
             "destroyMultiple",
         ])->name("plans.multiple.destroy");
-    })
-    ->middleware(["auth", "verified"]);
+    });
 
 Route::get("/check-session", function (Request $request) {
     if (Auth::check()) {

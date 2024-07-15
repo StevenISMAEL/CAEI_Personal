@@ -54,10 +54,9 @@ const distributionNap = ({ auth, Olts, DistributionNaps }) => {
 
     useEffect(() => {
         if (selectedOlt) {
-            setSelectedOption(""); 
+            setSelectedOption("");
             fetchAvailablePorts(selectedOlt);
         }
-       
     }, [selectedOlt]);
     useEffect(() => {
         if (editData) {
@@ -93,27 +92,33 @@ const distributionNap = ({ auth, Olts, DistributionNaps }) => {
         reset();
         setShowCreate(true);
         setSelectedOption("");
+        setSelectedSplitter("");
 
     };
 
     const closeModalCreate = () => {
         setShowCreate(false);
-        reset();
-        setSelectedOption(""); 
-        setData("olt_ports", "");
+        setSelectedOption("");
     };
 
     const closeEditModal = () => {
         setShowEdit(false);
         setEditData(null);
         reset();
+        setSelectedOption("");
     };
 
     const openEditModal = (distributionNap) => {
         setShowEdit(true);
-        setEditData(distributionNap);
+        setEditData(distributionNap); 
+        setSelectedSplitter(distributionNap.distribution_nap_splitter);
+        setSelectedOption(distributionNap.olt_ports);
+            const olt = Olts.find(
+                (olt) => olt.olt_id === distributionNap.olt_id,
+            );
+        
         setData({
-            olt_id: distributionNap.olt_id,
+            olt_id: olt.olt_id,
             distribution_nap_name: distributionNap.distribution_nap_name,
             distribution_nap_address: distributionNap.distribution_nap_address,
             distribution_nap_coordx: distributionNap.distribution_nap_coordx,
@@ -122,18 +127,14 @@ const distributionNap = ({ auth, Olts, DistributionNaps }) => {
             distribution_nap_splitter:
                 distributionNap.distribution_nap_splitter,
         });
-        setSelectedOption(distributionNap.olt_ports);
         if (distributionNap.olt_id) {
-            fetchAvailablePorts(distributionNap.olt_id)
+            fetchAvailablePorts(distributionNap.olt_id);
         }
-        
-        console.log(distributionNap.olt_ports);
-        setSelectedSplitter(distributionNap.distribution_nap_splitter);
     };
 
     const handleSubmitAdd = (e) => {
         e.preventDefault();
-    
+
         post(route("distributionNaps.store"), {
             preserveScroll: true,
             onSuccess: () => {
@@ -143,18 +144,17 @@ const distributionNap = ({ auth, Olts, DistributionNaps }) => {
                     fetchAvailablePorts(data.olt_id);
                 }
                 notify("success", "Nap agregada.");
-
+                setSelectedSplitter("");
+                setSelectedOption("");
             },
-            onError: (error) => console.log(error),
-            onFinish: () => reset(),
+            onError: (error) => console.error(Object.values(error).join(", ")),
         });
-        setSelectedSplitter("");
-        setSelectedOption(""); 
+
     };
 
     const handleSubmitEdit = (e) => {
         e.preventDefault();
-    
+
         patch(
             route("distributionNaps.update", {
                 id: editData.distribution_nap_id,
@@ -167,13 +167,10 @@ const distributionNap = ({ auth, Olts, DistributionNaps }) => {
                         fetchAvailablePorts(data.olt_id);
                     }
                     notify("success", "Nap Actualizada.");
-
                 },
-                onError: (error) => console.log(error),
-                onFinish: () => reset(),
+                onError: (error) => console.error(Object.values(error).join(", ")),
             },
         );
-        setSelectedOption(""); 
     };
 
     const handleDelete = (id) => {
@@ -189,8 +186,7 @@ const distributionNap = ({ auth, Olts, DistributionNaps }) => {
                     }
                     notify("success", "Naps Eliminadas.");
                 },
-                onError: (error) => console.error(error),
-                onFinish: () => reset(),
+                onError: (error) => console.error(Object.values(error).join(", ")),
             });
         } else {
             destroy(route("distributionNaps.destroy", { id }), {
@@ -201,13 +197,10 @@ const distributionNap = ({ auth, Olts, DistributionNaps }) => {
                         fetchAvailablePorts(data.olt_id);
                     }
                     notify("success", "Nap eliminada.");
-
                 },
-                onError: (error) => console.error(error),
-                onFinish: () => reset(),
+                onError: (error) => console.error(Object.values(error).join(", ")),
             });
         }
-        
     };
     const transformForCombobox = (arrays) => {
         return arrays.map((array) => ({
@@ -232,7 +225,6 @@ const distributionNap = ({ auth, Olts, DistributionNaps }) => {
             labelKey: "olt_name",
             valueKey: "olt_id",
             options: Olts,
-            value: data.olt_id,
             onSelect: (id) => {
                 setSelectedOlt(id);
                 setData("olt_id", id);
@@ -246,8 +238,10 @@ const distributionNap = ({ auth, Olts, DistributionNaps }) => {
             options: availablePorts,
             value: selectedOption,
             onChange: handleChange,
-            inputError: <InputError message={errors.olt_ports} className="mt-2" />,
-            defaultValue: data.olt_ports, 
+            inputError: (
+                <InputError message={errors.olt_ports} className="mt-2" />
+            ),
+            defaultValue: data.olt_ports,
         },
 
         {
@@ -345,9 +339,6 @@ const distributionNap = ({ auth, Olts, DistributionNaps }) => {
         "OLT",
         "Nombre ",
         "Dirección",
-        "Coord X",
-        "Coord Y",
-        "Splitter",
         "OLT Ports",
     ];
     const searchColumns = [
@@ -355,9 +346,6 @@ const distributionNap = ({ auth, Olts, DistributionNaps }) => {
         "olt_name",
         "distribution_nap_name",
         "distribution_nap_address",
-        "distribution_nap_coordx",
-        "distribution_nap_coordy",
-        "distribution_nap_splitter",
         "olt_ports",
     ];
 
@@ -390,6 +378,7 @@ const distributionNap = ({ auth, Olts, DistributionNaps }) => {
         <Authenticated
             user={auth.user}
             header={<Header subtitle="Administrar Naps de Distribución" />}
+            roles={auth.user.roles.map((role) => role.name)}
         >
             <Head title="distribucion de Naps" />
             <Tab tabs={tabs}>

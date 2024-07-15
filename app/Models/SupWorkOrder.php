@@ -4,10 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class SupWorkOrder extends Model
+class SupWorkOrder extends Model implements Auditable
 {
     use HasFactory;
+    use \OwenIt\Auditing\Auditable;
+    protected $auditStrict = true;
 
     protected $table = "sup_work_orders";
     protected $primaryKey = "work_order_id";
@@ -36,16 +39,7 @@ class SupWorkOrder extends Model
         "value_due",
     ];
      
-    protected static function booted() {
-        static::creating(function ($model) {
-            $orderwork = static::max("work_order_id");
-            $nextNumber = $orderwork
-                ? intval(substr($orderwork, 4)) + 1
-                : 1;
-            $model->work_order_id =
-                "ORT-" . str_pad($nextNumber, 2, "0", STR_PAD_LEFT);
-        });
-    }
+  
 
     public static function getWorkOrders()
 {
@@ -57,7 +51,7 @@ class SupWorkOrder extends Model
                 'employee_id' => $workOrder->employee_id,
                 'employee_name' => $workOrder->employee->name,
                 'type_report_id' => $workOrder->type_report_id,
-                'report_name' => $workOrder->typeReport->report_name,
+                'name_type_report' => $workOrder->typeReport->name_type_report,
                 'contract_num' => $workOrder->contract_num,
                 'contract_client' => $workOrder->contract->client->client_name,
                 'order_channel' => $workOrder->order_channel,

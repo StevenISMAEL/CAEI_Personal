@@ -4,10 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+//use OwenIt\Auditing\Contracts\Auditable;
 
 class SupTypeReport extends Model
 {
+    // use \OwenIt\Auditing\Auditable;
+    // protected $auditStrict = true;
+
     use HasFactory;
+
     protected $table = "sup_type_report";
 
     protected $primaryKey = " type_report_id";

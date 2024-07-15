@@ -81,6 +81,7 @@ const Ips = ({ auth, Ips, lastMileNaps }) => {
         <Authenticated
             user={auth.user}
             header={<Header subtitle="Administrar IPs" />}
+            roles={auth.user.roles.map((role) => role.name)}
         >
             <Head title="IPs" />
             <Tab tabs={tabs}>
