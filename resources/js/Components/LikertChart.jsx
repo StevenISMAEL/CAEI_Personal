@@ -124,7 +124,7 @@ const LikertChart = ({ data }) => {
 
     return (
         <div className="w-full h-full">
-            <div className="bg-white dark:bg-gray-700 p-4 rounded-lg shadow-lg">
+            <div className="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-lg">
                 <div className="relative h-64 md:h-96">
                     <canvas ref={chartRef} className="w-full h-full"></canvas>
                 </div>

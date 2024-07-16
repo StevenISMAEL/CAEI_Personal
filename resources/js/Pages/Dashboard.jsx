@@ -31,24 +31,22 @@ export default function Dashboard({ auth, audits }) {
                         <LikertChart data={likertData} />
                     </div>
                     <div className="w-full md:w-1/2 p-2">
-                        <RoleActivityChart data={roleActivityData} />
+                        <EntityActivityChart data={entityActivityData} />
                     </div>
                 </div>
             </Box>,
-            <Box key="auditor-box-2" className="pt-6">
+        ],
+        admin: [
+            <Box key="auditor-box-1" className="pt-6">
                 <div className="flex flex-wrap">
                     <div className="w-full md:w-1/2 p-2">
-                        <EntityActivityChart data={entityActivityData} />
+                        <RoleActivityChart data={roleActivityData} />
                     </div>
                     <div className="w-full md:w-1/2 p-2">
                         <TimelineChart data={timelineData} />
                     </div>
                 </div>
             </Box>,
-        ],
-        admin: [
-            // Componentes específicos para el rol admin
-            // Ejemplo: <AdminChart key="admin" data={someAdminData} />
         ],
         vendedor: [
             // Componentes específicos para el rol vendedor
