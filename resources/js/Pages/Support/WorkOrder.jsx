@@ -528,6 +528,7 @@ const WorkOrder = ({
             inputError: (
                 <InputError message={errors.work_order_id} className="mt-1" />
             ),
+            defaultValue: data.work_order_id,
         },
         {
             placeholder: "Empleado",
@@ -888,20 +889,7 @@ const WorkOrder = ({
             ),
             defaultValue: data.value_due,
         },
-        {
-            type: "combobox",
-            label: "Precedentes",
-            options:comboboxpreced,
-            value: preceOptions,
-            onChange: handleChangepreceO,
-            inputError: (
-                <InputError
-                    message={errors.order_precedents}
-                    className="mt-2"
-                />
-            ),
-            defaultValue: data.order_precedents,
-        },
+
     ];
 
     const theaders = ["ID", "Empleado", "Tipo de Reporte", "Cliente", "Estado"];
