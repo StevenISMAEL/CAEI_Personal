@@ -13,8 +13,9 @@ import tabs from "./tabs";
 import DeleteModal from "@/Components/DeleteModal";
 import TableCustom from "@/Components/TableCustom";
 import CardsCustom from "@/Components/CardCustom";
+import { useNotify } from "@/Components/Toast";
 
-const Movement = ({ auth, Products, Movements }) => {
+const Movement = ({ auth, Products, Movements, Orders }) => {
     const {
         data,
         setData,
@@ -26,6 +27,7 @@ const Movement = ({ auth, Products, Movements }) => {
         patch,
     } = useForm({
         product_id: "",
+        work_order_id: "",
         movement_date: "",
         movement_quantity: "",
         movement_total: "",
@@ -42,7 +44,7 @@ const Movement = ({ auth, Products, Movements }) => {
     const [productQuantity, setProductQuantity] = useState(0);
     const [showQuantityError, setShowQuantityError] = useState(false);
     const [selectedOption, setSelectedOption] = useState("");
-
+    const notify = useNotify();
     useEffect(() => {
         // Reset product quantity and error state whenever product changes
         setProductQuantity(0);
@@ -74,12 +76,21 @@ const Movement = ({ auth, Products, Movements }) => {
     const openEditModal = (movement) => {
         setShowEdit(true);
         setEditData(movement);
+        const order = Orders.find(
+            (order) => order.work_order_id === movement.work_order_id,
+        );
+        const work_order_namei = order
+            ? `${order.work_order_id} - ${order.report_name}`
+            : "";
+        console.log(work_order_namei);
         setData({
             product_id: movement.product_id,
             movement_date: movement.movement_date,
             movement_quantity: movement.movement_quantity,
             movement_total: movement.movement_total,
             movement_type: movement.movement_type,
+            work_order_id: movement.work_order_id,
+            work_order_name: work_order_namei,
         });
         setSelectedOption(movement.movement_type);
     };
@@ -120,9 +131,11 @@ const Movement = ({ auth, Products, Movements }) => {
 
         post(route("movements.store"), {
             preserveScroll: true,
-            onSuccess: () => closeModalCreate(),
-            onError: (error) => console.log(error),
-            onFinish: () => reset(),
+            onSuccess: () => {
+                closeModalCreate();
+                notify("success", "Movimiento agregado.");
+            },
+            onError: (error) => console.error(Object.values(error).join(", ")),
         });
     };
 
@@ -131,9 +144,11 @@ const Movement = ({ auth, Products, Movements }) => {
 
         patch(route("movements.update", { id: editData.movement_id }), {
             preserveScroll: true,
-            onSuccess: () => closeEditModal(),
-            onError: (error) => console.log(error),
-            onFinish: () => reset(),
+            onSuccess: () => {
+                closeEditModal();
+                notify("success", "Movimiento actualizado.");
+            },
+            onError: (error) => console.error(Object.values(error).join(", ")),
         });
     };
 
@@ -143,18 +158,22 @@ const Movement = ({ auth, Products, Movements }) => {
             destroy(route("movements.multiple.destroy"), {
                 preserveScroll: true,
                 onSuccess: () => {
-                    setSelectedMovements([]);
+                    setSelectedCantons([]);
                     closeDeleteModal();
+                    notify("success", "Movimientos eliminados.");
                 },
-                onError: (error) => console.error(error),
-                onFinish: () => reset(),
+                onError: (error) =>
+                    console.error(Object.values(error).join(", ")),
             });
         } else {
             destroy(route("movements.destroy", { id }), {
                 preserveScroll: true,
-                onSuccess: () => closeDeleteModal(),
-                onError: (error) => console.error(error),
-                onFinish: () => reset(),
+                onSuccess: () => {
+                    closeDeleteModal();
+                    notify("success", "Movimiento eliminado.");
+                },
+                onError: (error) =>
+                    console.error(Object.values(error).join(", ")),
             });
         }
     };
@@ -169,6 +188,13 @@ const Movement = ({ auth, Products, Movements }) => {
             movement_total: "",
         }));
     };
+    const generateOrderOptions = () => {
+        return Orders.map((order) => ({
+            work_order_id: order.work_order_id,
+            work_order_name: `${order.work_order_id} - ${order.report_name}`,
+        }));
+    };
+    const order = generateOrderOptions();
 
     const inputs = [
         {
@@ -183,6 +209,19 @@ const Movement = ({ auth, Products, Movements }) => {
             ),
             defaultValue: data.product_id,
         },
+        {
+            placeholder: "Orden de trabajo (opcional)",
+            type: "select",
+            labelKey: "work_order_name",
+            valueKey: "work_order_id",
+            options: order,
+            onSelect: (id) => setData("work_order_id", id),
+            inputError: (
+                <InputError message={errors.work_order_id} className="mt-2" />
+            ),
+            defaultValue: data.work_order_name,
+        },
+
         {
             label: "Fecha del movimiento",
             id: "movement_date",
@@ -249,6 +288,7 @@ const Movement = ({ auth, Products, Movements }) => {
         "Cantidad",
         "Total",
         "Tipo de movimiento",
+        "Orden",
     ];
     const searchColumns = [
         "movement_id",
@@ -257,6 +297,7 @@ const Movement = ({ auth, Products, Movements }) => {
         "movement_quantity",
         "movement_total",
         "movement_type",
+        "work_order_id",
     ];
 
     const handleCheckboxChange = (id) => {
@@ -287,7 +328,8 @@ const Movement = ({ auth, Products, Movements }) => {
     return (
         <Authenticated
             user={auth.user}
-            header={<Header subtitle="Manage Movements" />}
+            header={<Header subtitle="Administrar Movimientos" />}
+            roles={auth.user.roles.map((role) => role.name)}
         >
             <Head title="Movimientos de Inventario" />
             <Tab tabs={tabs}>
@@ -304,13 +346,14 @@ const Movement = ({ auth, Products, Movements }) => {
                             data={Movements}
                             searchColumns={searchColumns}
                             headers={theaders}
+                            fileName="Movimientos"
                         />
                     </div>
                 </Box>
                 <ModalCreate
                     showCreate={showCreate}
                     closeModalCreate={closeModalCreate}
-                    title={"Add Movement"}
+                    title={"Añadir Movimiento"}
                     inputs={inputs}
                     processing={processing}
                     handleSubmitAdd={handleSubmitAdd}
@@ -318,12 +361,12 @@ const Movement = ({ auth, Products, Movements }) => {
                 <DeleteModal
                     showDelete={showDelete}
                     closeDeleteModal={closeDeleteModal}
-                    title={"Delete Movement"}
+                    title={"Eliminar Movimiento"}
                     handleDelete={() => handleDelete(dataToDelete)}
                     processing={processing}
                 />
                 <ModalEdit
-                    title="Edit Movement"
+                    title="Editar Movimiento"
                     showEdit={showEdit}
                     closeEditModal={closeEditModal}
                     inputs={inputs}

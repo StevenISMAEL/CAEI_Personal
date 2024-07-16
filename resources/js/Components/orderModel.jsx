@@ -8,7 +8,7 @@ import Modal from "./Modalorder";
 //import { jsPDF } from "jspdf";
 //import "jspdf-autotable";
 
-const ModalCreate = ({
+const ModalCreateOrder = ({
     showCreate,
     closeModalCreate,
     contractInputs,
@@ -180,4 +180,4 @@ const ModalCreate = ({
     );
 };
 
-export default ModalCreate;
+export default ModalCreateOrder;

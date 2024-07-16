@@ -14,7 +14,10 @@ use App\Models\IpDistribution;
 use App\Models\ConDiscount;
 use App\Models\ConStatus;
 use App\Models\ConPhone;
-
+use App\Models\User;
+use App\Models\SupWorkOrder;
+use App\Models\SupTypeReport;
+use App\Models\SupTypeOrder;
 use Inertia\Inertia;
 
 class ConContractController extends Controller {
@@ -30,6 +33,12 @@ class ConContractController extends Controller {
             "Discounts" => ConDiscount::all(),
             "Phones" => ConPhone::all(),
             "Contracts" => ConContract::getContracts(),
+            "Employees" => User::all(),
+            "WorkOrders" => SupWorkOrder::getOrderID(),
+            "TypeReports" => SupTypeReport::all(),
+            "TypeOrders" => SupTypeOrder::all(),
+            
+
         ]);
     }
     public function store(ContractRequest $contractRequest) {
@@ -90,9 +99,18 @@ class ConContractController extends Controller {
         return to_route("contracts.index");
     }
 
+   
     public function destroyMultiple(Request $request) {
         $ids = $request->input("ids");
-        ConContract::whereIn("contract_num", $ids)->delete();
+        // Encuentra los movimientos con los IDs dados
+        $movements = ConContract::whereIn("contract_num", $ids)->get();
+    
+        // Cambia el estado de cada movimiento
+        foreach ($movements as $movement) {
+            $movement->status_id = "STS-0002"; // Cambia "STS-0002" por el estado que necesites
+            $movement->save();
+        }
+    
         return to_route("contracts.index");
     }
 }

@@ -5,7 +5,7 @@ import Authenticated from "@/Layouts/AuthenticatedLayout";
 import Tab from "@/Layouts/TabLayout";
 import { AddButton, DeleteButton } from "@/Components/CustomButtons";
 import InputError from "@/Components/InputError";
-import ModalCreate from "@/Components/orderModel";
+import ModalCreateOrder from "@/Components/orderModel";
 import ModalEdit from "@/Components/EditWork";
 import Box from "@/Layouts/Box";
 import ExportData from "@/Components/ExportData";
@@ -186,7 +186,7 @@ const WorkOrder = ({
 
                 const newData = {
                     work_order_id: workOrder.work_order_id,
-                   employee_id: workOrder.employee_id,
+                    employee_id: workOrder.employee_id,
                     employee_name: workOrder.employee_name,
                     type_report_id: workOrder.type_report_id,
                     name_type_report: typeReport
@@ -420,31 +420,29 @@ const WorkOrder = ({
     const transformrCombobox = (arrays) => {
         return arrays.map((array) => ({
             value: array,
-            label: array === 1 ? 'Si' : 'No',
+            label: array === 1 ? "Si" : "No",
         }));
     };
-    
-    
+
     const comboboxstatus = transformForCombobox(["Pendiente", "Realizado"]);
     const comboboxpreced = transformrCombobox([0, 1]);
-// Función para generar opciones de empleados
-const generateEmployeeOptions = () => {
-    return Employees.map((employee) => ({
-        id: employee.id,
-        name: employee.name,
-    }));
-};
-const employ= generateEmployeeOptions();
-// Función para generar opciones de contratos
+    // Función para generar opciones de empleados
+    const generateEmployeeOptions = () => {
+        return Employees.map((employee) => ({
+            id: employee.id,
+            name: employee.name,
+        }));
+    };
+    const employ = generateEmployeeOptions();
+    // Función para generar opciones de contratos
 
-const generateContractOptions = () => {
-    return Contracts.map((contract) => ({
-        contract_num: contract.contract_num,
-        contract_id: `${contract.contract_id} - ${Clients.find((client) => client.client_id === contract.client_id)?.client_name}`,
-    }));
-};
-const contr= generateContractOptions();
-
+    const generateContractOptions = () => {
+        return Contracts.map((contract) => ({
+            contract_num: contract.contract_num,
+            contract_id: `${contract.contract_id} - ${Clients.find((client) => client.client_id === contract.client_id)?.client_name}`,
+        }));
+    };
+    const contr = generateContractOptions();
 
     const contractInputs = [
         {
@@ -620,7 +618,7 @@ const contr= generateContractOptions();
             defaultValue: data.issue_date
                 ? new Date(data.issue_date).toISOString().slice(0, 16)
                 : "",
-        }, 
+        },
         {
             type: "combobox",
             label: "Estado",
@@ -774,7 +772,7 @@ const contr= generateContractOptions();
         {
             type: "combobox",
             label: "Precedentes",
-            options:comboboxpreced,
+            options: comboboxpreced,
             value: preceOptions,
             onChange: handleChangepreceO,
             inputError: (
@@ -847,7 +845,7 @@ const contr= generateContractOptions();
                         />
                     </div>
                 </Box>
-                <ModalCreate
+                <ModalCreateOrder
                     showCreate={showCreate}
                     closeModalCreate={closeModalCreate}
                     title="Crear Órden de Trabajo"
