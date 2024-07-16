@@ -805,6 +805,7 @@ const Contract = ({
             inputError: (
                 <InputError message={errors.work_order_id} className="mt-1" />
             ),
+            defaultValue: data.work_order_id,
         },
         {
             placeholder: "Empleado",
