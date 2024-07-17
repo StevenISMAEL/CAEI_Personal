@@ -15,7 +15,7 @@ import TableCustom from "@/Components/TableCustom";
 import CardsCustom from "@/Components/CardCustom";
 
 const Olts = ({ auth, Olts}) => {
-    const { data, setData, post, processing, errors, reset,patch, delete:destroy } = useForm({
+    const { data, setData, post, processing, errors,clearErrors, reset,patch, delete:destroy } = useForm({
         olt_id: "",
         olt_name: "",
         olt_address: "",
@@ -85,12 +85,11 @@ const Olts = ({ auth, Olts}) => {
     };
     const handleSubmitAdd = (e) => {
         e.preventDefault();
-
+        clearErrors('olt_ports');  // Limpia los errores específicos de olt_ports
         post(route("olts.store"), {
             preserveScroll: true,
             onSuccess: () => closeModalCreate(),
-            onError: (error) => console.log(error),
-            onFinish: () => reset(),
+            onError: (error) => console.error(Object.values(error).join(", ")),
         });
     };
 
@@ -100,8 +99,7 @@ const Olts = ({ auth, Olts}) => {
         patch(route("olts.update", { id: editData.olt_id }), {
             preserveScroll: true,
             onSuccess: () => closeEditModal(),
-            onError: (error) => console.log(error),
-            onFinish: () => reset(),
+            onError: (error) => console.error(Object.values(error).join(", ")),
         });
     };
 
@@ -114,15 +112,13 @@ const Olts = ({ auth, Olts}) => {
                     setSelectedOlts([]);
                     closeDeleteModal();
                 },
-                onError: (error) => console.error(error),
-                onFinish: () => reset(),
+                onError: (error) => console.error(Object.values(error).join(", ")),
             });
         } else {
             destroy(route("olts.destroy", { id }), {
                 preserveScroll: true,
                 onSuccess: () => closeDeleteModal(),
-                onError: (error) => console.error(error),
-                onFinish: () => reset(),
+                onError: (error) => console.error(Object.values(error).join(", ")),
             });
         }
     };
@@ -197,8 +193,7 @@ const Olts = ({ auth, Olts}) => {
             value: selectedOption,
             onChange: handleChange,
             inputError: (
-                <InputError message={errors.olt_ports} className="mt-2" />
-            ),
+                <InputError message={errors.olt_ports} className="mt-2" />),
             defaultValue: data.olt_ports,
         },
     ];

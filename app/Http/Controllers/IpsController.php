@@ -13,7 +13,7 @@ class IpsController extends Controller
     {
         return Inertia::render("Ips/Ip", [
             "Ips" => Ips::getIps(),
-            "lastMileNaps"=> IpLastMile:: all(),
+            "lastMileNaps"=> IpLastMile::all(),
         ]);
     }
 

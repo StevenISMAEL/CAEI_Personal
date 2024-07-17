@@ -28,6 +28,8 @@ const TypeReport = ({ auth, Orders, Reports }) => {
         clearErrors,
     } = useForm({
         type_order_id: "",
+        type_report_id: "",
+        name_type_order: "",
         name_type_report: "",
         description_type_report: "",
         ids: [],
@@ -70,6 +72,7 @@ const TypeReport = ({ auth, Orders, Reports }) => {
         setEditData(typeReport);
         setData({
             type_order_id: typeReport.type_order_id,
+            name_type_order:typeReport.name_type_order,
             name_type_report: typeReport.name_type_report,
             description_type_report: typeReport.description_type_report,
         });
@@ -139,7 +142,7 @@ const TypeReport = ({ auth, Orders, Reports }) => {
             inputError: (
                 <InputError message={errors.type_order_id} className="mt-2" />
             ),
-            defaultValue: data.type_order_id,
+            defaultValue: data.name_type_order,
         },
         {
             label: "Nombre",
@@ -154,7 +157,7 @@ const TypeReport = ({ auth, Orders, Reports }) => {
                     className="mt-2"
                 />
             ),
-            defaultValue: data.name_type_report,
+            defaultValue: data.type_report_id,
         },
         {
             label: "Descripción",

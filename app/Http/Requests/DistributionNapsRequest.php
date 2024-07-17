@@ -37,7 +37,6 @@ class DistributionNapsRequest extends FormRequest {
                     "distribution_nap_coordx" => "sometimes|required|string|max:25",
                     "distribution_nap_coordy" => "sometimes|required|string|max:25",
                     "distribution_nap_splitter" => "sometimes|required|integer|between:0,24",
-                    "olt_ports" => "sometimes|required|integer|min:0", 
                 ];
             case "DELETE":
                 return [

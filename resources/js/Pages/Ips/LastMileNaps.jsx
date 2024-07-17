@@ -23,11 +23,14 @@ const lastmileNaps = ({ auth, Olts, DistributionNaps, LastMileNaps }) => {
         processing,
         errors,
         reset,
+        clearErrors,
         delete: destroy,
         patch,
     } = useForm({
         olt_id: "",
+        olt_name: "",
         distribution_nap_id: "",
+        distribution_nap_name: "",
         last_mile_nap_name: "",
         last_mile_nap_address: "",
         last_mile_nap_coordx: "",
@@ -63,6 +66,7 @@ const lastmileNaps = ({ auth, Olts, DistributionNaps, LastMileNaps }) => {
         setShowCreate(true);
     };
     const closeModalCreate = () => {
+        clearErrors();
         setShowCreate(false);
         reset();
     };
@@ -76,6 +80,7 @@ const lastmileNaps = ({ auth, Olts, DistributionNaps, LastMileNaps }) => {
     };
 
     const closeEditModal = () => {
+        clearErrors();
         setShowEdit(false);
         setEditData(null);
         reset();
@@ -106,7 +111,9 @@ const lastmileNaps = ({ auth, Olts, DistributionNaps, LastMileNaps }) => {
         
         setData({
             olt_id:olts,
+            olt_name: olt.olt_name,
             distribution_nap_id: lastMileNap.distribution_nap_id,
+            distribution_nap_name: lastMileNap.distribution_nap_name,
             last_mile_nap_name: lastMileNap.last_mile_nap_name,
             last_mile_nap_address: lastMileNap.last_mile_nap_address,
             last_mile_nap_coordx: lastMileNap.last_mile_nap_coordx,
@@ -232,7 +239,7 @@ const lastmileNaps = ({ auth, Olts, DistributionNaps, LastMileNaps }) => {
             value: selectedOlt,
             onSelect: handleOltChange,
             inputError: <InputError message={errors.olt_id} className="mt-2" />,
-            defaultValue: data.olt_id,
+            defaultValue: data.olt_name,
 
         },
         {
@@ -249,7 +256,7 @@ const lastmileNaps = ({ auth, Olts, DistributionNaps, LastMileNaps }) => {
                     className="mt-2"
                 />
             ),
-            defaultValue: data.distribution_nap_id,
+            defaultValue: data.distribution_nap_name,
         },
         {
             label: "Nombre ",
