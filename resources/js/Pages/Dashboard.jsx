@@ -9,6 +9,7 @@ import {
     TimelineChart,
     RoleActivityChart,
     EntityActivityChart,
+    SalesFunnelChart,
 } from "@/Components/CustomChart";
 import {
     transformAuditData,
@@ -17,7 +18,7 @@ import {
     transformEntityActivityData,
 } from "@/Utils/transformAuditData";
 
-export default function Dashboard({ auth, audits }) {
+export default function Dashboard({ auth, audits, salesFunnelData }) {
     const likertData = transformAuditData(audits);
     const roleActivityData = transformRoleActivityData(audits);
     const entityActivityData = transformEntityActivityData(audits);
@@ -25,7 +26,7 @@ export default function Dashboard({ auth, audits }) {
 
     const DashboardComponents = {
         auditor: [
-            <Box key="auditor-box-1" className="pt-6">
+            <Box key="box-1" className="pt-6">
                 <div className="flex flex-wrap">
                     <div className="w-full md:w-1/2 p-2">
                         <LikertChart data={likertData} />
@@ -37,7 +38,7 @@ export default function Dashboard({ auth, audits }) {
             </Box>,
         ],
         admin: [
-            <Box key="auditor-box-1" className="pt-6">
+            <Box key="box-2" className="pt-6">
                 <div className="flex flex-wrap">
                     <div className="w-full md:w-1/2 p-2">
                         <RoleActivityChart data={roleActivityData} />
@@ -49,8 +50,13 @@ export default function Dashboard({ auth, audits }) {
             </Box>,
         ],
         vendedor: [
-            // Componentes específicos para el rol vendedor
-            // Ejemplo: <VendedorChart key="vendedor" data={someVendedorData} />
+            <Box key="box-2" className="pt-6">
+                <div className="flex flex-wrap">
+                    <div className="w-full md:w-1/2 p-2">
+                        <SalesFunnelChart data={salesFunnelData} />
+                    </div>
+                </div>
+            </Box>,
         ],
         tecnico: [
             // Componentes específicos para el rol técnico

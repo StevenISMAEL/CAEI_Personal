@@ -139,3 +139,27 @@ export const TimelineChart = ({ data }) => {
         </div>
     );
 };
+
+export function SalesFunnelChart({ data }) {
+    const chartData = {
+        labels: data.labels,
+        datasets: [
+            {
+                label: "Contratos",
+                data: data.values,
+                backgroundColor: "rgba(75, 192, 192, 0.6)",
+            },
+        ],
+    };
+
+    const options = {
+        indexAxis: "y",
+        scales: {
+            x: {
+                beginAtZero: true,
+            },
+        },
+    };
+
+    return <Bar data={chartData} options={options} />;
+}

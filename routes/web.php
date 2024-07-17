@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -9,6 +10,7 @@ use App\Http\Controllers\InvProductController;
 use App\Http\Controllers\PlansController;
 use Laravel\Fortify\Http\Controllers\TwoFactorAuthenticatedSessionController;
 use App\Models\Audit;
+use App\Services\DashboardService;
 use Laravel\Fortify\Http\Controllers\TwoFactorAuthenticationController;
 use Laravel\Fortify\Http\Controllers\ConfirmedTwoFactorAuthenticationController;
 use Laravel\Fortify\Http\Controllers\ConfirmedPasswordStatusController;
@@ -23,10 +25,7 @@ Route::get("/", function () {
         : redirect()->route("login");
 });
 
-Route::get("/dashboard", function () {
-    $audits = Audit::getAll();
-    return Inertia::render("Dashboard", ["audits" => $audits]);
-})
+Route::get("/dashboard", [DashboardController::class, "index"])
     ->middleware(["auth", "verified", "role:admin|vendedor|tecnico|auditor"])
     ->name("dashboard");
 
