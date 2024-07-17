@@ -10,7 +10,7 @@ class SupTypeReport extends Model {
 
     protected $table = "sup_type_report";
 
-    protected $primaryKey = " type_report_id";
+    protected $primaryKey = "type_report_id";
     public $incrementing = false;
     protected $keyType = "string";
     protected $fillable = [
@@ -27,7 +27,7 @@ class SupTypeReport extends Model {
                 return [
                     "type_report_id" => $typeOrder->type_report_id,
                     "type_order_id" => $typeOrder->type_order_id,
-                    "name_type_order" => $typeOrder->name_type_order,
+                    "name_type_order" => $typeOrder->typeOrder->name_type_order,
                     "name_type_report" => $typeOrder->name_type_report,
                     "description_type_report" =>
                         $typeOrder->description_type_report,

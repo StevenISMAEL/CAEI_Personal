@@ -40,7 +40,7 @@ const ModalCreateOrder = ({
         };
 
         const allInputs = [
-            { section: "Contrato", inputs: contractInputs },
+            { section: "Información del Contrato", inputs: contractInputs },
             { section: "Información de soporte", inputs: supportInputs },
         ];
 

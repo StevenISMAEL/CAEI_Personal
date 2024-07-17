@@ -163,7 +163,6 @@ const Contract = ({
                 nap.last_mile_nap_splitter >= ipsAssignedToLastMileNap.length
             );
         });
-        console.log(filteredLastMileNaps);
         setFilteredLastMileNaps(filteredLastMileNaps);
 
         // Filtrar las direcciones IP basadas en la NAP de Distribución seleccionada y estado de IP
@@ -241,7 +240,6 @@ const Contract = ({
     };
 
     const openEditModal = (contract) => {
-        console.log(contract);
         const ip = Ips.find((ip) => ip.ip_address === contract.ip_address);
 
         // Encontrar la NAP de Última Milla asociada a la IP
@@ -416,7 +414,6 @@ const Contract = ({
     const handleChange = (value) => {
         setSelectedOption(value); // Actualiza el estado cuando cambia la selección
         setData("maximum_date", value); // Asegura que movement_type también se actualice
-        console.log(data.distribution_nap_id);
     };
     const contractInputs = [
         {
@@ -800,7 +797,7 @@ const Contract = ({
             id: "work_order_id",
             type: "text",
             name: "work_order_id",
-            value: data.work_order_id,
+            value: data.work_order_id|| '',
             disabled: true,
             inputError: (
                 <InputError message={errors.work_order_id} className="mt-1" />
@@ -813,7 +810,7 @@ const Contract = ({
             type: "select",
             labelKey: "name",
             valueKey: "id",
-            value: data.employee_id,
+            value: data.employee_id || '',
             options: employeesOptions,
             onSelect: handleEmployeeChange,
             inputError: (
@@ -826,7 +823,7 @@ const Contract = ({
             type: "text",
             id: "contract_num",
             name: "contract_num",
-            value: data.contract_num,
+            value: data.contract_num || '',
             disabled: true,
             inputError: (
                 <InputError message={errors.contract_num} className="mt-2" />
@@ -838,7 +835,7 @@ const Contract = ({
             id: "address",
             type: "text",
             name: "address",
-            value: data.address,
+            value: data.address || '',
             disabled: true,
             inputError: (
                 <InputError message={errors.address} className="mt-2" />
@@ -850,7 +847,7 @@ const Contract = ({
             id: "sector_name",
             type: "text",
             name: "sector_name",
-            value: data.sector_name,
+            value: data.sector_name || '',
             disabled: true,
             inputError: (
                 <InputError message={errors.sector_name} className="mt-2" />
@@ -862,7 +859,7 @@ const Contract = ({
             id: "plan_id",
             type: "text",
             name: "plan_name",
-            value: data.plan_name,
+            value: data.plan_name || '',
             disabled: true,
             inputError: (
                 <InputError message={errors.plan_id} className="mt-2" />
@@ -874,7 +871,8 @@ const Contract = ({
             id: "phone_numbers",
             type: "text",
             name: "phone_numbers",
-            value: data.phone_numbers,
+            value: data.phone_numbers || '',
+            disabled: true,
             inputError: (
                 <InputError message={errors.phone_numbers} className="mt-1" />
             ),
@@ -885,7 +883,8 @@ const Contract = ({
             id: "ip_address",
             type: "text",
             name: "ip_address",
-            value: data.ip_address,
+            value: data.ip_address|| '',
+            disabled: true,
             inputError: (
                 <InputError message={errors.ip_address} className="mt-2" />
             ),
@@ -897,7 +896,8 @@ const Contract = ({
             id: "last_mile_nap_id",
             type: "text",
             name: "last_mile_nap_name",
-            value: data.last_mile_nap_name,
+            value: data.last_mile_nap_name || '',
+            disabled: true,
             inputError: (
                 <InputError
                     message={errors.last_mile_nap_name}
@@ -911,7 +911,8 @@ const Contract = ({
             id: "distribution_nap_name",
             type: "text",
             name: "distribution_nap_name",
-            value: data.distribution_nap_name,
+            value: data.distribution_nap_name || '',
+            disabled: true,
             inputError: (
                 <InputError
                     message={errors.distribution_nap_name}
@@ -925,7 +926,8 @@ const Contract = ({
             id: "olt_name",
             type: "text",
             name: "olt_name",
-            value: data.olt_name,
+            value: data.olt_name || '',
+            disabled: true,
             inputError: (
                 <InputError message={errors.olt_name} className="mt-2" />
             ),
@@ -939,7 +941,7 @@ const Contract = ({
             type: "select",
             labelKey: "name_type_order",
             valueKey: "type_order_id",
-            value: data.type_order_id,
+            value: data.type_order_id || '',
             options: TypeOrders,
             onSelect: handleTypeOrderChange,
             inputError: (
@@ -953,7 +955,7 @@ const Contract = ({
             type: "select",
             labelKey: "name_type_report",
             valueKey: "type_report_id",
-            value: data.type_report_id,
+            value: data.type_report_id || '',
             options: reportsOptions,
             onSelect: handleTypeReportChange,
             inputError: (
@@ -967,7 +969,7 @@ const Contract = ({
             id: "order_channel",
             type: "text",
             name: "order_channel",
-            value: data.order_channel,
+            value: data.order_channel || '',
             onChange: (e) => setData("order_channel", e.target.value),
             inputError: (
                 <InputError message={errors.order_channel} className="mt-2" />
@@ -995,7 +997,7 @@ const Contract = ({
             label: "Estado",
             id: "order_status",
             options: comboboxstatus,
-            value: selectedStatus,
+            value: selectedStatus || '',
             onChange: handleChangeStatus,
             inputError: (
                 <InputError message={errors.order_status} className="mt-2" />
@@ -1007,7 +1009,7 @@ const Contract = ({
             id: "order_abclaim",
             type: "text",
             name: "order_abclaim",
-            value: data.order_abclaim,
+            value: data.order_abclaim || '',
             onChange: (e) => setData("order_abclaim", e.target.value),
             inputError: (
                 <InputError message={errors.order_abclaim} className="mt-2" />
@@ -1018,7 +1020,7 @@ const Contract = ({
             type: "combobox",
             label: "Precedentes",
             options: comboboxpreced,
-            value: preceOptions, // Usa data en lugar de preceOptions
+            value: preceOptions || '', // Usa data en lugar de preceOptions
             onChange: handleChangepreceO,
             inputError: (
                 <InputError
@@ -1050,7 +1052,7 @@ const Contract = ({
             id: "order_initial_abis",
             type: "text",
             name: "order_initial_abis",
-            value: data.order_initial_abis,
+            value: data.order_initial_abis || '',
             onChange: (e) => setData("order_initial_abis", e.target.value),
             inputError: (
                 <InputError
@@ -1065,7 +1067,7 @@ const Contract = ({
             id: "order_initial_abis",
             type: "text",
             name: "order_initial_potency",
-            value: data.order_initial_potency,
+            value: data.order_initial_potency || '',
             onChange: (e) => setData("order_initial_potency", e.target.value),
             inputError: (
                 <InputError
@@ -1080,7 +1082,7 @@ const Contract = ({
             id: "order_final_abis",
             type: "text",
             name: "order_final_abis",
-            value: data.order_final_abis,
+            value: data.order_final_abis || '',
             onChange: (e) => setData("order_final_abis", e.target.value),
             inputError: (
                 <InputError
@@ -1095,7 +1097,7 @@ const Contract = ({
             id: "order_initial_diagnosis",
             type: "text",
             name: "order_initial_diagnosis",
-            value: data.order_initial_diagnosis,
+            value: data.order_initial_diagnosis|| '',
             onChange: (e) => setData("order_initial_diagnosis", e.target.value),
             inputError: (
                 <InputError
@@ -1110,7 +1112,7 @@ const Contract = ({
             id: "order_solution",
             type: "text",
             name: "order_solution",
-            value: data.order_solution,
+            value: data.order_solution || '',
             onChange: (e) => setData("order_solution", e.target.value),
             inputError: (
                 <InputError message={errors.order_solution} className="mt-2" />
@@ -1122,7 +1124,7 @@ const Contract = ({
             id: "order_final_potency",
             type: "text",
             name: "order_final_potency",
-            value: data.order_final_potency,
+            value: data.order_final_potency|| '',
             onChange: (e) => setData("order_final_potency", e.target.value),
             inputError: (
                 <InputError
@@ -1137,7 +1139,7 @@ const Contract = ({
             id: "order_final_diagnosis",
             type: "text",
             name: "order_final_diagnosis",
-            value: data.order_final_diagnosis,
+            value: data.order_final_diagnosis|| '',
             onChange: (e) => setData("order_final_diagnosis", e.target.value),
             inputError: (
                 <InputError
@@ -1152,7 +1154,7 @@ const Contract = ({
             id: "value_due",
             type: "number",
             name: "value_due",
-            value: data.value_due,
+            value: data.value_due|| '',
             onChange: (e) => setData("value_due", e.target.value),
             inputError: (
                 <InputError message={errors.value_due} className="mt-2" />
@@ -1222,7 +1224,6 @@ const Contract = ({
         });
         setShowCreate(true);
 
-        console.log(data);
     };
 
     const closeModalCreateOrder = () => {

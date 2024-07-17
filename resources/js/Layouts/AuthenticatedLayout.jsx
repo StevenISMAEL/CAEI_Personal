@@ -93,7 +93,14 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
             route: "typereport.index",
             subroute: "/manage-orders/",
             icon: <TiDocumentText />,
-            roles: ["tecnico", "admin", "vendedor"],
+            roles: [ "admin", "vendedor"],
+        },
+        {
+            title: "Orden de Trabajo",
+            route: "orderTecnico.index",
+            subroute: "/manage-tecnico/",
+            icon: <TiDocumentText />,
+            roles: ["tecnico"],
         },
         {
             title: "Plans",

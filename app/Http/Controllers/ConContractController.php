@@ -33,7 +33,8 @@ class ConContractController extends Controller {
             "Discounts" => ConDiscount::all(),
             "Phones" => ConPhone::all(),
             "Contracts" => ConContract::getContracts(),
-            "Employees" => User::all(),
+            "Employees" => User::whereHas('roles', function($query) {
+                $query->where('name', 'tecnico');  })->get(),
             "WorkOrders" => SupWorkOrder::getOrderID(),
             "TypeReports" => SupTypeReport::all(),
             "TypeOrders" => SupTypeOrder::all(),

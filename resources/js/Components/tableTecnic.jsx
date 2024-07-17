@@ -3,21 +3,25 @@ import { CgUnavailable } from "react-icons/cg";
 import { RiArrowUpDownFill } from "react-icons/ri";
 import FloatInputText from "@/Components/FloatInputText";
 import { FaArrowDownShortWide, FaArrowUpShortWide } from "react-icons/fa6";
+import {
+    EditCircleButton
+} from "@/Components/CustomButtons";
 import SecondaryButton from "@/Components/SecondaryButton";
 import { IoIosArrowForward, IoIosArrowBack } from "react-icons/io";
 import Checkbox from "@/Components/Checkbox";
 
-const TableCustomViewOnly = ({
+const TableCustomT = ({
     headers,
     data,
     searchColumns,
+    onEdit,
     idKey,
     onSelectChange,
     selectedItems,
     onSelectAll,
 }) => {
     const styles =
-        "text-violet-600 shadow-sm focus:ring-violet-500 dark:focus:ring-violet-600";
+        "text-indigo-600 shadow-sm focus:ring-violet-500 dark:focus:ring-violet-600";
     const [searchValue, setSearchValue] = useState("");
     const [filteredData, setFilteredData] = useState(data);
     const [sortConfig, setSortConfig] = useState({
@@ -36,6 +40,11 @@ const TableCustomViewOnly = ({
         setSearchValue(value);
         const filtered = data.filter((item) => {
             return searchColumns.some((column) => {
+                if (column === "roles") {
+                    return item[column].some((role) =>
+                        role.role_name.toLowerCase().includes(value),
+                    );
+                }
                 const fieldValue = item[column].toString().toLowerCase();
                 return fieldValue.includes(value);
             });
@@ -51,6 +60,17 @@ const TableCustomViewOnly = ({
         }
         setSortConfig({ key: columnKey, direction });
         const sortedData = [...filteredData].sort((a, b) => {
+            if (columnKey === "roles") {
+                const rolesA = a[columnKey]
+                    .map((role) => role.role_name)
+                    .join(", ");
+                const rolesB = b[columnKey]
+                    .map((role) => role.role_name)
+                    .join(", ");
+                return direction === "asc"
+                    ? rolesA.localeCompare(rolesB)
+                    : rolesB.localeCompare(rolesA);
+            }
             if (a[columnKey] < b[columnKey]) {
                 return direction === "asc" ? -1 : 1;
             }
@@ -115,6 +135,7 @@ const TableCustomViewOnly = ({
                         </div>
                         <FloatInputText
                             label="Buscar..."
+                            id="search-button"
                             onChange={handleSearch}
                             value={searchValue}
                         />
@@ -124,7 +145,24 @@ const TableCustomViewOnly = ({
                             <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                                 <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                     <tr>
-                                      
+                                        <th scope="col" className="p-4">
+                                            <div className="flex items-center">
+                                                <Checkbox
+                                                    className={styles}
+                                                    checked={
+                                                        selectedItems.length ===
+                                                        data.length
+                                                    }
+                                                    onChange={onSelectAll}
+                                                />
+                                                <label
+                                                    htmlFor="checkbox-all"
+                                                    className="sr-only"
+                                                >
+                                                    checkbox
+                                                </label>
+                                            </div>
+                                        </th>
                                         {headers.map((header, index) => (
                                             <th
                                                 key={index}
@@ -148,6 +186,12 @@ const TableCustomViewOnly = ({
                                                 </button>
                                             </th>
                                         ))}
+                                        <th
+                                            scope="col"
+                                            className="px-6 py-3 items-center"
+                                        >
+                                            Acción
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -162,17 +206,57 @@ const TableCustomViewOnly = ({
                                                     : "bg-white dark:bg-gray-800"
                                             }`}
                                         >
-                                            
+                                            <td className="w-4 p-4">
+                                                <div className="flex items-center">
+                                                    <Checkbox
+                                                        className={styles}
+                                                        checked={selectedItems.includes(
+                                                            item[idKey],
+                                                        )}
+                                                        onChange={() =>
+                                                            onSelectChange(
+                                                                item[idKey],
+                                                            )
+                                                        }
+                                                    />
+                                                    <label
+                                                        htmlFor="checkbox-table-search-1"
+                                                        className="sr-only"
+                                                    >
+                                                        checkbox
+                                                    </label>
+                                                </div>
+                                            </td>
                                             {searchColumns.map(
                                                 (column, idx) => (
                                                     <td
                                                         key={idx}
                                                         className="px-6 py-4 whitespace-pre-wrap truncate"
                                                     >
-                                                        {item[column]}
+                                                        {column === "roles"
+                                                            ? item[column]
+                                                                  .length > 0
+                                                                ? item[column]
+                                                                      .map(
+                                                                          (
+                                                                              role,
+                                                                          ) =>
+                                                                              role.role_name,
+                                                                      )
+                                                                      .join(
+                                                                          ", ",
+                                                                      )
+                                                                : "Sin Rol"
+                                                            : item[column]}
                                                     </td>
                                                 ),
                                             )}
+                                            <td className="flex items-center px-6 py-4 gap-1">
+                                                <EditCircleButton
+                                                    onClick={() => onEdit(item)}
+                                                />
+                                              
+                                            </td>
                                         </tr>
                                     ))}
                                 </tbody>
@@ -222,4 +306,4 @@ const TableCustomViewOnly = ({
     );
 };
 
-export default TableCustomViewOnly;
+export default TableCustomT;
