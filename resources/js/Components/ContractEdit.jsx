@@ -104,7 +104,7 @@ const ModalEdit = ({
                     <h4 className="text-md font-medium text-white bg-green-600 text-center mb-2 py-2 rounded-lg">
                         Contrato
                     </h4>
-                    <div className="grid grid-cols-4 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                         {contractInputs &&
                             contractInputs.map((input, index) => (
                                 <div key={index}>
@@ -139,7 +139,7 @@ const ModalEdit = ({
                     <h4 className="text-md font-medium text-white bg-green-600 text-center mb-2 py-2 rounded-lg">
                         Información de Cliente
                     </h4>
-                    <div className="grid grid-cols-4 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                         {clientInfoInputs &&
                             clientInfoInputs.map((input, index) => (
                                 <div key={index}>
@@ -174,7 +174,7 @@ const ModalEdit = ({
                     <h4 className="text-md font-medium text-white bg-green-600 text-center mb-2 py-2 rounded-lg">
                         Información Técnica
                     </h4>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {technicalInfoInputs &&
                             technicalInfoInputs.map((input, index) => (
                                 <div key={index}>
@@ -205,16 +205,21 @@ const ModalEdit = ({
                 </div>
 
                 {/* Botones de Cancelar y Actualizar */}
-                <div className="mt-6 flex justify-end">
+                <div className="mt-6 flex flex-col md:flex-row md:items-center md:justify-end">
                     <SecondaryButton onClick={closeEditModal}>
                         Cancelar
                     </SecondaryButton>
-                    <PrimaryButton className="ms-3" disabled={processing}>
-                        Actualizar
-                    </PrimaryButton>
-                    <PrimaryButton className="ms-3" onClick={handleDownloadPDF}>
-                        Convertir a PDF
-                    </PrimaryButton>
+                    <div className="mt-3 md:mt-0 flex flex-col md:flex-row gap-3  md:ml-4 ">
+                        <PrimaryButton className="ms-3" disabled={processing}>
+                            Actualizar
+                        </PrimaryButton>
+                        <PrimaryButton
+                            className="ms-3"
+                            onClick={handleDownloadPDF}
+                        >
+                            Convertir a PDF
+                        </PrimaryButton>
+                    </div>
                 </div>
             </form>
         </Modal>
