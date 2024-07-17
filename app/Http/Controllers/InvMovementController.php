@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\MovementRequest;
 use App\Models\InvMovement;
 use App\Models\InvProduct;
+use App\Models\SupWorkOrder;
 use Inertia\Inertia;
 
 class InvMovementController extends Controller {
@@ -13,6 +14,7 @@ class InvMovementController extends Controller {
         return Inertia::render("Inventory/Movement", [
             "Products" => InvProduct::all(),
             "Movements" => InvMovement::getMovements(),
+            "Orders" => SupWorkOrder::getOrderType(),
         ]);
     }
     public function store(MovementRequest $movementRequest) {
@@ -70,7 +72,10 @@ class InvMovementController extends Controller {
 
     public function destroyMultiple(Request $request) {
         $ids = $request->input("ids");
-        InvMovement::whereIn("movement_id", $ids)->delete();
+        $movements=InvMovement::whereIn("movement_id", $ids)->delete();
+        foreach ($movements as $movement) {
+            $movement->delete();
+        }
         return to_route("movements.index");
     }
 }

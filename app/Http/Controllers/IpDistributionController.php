@@ -35,8 +35,13 @@ class IpDistributionController extends Controller {
 
     public function destroyMultiple(Request $request) {
         $ids = $request->input("ids");
-        IpDistribution::whereIn("distribution_nap_id", $ids)->delete();
-        return redirect()->route("distributionNaps.index");
+        $distribu = IpDistribution::whereIn("distribution_nap_id", $ids)->get();
+
+        foreach ($distribu as $dist) {
+            $dist->delete();
+        }
+        return to_route("distributionNaps.index");
+    
     }
 
     public function getAvailablePorts($oltId) {

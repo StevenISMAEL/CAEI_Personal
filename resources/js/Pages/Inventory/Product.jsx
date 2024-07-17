@@ -13,6 +13,7 @@ import tabs from "./tabs";
 import DeleteModal from "@/Components/DeleteModal";
 import TableCustom from "@/Components/TableCustom";
 import CardsCustom from "@/Components/CardCustom";
+import { useNotify } from "@/Components/Toast";
 
 const Product = ({ auth, Products }) => {
     const {
@@ -24,6 +25,7 @@ const Product = ({ auth, Products }) => {
         reset,
         delete: destroy,
         patch,
+        clearErrors,
     } = useForm({
         product_name: "",
         product_description: "",
@@ -40,8 +42,15 @@ const Product = ({ auth, Products }) => {
     const [editData, setEditData] = useState(null);
     const [dataToDelete, setDataToDelete] = useState(null);
     const [selectedProducts, setSelectedProducts] = useState([]);
+    const [selectedOption, setSelectedOption] = useState("");
+    const notify = useNotify();
 
-    const closeModalCreate = () => setShowCreate(false);
+    const closeModalCreate = () => {
+        clearErrors();
+        setShowCreate(false);
+        reset();
+        setSelectedOption("");
+    };
     const openCreateModal = () => setShowCreate(true);
 
     const closeDeleteModal = () => {
@@ -54,8 +63,10 @@ const Product = ({ auth, Products }) => {
     };
 
     const closeEditModal = () => {
+        clearErrors();
         setShowEdit(false);
         setEditData(null);
+        reset();
     };
     const openEditModal = (product) => {
         setShowEdit(true);
@@ -68,6 +79,7 @@ const Product = ({ auth, Products }) => {
             product_brand: product.product_brand,
             product_vat: product.product_vat,
         });
+        setSelectedOption(product.product_brand);
     };
 
     const handleSubmitAdd = (e) => {
@@ -75,9 +87,11 @@ const Product = ({ auth, Products }) => {
 
         post(route("products.store"), {
             preserveScroll: true,
-            onSuccess: () => closeModalCreate(),
-            onError: (error) => console.log(error),
-            onFinish: () => reset(),
+            onSuccess: () => {
+                closeModalCreate();
+                notify("success", "Producto agregado.");
+            },
+            onError: (error) => console.error(Object.values(error).join(", ")),
         });
     };
 
@@ -86,9 +100,11 @@ const Product = ({ auth, Products }) => {
 
         patch(route("products.update", { id: editData.product_id }), {
             preserveScroll: true,
-            onSuccess: () => closeEditModal(),
-            onError: (error) => console.log(error),
-            onFinish: () => reset(),
+            onSuccess: () => {
+                closeEditModal();
+                notify("success", "Producto actualizado.");
+            },
+            onError: (error) => console.error(Object.values(error).join(", ")),
         });
     };
 
@@ -100,19 +116,33 @@ const Product = ({ auth, Products }) => {
                 onSuccess: () => {
                     setSelectedProducts([]);
                     closeDeleteModal();
+                    notify("success", "Productos eliminados.");
                 },
-                onError: (error) => console.error(error),
-                onFinish: () => reset(),
+                onError: (error) =>
+                    console.error(Object.values(error).join(", ")),
             });
         } else {
             destroy(route("products.destroy", { id }), {
                 preserveScroll: true,
-                onSuccess: () => closeDeleteModal(),
-                onError: (error) => console.error(error),
-                onFinish: () => reset(),
+                onSuccess: () => {
+                    closeDeleteModal();
+                    notify("success", "Producto eliminado.");
+                },
+                onError: (error) =>
+                    console.error(Object.values(error).join(", ")),
             });
         }
     };
+    const handleChange = (value) => {
+        setSelectedOption(value); // Actualiza el estado cuando cambia la selección
+        setData("product_brand", value);
+    };
+    const BrandOptions = [
+        { value: "Cisco", label: "Cisco" },
+        { value: "Linksys ", label: "Linksys " },
+        { value: "Juniper Networks ", label: "Juniper Networks " },
+        { value: "Huawei", label: "Huawei" },
+    ];
 
     const inputs = [
         {
@@ -170,17 +200,17 @@ const Product = ({ auth, Products }) => {
             defaultValue: data.product_quantity,
         },
         {
+            type: "combobox",
             label: "Marca",
-            id: "product_brand",
-            type: "text",
-            name: "product_brand",
-            value: data.product_brand,
-            onChange: (e) => setData("product_brand", e.target.value),
+            options: BrandOptions,
+            value: selectedOption,
+            onChange: handleChange,
             inputError: (
                 <InputError message={errors.product_brand} className="mt-2" />
             ),
             defaultValue: data.product_brand,
         },
+
         {
             label: "Iva",
             id: "product_vat",
@@ -231,7 +261,8 @@ const Product = ({ auth, Products }) => {
     return (
         <Authenticated
             user={auth.user}
-            header={<Header subtitle="Manage Products" />}
+            header={<Header subtitle="Administrar Productos" />}
+            roles={auth.user.roles.map((role) => role.name)}
         >
             <Head title="Productos" />
             <Tab tabs={tabs}>
@@ -248,13 +279,14 @@ const Product = ({ auth, Products }) => {
                             data={Products}
                             searchColumns={searchColumns}
                             headers={theaders}
+                            fileName="Productos"
                         />
                     </div>
                 </Box>
                 <ModalCreate
                     showCreate={showCreate}
                     closeModalCreate={closeModalCreate}
-                    title={"Add Products"}
+                    title={"Añadir Products"}
                     inputs={inputs}
                     processing={processing}
                     handleSubmitAdd={handleSubmitAdd}
@@ -262,12 +294,12 @@ const Product = ({ auth, Products }) => {
                 <DeleteModal
                     showDelete={showDelete}
                     closeDeleteModal={closeDeleteModal}
-                    title={"Delete Products"}
+                    title={"Eliminar Productos"}
                     handleDelete={() => handleDelete(dataToDelete)}
                     processing={processing}
                 />
                 <ModalEdit
-                    title="Edit Product"
+                    title="Editar Producto"
                     showEdit={showEdit}
                     closeEditModal={closeEditModal}
                     inputs={inputs}

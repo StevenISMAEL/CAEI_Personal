@@ -26,6 +26,7 @@ const lastmileNaps = ({ auth, Olts, DistributionNaps, LastMileNaps }) => {
         delete: destroy,
         patch,
     } = useForm({
+        olt_id: "",
         distribution_nap_id: "",
         last_mile_nap_name: "",
         last_mile_nap_address: "",
@@ -83,7 +84,28 @@ const lastmileNaps = ({ auth, Olts, DistributionNaps, LastMileNaps }) => {
     const openEditModal = (lastMileNap) => {
         setShowEdit(true);
         setEditData(lastMileNap);
+        setSelectedSplitter(lastMileNap.last_mile_nap_splitter);
+        let distributionNapName = "";
+        let olt = "";
+        let olts= "";
+            const distributionNap = DistributionNaps.find(
+                (distribution) =>
+                    distribution.distribution_nap_id ===
+                lastMileNap.distribution_nap_id,
+            );
+            if (distributionNap) {
+                distributionNapName =
+                    distributionNap.distribution_nap_name;
+
+               olt = Olts.find(
+                    (olt) => olt.olt_id === distributionNap.olt_id,
+                );
+                olts= olt.olt_id;
+
+            }
+        
         setData({
+            olt_id:olts,
             distribution_nap_id: lastMileNap.distribution_nap_id,
             last_mile_nap_name: lastMileNap.last_mile_nap_name,
             last_mile_nap_address: lastMileNap.last_mile_nap_address,
@@ -91,6 +113,8 @@ const lastmileNaps = ({ auth, Olts, DistributionNaps, LastMileNaps }) => {
             last_mile_nap_coordy: lastMileNap.last_mile_nap_coordy,
             last_mile_nap_splitter: lastMileNap.last_mile_nap_splitter,
         });
+
+
     };
     const handleDistributionNapChange = (id) => {
         setData("distribution_nap_id", id);
@@ -118,8 +142,7 @@ const lastmileNaps = ({ auth, Olts, DistributionNaps, LastMileNaps }) => {
             onSuccess: () => {
                 closeModalCreate(), notify("success", "Nap agregada.");
             },
-            onError: (error) => console.log(error),
-            onFinish: () => reset(),
+            onError: (error) => console.error(Object.values(error).join(", ")),
         });
     };
 
@@ -135,8 +158,7 @@ const lastmileNaps = ({ auth, Olts, DistributionNaps, LastMileNaps }) => {
                 onSuccess: () => {
                     closeEditModal(), notify("success", "Nap actualizada.");
                 },
-                onError: (error) => console.log(error),
-                onFinish: () => reset(),
+                onError: (error) => console.error(Object.values(error).join(", ")),
             },
         );
     };
@@ -151,8 +173,7 @@ const lastmileNaps = ({ auth, Olts, DistributionNaps, LastMileNaps }) => {
                     closeDeleteModal();
                     notify("success", "Naps eliminadas.");
                 },
-                onError: (error) => console.error(error),
-                onFinish: () => reset(),
+                onError: (error) => console.error(Object.values(error).join(", ")),
             });
         } else {
             destroy(route("lastmileNaps.destroy", { id }), {
@@ -160,8 +181,7 @@ const lastmileNaps = ({ auth, Olts, DistributionNaps, LastMileNaps }) => {
                 onSuccess: () => {
                     closeDeleteModal(), notify("success", "Nap eliminada.");
                 },
-                onError: (error) => console.error(error),
-                onFinish: () => reset(),
+                onError: (error) => console.error(Object.values(error).join(", ")),
             });
         }
     };
@@ -212,6 +232,8 @@ const lastmileNaps = ({ auth, Olts, DistributionNaps, LastMileNaps }) => {
             value: selectedOlt,
             onSelect: handleOltChange,
             inputError: <InputError message={errors.olt_id} className="mt-2" />,
+            defaultValue: data.olt_id,
+
         },
         {
             placeholder: "Nap de Distribución",
@@ -227,7 +249,7 @@ const lastmileNaps = ({ auth, Olts, DistributionNaps, LastMileNaps }) => {
                     className="mt-2"
                 />
             ),
-            disabled: !selectedOlt,
+            defaultValue: data.distribution_nap_id,
         },
         {
             label: "Nombre ",
@@ -315,6 +337,7 @@ const lastmileNaps = ({ auth, Olts, DistributionNaps, LastMileNaps }) => {
                     className="mt-2"
                 />
             ),
+            defaultValue: data.last_mile_nap_splitter,
         },
     ];
     const theaders = [
@@ -322,8 +345,6 @@ const lastmileNaps = ({ auth, Olts, DistributionNaps, LastMileNaps }) => {
         "NAP de distribución",
         "Nombre",
         "Dirección",
-        "Coord X",
-        "Coord Y",
         "Splitter",
     ];
     const searchColumns = [
@@ -331,8 +352,6 @@ const lastmileNaps = ({ auth, Olts, DistributionNaps, LastMileNaps }) => {
         "distribution_nap_name",
         "last_mile_nap_name",
         "last_mile_nap_address",
-        "last_mile_nap_coordx",
-        "last_mile_nap_coordy",
         "last_mile_nap_splitter",
     ];
 
@@ -340,6 +359,7 @@ const lastmileNaps = ({ auth, Olts, DistributionNaps, LastMileNaps }) => {
         <Authenticated
             user={auth.user}
             header={<Header subtitle="Administrar Naps Ultima Milla" />}
+            roles={auth.user.roles.map((role) => role.name)}
         >
             <Head title="Naps Ultima Milla" />
             <Tab tabs={tabs}>

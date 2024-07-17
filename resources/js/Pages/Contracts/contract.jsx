@@ -3,21 +3,25 @@ import { Head, useForm } from "@inertiajs/react";
 import Header from "@/Components/Header";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import Tab from "@/Layouts/TabLayout";
-import { AddButton, DeleteButton } from "@/Components/CustomButtons";
+import { AddButton } from "@/Components/CustomButtons";
 import InputError from "@/Components/InputError";
 import ModalCreate from "@/Components/ContractModel";
 import ModalEdit from "@/Components/ContractEdit";
 import Box from "@/Layouts/Box";
 import ExportData from "@/Components/ExportData";
 import tabs from "./tabs";
-import DeleteModal from "@/Components/DeleteModal";
-import TableCustom from "@/Components/TableCustom";
+import TableContract from "@/Components/TableContract";
 import CardsCustom from "@/Components/CardCustom";
 import { useNotify } from "@/Components/Toast";
+import ModalCreateOrder from "@/Components/orderModel";
+import ConfirmationModal from "@/Components/ConfirmationModal";
 
 const Contract = ({
     auth,
     Clients,
+    Employees,
+    TypeReports,
+    TypeOrders,
     Plans,
     Olts,
     LastMiles,
@@ -27,6 +31,7 @@ const Contract = ({
     Discounts,
     Phones,
     Contracts,
+    WorkOrders,
 }) => {
     const {
         data,
@@ -35,7 +40,7 @@ const Contract = ({
         processing,
         errors,
         reset,
-        delete: destroy,
+
         patch,
         clearErrors,
     } = useForm({
@@ -68,13 +73,36 @@ const Contract = ({
         discount_name: "",
         status_id: "",
         status_name: "",
+        type_order_id: "",
+        plan_details: "",
+
+        employee_id: "",
+        employee_name: "",
+        type_report_id: "",
+        name_type_report: "",
+        name_type_order: "",
+        order_channel: "",
+        issue_date: "",
+        order_precedents: "",
+        order_status: "",
+        order_abclaim: "",
+        solution_date: "",
+        order_initial_abis: "",
+        order_initial_potency: "",
+        order_final_abis: "",
+        order_initial_diagnosis: "",
+        order_solution: "",
+        order_final_potency: "",
+        order_final_diagnosis: "",
+        value_due: "",
+
         ids: [],
     });
     const [showCreate, setShowCreate] = useState(false);
-    const [showDelete, setShowDelete] = useState(false);
+
     const [showEdit, setShowEdit] = useState(false);
     const [editData, setEditData] = useState(null);
-    const [dataToDelete, setDataToDelete] = useState(null);
+
     const [selectedContracts, setSelectedContracts] = useState([]);
     //napdistribution
     const [selectedOlt, setSelectedOlt] = useState("");
@@ -87,10 +115,13 @@ const Contract = ({
     const [selectedOption, setSelectedOption] = useState("");
 
     const handleOltChange = (id) => {
+        const selectedOlt = Olts.find((olt) => olt.olt_id === id); // Suponiendo que tus OLTs tienen una estructura con id y name
         setSelectedOlt(id);
         const filteredNaps = Distributions.filter((nap) => nap.olt_id === id);
         setData((prevData) => ({
             ...prevData,
+            olt_id: id,
+            olt_name: selectedOlt ? selectedOlt.olt_name : "", // Guardar el nombre del OLT
             distribution_nap_id: "", // Limpiar distribución NAP ID
             last_mile_nap_id: "", // Limpiar última milla NAP ID
             ip_address: "", // Limpiar dirección IP
@@ -99,12 +130,17 @@ const Contract = ({
         setFilteredLastMileNaps([]);
         setFilteredIps([]);
     };
-    const handleDistributionNapChange = (id) => {
-        // Actualizar el estado de data para distribution_nap_id
 
+    const handleDistributionNapChange = (id) => {
+        const selectedNap = Distributions.find(
+            (nap) => nap.distribution_nap_id === id,
+        ); // Suponiendo que tus NAPs tienen una estructura con id y name
         setData((prevData) => ({
             ...prevData,
             distribution_nap_id: id,
+            distribution_nap_name: selectedNap
+                ? selectedNap.distribution_nap_name
+                : "", // Guardar el nombre de la NAP de distribución
         }));
 
         // Obtener todas las IPs asignadas a la NAP de Distribución seleccionada
@@ -126,7 +162,7 @@ const Contract = ({
                 nap.last_mile_nap_splitter >= ipsAssignedToLastMileNap.length
             );
         });
-        console.log(filteredLastMileNaps);
+
         setFilteredLastMileNaps(filteredLastMileNaps);
 
         // Filtrar las direcciones IP basadas en la NAP de Distribución seleccionada y estado de IP
@@ -144,18 +180,27 @@ const Contract = ({
     };
 
     const handleLastMileNapChange = (id) => {
-        setData("last_mile_nap_id", id);
+        const selectedLastMileNap = LastMiles.find(
+            (nap) => nap.last_mile_nap_id === id,
+        ); // Suponiendo que tus NAPs de última milla tienen una estructura con last_mile_nap_id y name
+
+        setData((prevData) => ({
+            ...prevData,
+            last_mile_nap_id: id,
+            last_mile_nap_name: selectedLastMileNap
+                ? selectedLastMileNap.last_mile_nap_name
+                : "", // Guardar el nombre de la NAP de última milla
+        }));
     };
     const notify = useNotify();
 
     const closeModalCreate = () => {
         clearErrors();
-        reset();
-        setSelectedOption("");
         setShowCreate(false);
     };
 
     const openCreateModal = () => {
+        reset();
         const latestContractNum = Contracts.reduce((maxNum, contract) => {
             const numParts = contract.contract_num.split("-");
             const num = parseInt(numParts[numParts.length - 1]);
@@ -175,16 +220,6 @@ const Contract = ({
         setShowCreate(true);
     };
 
-    const closeDeleteModal = () => {
-        setShowDelete(false);
-        setDataToDelete(null);
-    };
-
-    const openDeleteModal = (id) => {
-        setShowDelete(true);
-        setDataToDelete(id);
-    };
-
     const closeEditModal = () => {
         clearErrors();
         setShowEdit(false);
@@ -193,7 +228,6 @@ const Contract = ({
     };
 
     const openEditModal = (contract) => {
-        console.log(contract);
         const ip = Ips.find((ip) => ip.ip_address === contract.ip_address);
 
         // Encontrar la NAP de Última Milla asociada a la IP
@@ -271,6 +305,7 @@ const Contract = ({
             preserveScroll: true,
             onSuccess: () => {
                 closeModalCreate();
+                setShowModalConfirm(true);
             },
             onError: (error) => console.error(Object.values(error).join(", ")),
         });
@@ -289,31 +324,6 @@ const Contract = ({
         });
     };
 
-    const handleDelete = (id) => {
-        if (Array.isArray(id)) {
-            data.ids = id;
-            destroy(route("contracts.multiple.destroy"), {
-                preserveScroll: true,
-                onSuccess: () => {
-                    setSelectedContracts([]);
-                    closeDeleteModal();
-                    notify("success", "Contratos eliminados.");
-                },
-                onError: (error) =>
-                    console.error(Object.values(error).join(", ")),
-            });
-        } else {
-            destroy(route("contracts.destroy", { id }), {
-                preserveScroll: true,
-                onSuccess: () => {
-                    closeDeleteModal();
-                    notify("success", "Contrato eliminado.");
-                },
-                onError: (error) =>
-                    console.error(Object.values(error).join(", ")),
-            });
-        }
-    };
     const handleClientIdChange = (id) => {
         // Actualiza el client_id en el estado
         setData("client_id", id);
@@ -367,8 +377,11 @@ const Contract = ({
     const handleChange = (value) => {
         setSelectedOption(value); // Actualiza el estado cuando cambia la selección
         setData("maximum_date", value); // Asegura que movement_type también se actualice
-        console.log(data.distribution_nap_id);
     };
+    const filteredStatus = Status.filter(
+        (status) => status.status_id !== "STS-0002",
+    );
+
     const contractInputs = [
         {
             label: "Num Contrato",
@@ -412,7 +425,7 @@ const Contract = ({
             labelKey: "status_name",
             valueKey: "status_id",
             label: "Estado",
-            options: Status,
+            options: filteredStatus,
             value: data.status_id,
             onSelect: (id) => setData("status_id", id),
             inputError: (
@@ -590,7 +603,7 @@ const Contract = ({
             valueKey: "olt_id",
             options: Olts,
             label: "OLT",
-            value: selectedOlt,
+            value: data.olt_id,
             onSelect: handleOltChange,
             inputError: <InputError message={errors.olt_id} className="mt-2" />,
             defaultValue: data.olt_name,
@@ -615,6 +628,7 @@ const Contract = ({
             options: filteredDistributionNaps,
             label: "Nap de Distribución",
             value: data.distribution_nap_id,
+
             inputError: (
                 <InputError
                     message={errors.distribution_nap_id}
@@ -653,7 +667,7 @@ const Contract = ({
                 />
             ),
             onSelect: handleLastMileNapChange,
-            disabled: !selectedOlt,
+            disabled: !data.distribution_nap_id,
             defaultValue: data.last_mile_nap_name,
         },
 
@@ -685,7 +699,433 @@ const Contract = ({
             defaultValue: data.ip_address,
         },
     ];
+    /*inputsss */
 
+    const [reportsOptions, setReportsOptions] = useState([]);
+    const [selectedStatus, setSelectedStatus] = useState("");
+    const [preceOptions, setpreceOptions] = useState([]);
+    const handleEmployeeChange = (id) => {
+        setData("employee_id", id);
+    };
+
+    const handleTypeReportChange = (id) => {
+        setData("type_report_id", id);
+    };
+    const handleTypeOrderChange = (id) => {
+        const filteredReports = TypeReports.filter(
+            (report) => report.type_order_id === id,
+        );
+
+        setReportsOptions(filteredReports);
+        setData({
+            ...data,
+            type_order_id: id,
+            type_report_id: "",
+        });
+    };
+
+    const handleChangeStatus = (value) => {
+        setSelectedStatus(value);
+        setData("order_status", value);
+    };
+    const handleChangepreceO = (value) => {
+        setpreceOptions(value);
+        setData("order_precedents", value);
+    };
+
+    const transformForCombobox = (arrays) => {
+        return arrays.map((array) => ({
+            value: array,
+            label: `${array}`,
+        }));
+    };
+    const transformCombobox = (arrays) => {
+        return arrays.map((array) => ({
+            value: array === "Si" ? 1 : 0,
+
+            label: `${array}`,
+        }));
+    };
+    const comboboxpreced = transformCombobox(["Si", "No"]);
+
+    const comboboxstatus = transformForCombobox(["Pendiente", "Realizado"]);
+    // Función para generar opciones de empleados
+    const generateEmployeeOptions = () => {
+        return Employees.map((employee) => ({
+            id: employee.id,
+            name: employee.name,
+        }));
+    };
+
+    const employeesOptions = generateEmployeeOptions();
+
+    const orderInputs = [
+        {
+            label: "Id orden",
+            id: "work_order_id",
+            type: "text",
+            name: "work_order_id",
+            value: data.work_order_id,
+            disabled: true,
+            inputError: (
+                <InputError message={errors.work_order_id} className="mt-1" />
+            ),
+            defaultValue: data.work_order_id,
+        },
+        {
+            placeholder: "Empleado",
+            label: "Empleado",
+            type: "select",
+            labelKey: "name",
+            valueKey: "id",
+            value: data.employee_id,
+            options: employeesOptions,
+            onSelect: handleEmployeeChange,
+            inputError: (
+                <InputError message={errors.employee_id} className="mt-2" />
+            ),
+            defaultValue: data.id,
+        },
+        {
+            label: "Contrato",
+            type: "text",
+            id: "contract_num",
+            name: "contract_num",
+            value: data.contract_num,
+            disabled: true,
+            inputError: (
+                <InputError message={errors.contract_num} className="mt-2" />
+            ),
+            defaultValue: data.contract_num,
+        },
+        {
+            label: "Dirección",
+            id: "address",
+            type: "text",
+            name: "address",
+            value: data.address,
+            disabled: true,
+            inputError: (
+                <InputError message={errors.address} className="mt-2" />
+            ),
+            defaultValue: data.address,
+        },
+        {
+            label: "Sector",
+            id: "sector_name",
+            type: "text",
+            name: "sector_name",
+            value: data.sector_name,
+            disabled: true,
+            inputError: (
+                <InputError message={errors.sector_name} className="mt-2" />
+            ),
+            defaultValue: data.sector_name,
+        },
+        {
+            label: "Plan",
+            id: "plan_id",
+            type: "text",
+            name: "plan_name",
+            value: data.plan_name,
+            disabled: true,
+            inputError: (
+                <InputError message={errors.plan_id} className="mt-2" />
+            ),
+            defaultValue: data.plan_name,
+        },
+        {
+            label: "Teléfonos",
+            id: "phone_numbers",
+            type: "text",
+            name: "phone_numbers",
+            value: data.phone_numbers,
+            inputError: (
+                <InputError message={errors.phone_numbers} className="mt-1" />
+            ),
+            defaultValue: data.phone_numbers,
+        },
+        {
+            label: "IP Asociada",
+            id: "ip_address",
+            type: "text",
+            name: "ip_address",
+            value: data.ip_address,
+            inputError: (
+                <InputError message={errors.ip_address} className="mt-2" />
+            ),
+
+            defaultValue: data.ip_address,
+        },
+        {
+            label: "NAP de Última Milla",
+            id: "last_mile_nap_id",
+            type: "text",
+            name: "last_mile_nap_name",
+            value: data.last_mile_nap_name,
+            inputError: (
+                <InputError
+                    message={errors.last_mile_nap_name}
+                    className="mt-2"
+                />
+            ),
+            defaultValue: data.last_mile_nap_name,
+        },
+        {
+            label: "NAP de Distribución",
+            id: "distribution_nap_name",
+            type: "text",
+            name: "distribution_nap_name",
+            value: data.distribution_nap_name,
+            inputError: (
+                <InputError
+                    message={errors.distribution_nap_name}
+                    className="mt-2"
+                />
+            ),
+            defaultValue: data.distribution_nap_name,
+        },
+        {
+            label: "OLT",
+            id: "olt_name",
+            type: "text",
+            name: "olt_name",
+            value: data.olt_name,
+            inputError: (
+                <InputError message={errors.olt_name} className="mt-2" />
+            ),
+            defaultValue: data.olt_name,
+        },
+    ];
+    const suportInputs = [
+        {
+            placeholder: "Tipo de Orden",
+            label: "Tipo de Orden",
+            type: "select",
+            labelKey: "name_type_order",
+            valueKey: "type_order_id",
+            value: data.type_order_id,
+            options: TypeOrders,
+            onSelect: handleTypeOrderChange,
+            inputError: (
+                <InputError message={errors.type_order_id} className="mt-2" />
+            ),
+            defaultValue: data.name_type_order,
+        },
+        {
+            placeholder: "Tipo de Reporte",
+            label: "Tipo de reporte",
+            type: "select",
+            labelKey: "name_type_report",
+            valueKey: "type_report_id",
+            value: data.type_report_id,
+            options: reportsOptions,
+            onSelect: handleTypeReportChange,
+            inputError: (
+                <InputError message={errors.type_report_id} className="mt-2" />
+            ),
+            defaultValue: data.name_type_report,
+        },
+
+        {
+            label: "Canal",
+            id: "order_channel",
+            type: "text",
+            name: "order_channel",
+            value: data.order_channel,
+            onChange: (e) => setData("order_channel", e.target.value),
+            inputError: (
+                <InputError message={errors.order_channel} className="mt-2" />
+            ),
+            defaultValue: data.order_channel,
+        },
+        {
+            label: "Fecha de Problema",
+            id: "issue_date",
+            type: "datetime-local",
+            name: "issue_date",
+            value: data.issue_date
+                ? new Date(data.issue_date).toISOString().slice(0, 16)
+                : "",
+            onChange: (e) => setData("issue_date", e.target.value),
+            inputError: (
+                <InputError message={errors.issue_date} className="mt-2" />
+            ),
+            defaultValue: data.issue_date
+                ? new Date(data.issue_date).toISOString().slice(0, 16)
+                : "",
+        },
+        {
+            type: "combobox",
+            label: "Estado",
+            id: "order_status",
+            options: comboboxstatus,
+            value: selectedStatus,
+            onChange: handleChangeStatus,
+            inputError: (
+                <InputError message={errors.order_status} className="mt-2" />
+            ),
+            defaultValue: data.order_status,
+        },
+        {
+            label: "Reclamación AB",
+            id: "order_abclaim",
+            type: "text",
+            name: "order_abclaim",
+            value: data.order_abclaim,
+            onChange: (e) => setData("order_abclaim", e.target.value),
+            inputError: (
+                <InputError message={errors.order_abclaim} className="mt-2" />
+            ),
+            defaultValue: data.order_abclaim,
+        },
+        {
+            type: "combobox",
+            label: "Precedentes",
+            options: comboboxpreced,
+            value: preceOptions, // Usa data en lugar de preceOptions
+            onChange: handleChangepreceO,
+            inputError: (
+                <InputError
+                    message={errors.order_precedents}
+                    className="mt-2"
+                />
+            ),
+            defaultValue: data.order_precedents === 1 ? "Sí" : "No", // Ajusta esto también
+        },
+        {
+            placeholder: "Fecha de Solución",
+            label: "Fecha de Solución",
+            id: "solution_date",
+            type: "datetime-local",
+            name: "solution_date",
+            value: data.solution_date
+                ? new Date(data.solution_date).toISOString().slice(0, 16)
+                : "",
+            onChange: (e) => setData("solution_date", e.target.value),
+            inputError: (
+                <InputError message={errors.solution_date} className="mt-2" />
+            ),
+            defaultValue: data.solution_date
+                ? new Date(data.solution_date).toISOString().slice(0, 16)
+                : "",
+        },
+        {
+            label: "Inicio de ABIS",
+            id: "order_initial_abis",
+            type: "text",
+            name: "order_initial_abis",
+            value: data.order_initial_abis,
+            onChange: (e) => setData("order_initial_abis", e.target.value),
+            inputError: (
+                <InputError
+                    message={errors.order_initial_abis}
+                    className="mt-2"
+                />
+            ),
+            defaultValue: data.order_initial_abis,
+        },
+        {
+            label: "Potencia Inicial",
+            id: "order_initial_abis",
+            type: "text",
+            name: "order_initial_potency",
+            value: data.order_initial_potency,
+            onChange: (e) => setData("order_initial_potency", e.target.value),
+            inputError: (
+                <InputError
+                    message={errors.order_initial_potency}
+                    className="mt-2"
+                />
+            ),
+            defaultValue: data.order_initial_potency,
+        },
+        {
+            label: "ABIS Final",
+            id: "order_final_abis",
+            type: "text",
+            name: "order_final_abis",
+            value: data.order_final_abis,
+            onChange: (e) => setData("order_final_abis", e.target.value),
+            inputError: (
+                <InputError
+                    message={errors.order_final_abis}
+                    className="mt-2"
+                />
+            ),
+            defaultValue: data.order_final_abis,
+        },
+        {
+            label: "Diagnostico Inicial",
+            id: "order_initial_diagnosis",
+            type: "text",
+            name: "order_initial_diagnosis",
+            value: data.order_initial_diagnosis,
+            onChange: (e) => setData("order_initial_diagnosis", e.target.value),
+            inputError: (
+                <InputError
+                    message={errors.order_initial_diagnosis}
+                    className="mt-2"
+                />
+            ),
+            defaultValue: data.order_initial_diagnosis,
+        },
+        {
+            label: "Solución",
+            id: "order_solution",
+            type: "text",
+            name: "order_solution",
+            value: data.order_solution,
+            onChange: (e) => setData("order_solution", e.target.value),
+            inputError: (
+                <InputError message={errors.order_solution} className="mt-2" />
+            ),
+            defaultValue: data.order_solution,
+        },
+        {
+            label: "Potencia Final",
+            id: "order_final_potency",
+            type: "text",
+            name: "order_final_potency",
+            value: data.order_final_potency,
+            onChange: (e) => setData("order_final_potency", e.target.value),
+            inputError: (
+                <InputError
+                    message={errors.order_final_potency}
+                    className="mt-2"
+                />
+            ),
+            defaultValue: data.order_final_potency,
+        },
+        {
+            label: "Diagnóstico Final",
+            id: "order_final_diagnosis",
+            type: "text",
+            name: "order_final_diagnosis",
+            value: data.order_final_diagnosis,
+            onChange: (e) => setData("order_final_diagnosis", e.target.value),
+            inputError: (
+                <InputError
+                    message={errors.order_final_diagnosis}
+                    className="mt-2"
+                />
+            ),
+            defaultValue: data.order_final_diagnosis,
+        },
+        {
+            label: "Valor a pagar",
+            id: "value_due",
+            type: "number",
+            name: "value_due",
+            value: data.value_due,
+            onChange: (e) => setData("value_due", e.target.value),
+            inputError: (
+                <InputError message={errors.value_due} className="mt-2" />
+            ),
+            defaultValue: data.value_due,
+        },
+    ];
+    /** */
     const theaders = ["Id Contrato", "Cliente", "Plan", "Ip", "Estado"];
     const searchColumns = [
         "contract_num",
@@ -715,15 +1155,68 @@ const Contract = ({
         }
     };
 
-    const openDeleteModalForSelected = () => {
-        setShowDelete(true);
-        setDataToDelete(selectedContracts);
+    /* para order */
+    const [showCreateOrder, setShowCreateOrder] = useState(false);
+    const [showModalConfirm, setShowModalConfirm] = useState(false);
+    const closeModalConfirm = () => {
+        setShowModalConfirm(false);
+
+        reset();
+        setSelectedOption("");
     };
+
+    const handleConfirm = () => {
+        closeModalConfirm();
+        setShowCreateOrder(true);
+
+        // Encontrar el último número de orden de trabajo para generar el siguiente
+        const latestOrder = WorkOrders.reduce((maxNum, order) => {
+            const numParts = order.work_order_id.split("-");
+            const num = parseInt(numParts[numParts.length - 1]);
+            return num > maxNum ? num : maxNum;
+        }, 0);
+
+        const nextNumber = latestOrder + 1;
+        const orderId = `ORT-${nextNumber.toString().padStart(4, "0")}`;
+
+        // Setear los valores en el formulario
+        setData({
+            ...data,
+            work_order_id: orderId,
+        });
+        setShowCreate(true);
+    };
+
+    const closeModalCreateOrder = () => {
+        clearErrors();
+        setShowCreateOrder(false);
+        reset();
+    };
+
+    const handleSubmitAddOrder = (e) => {
+        e.preventDefault();
+
+        post(route("workorder.store"), {
+            preserveScroll: true,
+            onSuccess: () => {
+                closeModalCreateOrder();
+                notify("success", "Orden de trabajo creada.");
+            },
+            onError: (error) => console.error(Object.values(error).join(", ")),
+        });
+    };
+
+    /*finnnn*/
+    const filteredContracts = Contracts.filter(
+        (contract) => contract.status_id !== "STS-0002",
+    );
+    console.log(filteredContracts);
 
     return (
         <Authenticated
             user={auth.user}
             header={<Header subtitle="Administrar Contratos" />}
+            roles={auth.user.roles.map((role) => role.name)}
         >
             <Head title="Contratos" />
             <Tab tabs={tabs}>
@@ -731,13 +1224,9 @@ const Contract = ({
                     <div className="flex flex-wrap items-center justify-center md:justify-between gap-2">
                         <div className="w-full sm:w-auto flex flex-wrap justify-center gap-2">
                             <AddButton onClick={openCreateModal} />
-                            <DeleteButton
-                                disabled={selectedContracts.length === 0}
-                                onClick={openDeleteModalForSelected}
-                            />
                         </div>
                         <ExportData
-                            data={Contracts}
+                            data={filteredContracts}
                             searchColumns={searchColumns}
                             headers={theaders}
                             fileName="Contratos"
@@ -754,13 +1243,7 @@ const Contract = ({
                     handleSubmitAdd={handleSubmitAdd}
                     numContract={data.contract_num}
                 />
-                <DeleteModal
-                    showDelete={showDelete}
-                    closeDeleteModal={closeDeleteModal}
-                    title={"Borrar Contratos"}
-                    handleDelete={() => handleDelete(dataToDelete)}
-                    processing={processing}
-                />
+
                 <ModalEdit
                     title="Editar Contratos"
                     showEdit={showEdit}
@@ -770,14 +1253,31 @@ const Contract = ({
                     technicalInfoInputs={technicalInfoInputs}
                     processing={processing}
                     handleSubmitEdit={handleSubmitEdit}
+                    numContract={data.contract_num}
+                />
+                <ConfirmationModal
+                    title="Agregar orden de trabajo"
+                    message="El contrato se ha agregado con éxito. ¿Desea agregar una orden de trabajo  para este cliente?"
+                    show={showModalConfirm}
+                    onClose={closeModalConfirm}
+                    onConfirm={handleConfirm}
+                    processing={processing}
+                />
+                <ModalCreateOrder
+                    showCreate={showCreateOrder}
+                    closeModalCreate={closeModalCreateOrder}
+                    title="Crear Órden de Trabajo"
+                    contractInputs={orderInputs}
+                    supportInputs={suportInputs}
+                    processing={processing}
+                    handleSubmitAdd={handleSubmitAddOrder}
                 />
 
                 <Box className="mt-3 hidden md:block">
-                    <TableCustom
+                    <TableContract
                         headers={theaders}
-                        data={Contracts}
+                        data={filteredContracts}
                         searchColumns={searchColumns}
-                        onDelete={openDeleteModal}
                         onEdit={openEditModal}
                         idKey="contract_num"
                         onSelectChange={handleCheckboxChange}
@@ -788,9 +1288,8 @@ const Contract = ({
                 <Box className="mt-3  md:hidden">
                     <CardsCustom
                         headers={theaders}
-                        data={Contracts}
+                        data={filteredContracts}
                         searchColumns={searchColumns}
-                        onDelete={openDeleteModal}
                         onEdit={openEditModal}
                         idKey="contract_num"
                         onSelectChange={handleCheckboxChange}

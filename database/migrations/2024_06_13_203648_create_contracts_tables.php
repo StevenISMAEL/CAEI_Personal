@@ -92,7 +92,7 @@ return new class extends Migration {
             $table->string("order_solution", 250)->nullable();
             $table->string("order_final_potency", 150)->nullable();
             $table->string("order_final_diagnosis", 250)->nullable();
-            $table->integer("value_due")->nullable();
+            $table->double("value_due")->nullable();
 
             $table
                 ->foreign("type_report_id")

@@ -68,23 +68,39 @@ Route::prefix("manage-customers")
             ->middleware("permission:manage cantons");
     });
 
-Route::prefix("manage-contracts")->group(function () {
-    Route::resource("contracts", ConContractController::class)->except([
-        "create",
-        "show",
-        "edit",
-    ]);
-    Route::delete("/contracts", [
-        ConContractController::class,
-        "destroyMultiple",
-    ])->name("contracts.multiple.destroy");
-});
+Route::prefix("manage-contracts")
+    ->middleware(["auth", "verified", "role:vendedor"])
+    ->group(function () {
+        Route::resource("contracts", ConContractController::class)->except([
+            "create",
+            "show",
+            "edit",
+        ]);
+    });
+Route::prefix("annulments-contracts")
+    ->middleware(["auth", "verified", "role:admin"])
+    ->group(function () {
+        // Ruta para listar anulaciones de contratos (index2)
+        Route::get("/contracts2", [
+            ConContractController::class,
+            "index2",
+        ])->name("contracts2.index");
 
-Route::get("orden-trabajo", function () {
-    return Inertia::render("OrdenTrabajo");
-})->middleware(["auth", "verified", "role:vendedor"]);
+        // Ruta para listar anulaciones de contratos (index3)
+        Route::get("/contracts3", [
+            ConContractController::class,
+            "index3",
+        ])->name("contracts3.index");
+
+        // Ruta para eliminar múltiples contratos anulados
+        Route::delete("/", [
+            ConContractController::class,
+            "destroyMultiple",
+        ])->name("contracts.multiple.destroy");
+    });
 
 Route::prefix("manage-ips")
+    ->middleware(["auth", "verified", "role:admin"])
     ->group(function () {
         Route::resource("olts", IpOltsController::class)->except([
             "create",
@@ -123,5 +139,4 @@ Route::prefix("manage-ips")
         ])->name("lastmileNaps.multiple.destroy");
 
         Route::resource("ips", IpsController::class)->except(["show", "edit"]);
-    })
-    ->middleware(["auth", "verified", "role:admin"]);
+    });

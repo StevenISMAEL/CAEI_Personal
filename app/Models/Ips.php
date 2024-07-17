@@ -4,9 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class Ips extends Model {
+class Ips extends Model implements Auditable {
+    use \OwenIt\Auditing\Auditable;
     use HasFactory;
+    protected $auditStrict = true;
     protected $table = "ip_ip";
     protected $primaryKey = "ip_address";
     public $incrementing = false;

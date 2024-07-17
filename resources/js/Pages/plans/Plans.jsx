@@ -48,11 +48,13 @@ const Plan = ({ auth, Plans }) => {
     const openDeleteModal = (id) => {
         setShowDelete(true);
         setDataToDelete(id);
+        reset();
     };
 
     const closeEditModal = () => {
         setShowEdit(false);
         setEditData(null);
+        reset();
     };
 
     const openEditModal = (plan) => {
@@ -72,9 +74,10 @@ const Plan = ({ auth, Plans }) => {
 
         post(route("plans.store"), {
             preserveScroll: true,
-            onSuccess: () => closeModalCreate(),
-            onError: (error) => console.log(error),
-            onFinish: () => reset(),
+            onSuccess: () => {closeModalCreate();
+                closeDeleteModal();
+            },
+            onError: (error) => console.error(Object.values(error).join(", ")),
         });
     };
 
@@ -84,8 +87,7 @@ const Plan = ({ auth, Plans }) => {
         patch(route("plans.update", { id: editData.plan_id }), {
             preserveScroll: true,
             onSuccess: () => closeEditModal(),
-            onError: (error) => console.log(error),
-            onFinish: () => reset(),
+            onError: (error) => console.error(Object.values(error).join(", ")),
         });
     };
 
@@ -98,15 +100,13 @@ const Plan = ({ auth, Plans }) => {
                     setSelectedPlans([]);
                     closeDeleteModal();
                 },
-                onError: (error) => console.error(error),
-                onFinish: () => reset(),
+                onError: (error) => console.error(Object.values(error).join(", ")),
             });
         } else {
             destroy(route("plans.destroy", { id }), {
                 preserveScroll: true,
                 onSuccess: () => closeDeleteModal(),
-                onError: (error) => console.error(error),
-                onFinish: () => reset(),
+                onError: (error) => console.error(Object.values(error).join(", ")),
             });
         }
     };
@@ -198,6 +198,7 @@ const Plan = ({ auth, Plans }) => {
         <Authenticated
             user={auth.user}
             header={<Header subtitle="Administrar Planes" />}
+            roles={auth.user.roles.map((role) => role.name)}
         >
             <Head title="Planes" />
             <Tab tabs={tabs}>

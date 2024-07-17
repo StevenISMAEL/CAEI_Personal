@@ -1,10 +1,10 @@
-import { IoPeopleSharp } from "react-icons/io5";
+import { GrDocumentUpload } from "react-icons/gr";
 
 const tabs = [
     {
         name: "Contrato",
         route: "contracts.index",
-        icon: IoPeopleSharp,
+        icon: GrDocumentUpload,
     },
 ];
 

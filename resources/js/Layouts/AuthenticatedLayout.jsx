@@ -19,6 +19,7 @@ import { TbTableOptions } from "react-icons/tb";
 import SessionExpiredModal from "@/Components/SessionExpiredModal";
 import useSessionChecker from "@/Hooks/useSessionChecker";
 import { AiOutlineAudit } from "react-icons/ai";
+import { MdFolderDelete } from "react-icons/md";
 
 const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
     const { env } = usePage().props;
@@ -72,7 +73,14 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
             route: "contracts.index",
             subroute: "/manage-contracts/",
             icon: <FaFileContract />,
-            roles: ["admin", "vendedor"],
+            roles: ["vendedor"],
+        },
+        {
+            title: "Anular Contratos",
+            route: "contracts2.index",
+            subroute: "/annulments-contracts/",
+            icon: <MdFolderDelete />,
+            roles: ["admin"],
         },
         {
             title: "Ips",
@@ -93,14 +101,14 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
             route: "typereport.index",
             subroute: "/manage-orders/",
             icon: <TiDocumentText />,
-            roles: ["tecnico", "vendedor"],
+            roles: ["tecnico", "admin", "vendedor"],
         },
         {
             title: "Plans",
             route: "plans.index",
             subroute: "/manage-plans/",
             icon: <TbTableOptions />,
-            roles: ["admin", "vendedor"],
+            roles: ["admin"],
         },
         {
             title: "Auditoria",
@@ -148,6 +156,7 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
                         item.roles.some((role) => roles.includes(role)),
                     ).map((Menu, index) => (
                         <li key={index} className="px-1">
+                            {console.log(route().current(), currentUrl)}
                             <LinkCustom
                                 href={route(Menu.route)}
                                 active={

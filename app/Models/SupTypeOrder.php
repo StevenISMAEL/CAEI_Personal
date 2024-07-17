@@ -5,9 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\SupTypeReport;
-class SupTypeOrder extends Model
+use OwenIt\Auditing\Contracts\Auditable;
+
+class SupTypeOrder extends Model implements Auditable
 {
+    use \OwenIt\Auditing\Auditable;
     use HasFactory;
+    protected $auditStrict = true;
     protected $table = "sup_type_order";
 
     protected $primaryKey = "type_order_id";

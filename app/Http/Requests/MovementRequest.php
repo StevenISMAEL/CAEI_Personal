@@ -23,6 +23,8 @@ class MovementRequest extends FormRequest {
                 return [
                     "product_id" =>
                         "required|string|max:8|exists:inv_products,product_id",
+                    "work_order_id" =>
+                        "nullable|string|max:8|exists:sup_work_orders,work_order_id",
                     "movement_date" => "required|date",
                     "movement_quantity" => "required|numeric|min:0",
                     "movement_total" => "required|numeric|between:0,100.00",
@@ -32,6 +34,8 @@ class MovementRequest extends FormRequest {
                 return [
                     "product_id" =>
                         "sometimes|required|string|max:8|exists:inv_products,product_id",
+                    "work_order_id" =>
+                        "sometimes|nullable|string|max:8|exists:sup_work_orders,work_order_id",
                     "movement_date" => "sometimes|required|date",
                     "movement_quantity" => "sometimes|required|numeric|min:0",
                     "movement_total" =>
