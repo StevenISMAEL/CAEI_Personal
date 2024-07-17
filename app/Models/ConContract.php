@@ -9,7 +9,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 class ConContract extends Model implements Auditable {
     use HasFactory;
     use \OwenIt\Auditing\Auditable;
-    
+
     protected $auditStrict = true;
 
     protected $table = "con_contracts";
@@ -31,6 +31,7 @@ class ConContract extends Model implements Auditable {
 
     public static function getContracts() {
         return self::with("client", "statu", "plan", "ipaddress") // Incluir relaciones
+
             ->get()
             ->map(function ($contract) {
                 return [
@@ -54,7 +55,52 @@ class ConContract extends Model implements Auditable {
                 ];
             });
     }
+    public static function getContractsNotAnnulment() {
+        return self::with("client", "statu", "plan", "ipaddress") // Incluir relaciones
+            ->where("status_id", "!=", "STS-0002") // Filtrar por estado diferente a "STS-0002"
+            ->get()
+            ->map(function ($contract) {
+                return [
+                    "contract_num" => $contract->contract_num,
+                    "contract_id" => $contract->contract_id,
+                    "client_id" => $contract->client->client_id,
+                    "client_name" => $contract->client->client_name,
 
+                    "status_id" => $contract->status_id,
+                    "status_name" => $contract->statu->status_name,
+
+                    "discount_id" => $contract->discount_id,
+                    "discount_name" => $contract->discount->discount_name,
+
+                    "ip_address" => $contract->ipaddress->ip_address,
+                    "plan_id" => $contract->plan->plan_id,
+                    "plan_name" => $contract->plan->plan_name,
+                ];
+            });
+    }
+    public static function getContractsAnnulment() {
+        return self::with("client", "statu", "plan", "ipaddress") // Incluir relaciones
+            ->where("status_id", "=", "STS-0002") // Filtrar por estado diferente a "STS-0002"
+            ->get()
+            ->map(function ($contract) {
+                return [
+                    "contract_num" => $contract->contract_num,
+                    "contract_id" => $contract->contract_id,
+                    "client_id" => $contract->client->client_id,
+                    "client_name" => $contract->client->client_name,
+
+                    "status_id" => $contract->status_id,
+                    "status_name" => $contract->statu->status_name,
+
+                    "discount_id" => $contract->discount_id,
+                    "discount_name" => $contract->discount->discount_name,
+
+                    "ip_address" => $contract->ipaddress->ip_address,
+                    "plan_id" => $contract->plan->plan_id,
+                    "plan_name" => $contract->plan->plan_name,
+                ];
+            });
+    }
     /*
     public function order() {
         return $this->belongsTo(

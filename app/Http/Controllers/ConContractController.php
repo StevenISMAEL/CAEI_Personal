@@ -37,10 +37,19 @@ class ConContractController extends Controller {
             "WorkOrders" => SupWorkOrder::getOrderID(),
             "TypeReports" => SupTypeReport::all(),
             "TypeOrders" => SupTypeOrder::all(),
-            
-
         ]);
     }
+    public function index2() {
+        return Inertia::render("AnnulmentContract/annulment", [
+            "Contracts" => ConContract::getContractsNotAnnulment(),
+        ]);
+    }
+    public function index3() {
+        return Inertia::render("AnnulmentContract/report", [
+            "Contracts" => ConContract::getContractsAnnulment(),
+        ]);
+    }
+
     public function store(ContractRequest $contractRequest) {
         $validatedData = $contractRequest->validated();
 
@@ -92,25 +101,49 @@ class ConContractController extends Controller {
     public function destroy($id) {
         $contract = ConContract::find($id);
 
-        // Cambiar el estado del contrato a inactivo u otro estado deseado
-        $contract->status_id = "STS-0002"; // Por ejemplo, cambia "Inactivo" por el estado que necesites
-        $contract->save();
+        if ($contract) {
+            $ip = Ips::find($contract->ip_address);
 
-        return to_route("contracts.index");
+            if ($ip && $ip->ip_status !== "0") {
+                $ip->ip_status = "0";
+                $ip->last_mile_nap_id = null;
+                $ip->save();
+            }
+
+            $contract->status_id = "STS-0002"; // Por ejemplo, cambia "STS-0002" por el estado que necesites
+
+            $contract->save();
+
+            return to_route("contracts.index2");
+        }
+
+        // Manejar el caso donde el contrato no se encuentre
+        return redirect()
+            ->route("contracts2.index")
+            ->with("error", "Contract not found.");
     }
 
-   
     public function destroyMultiple(Request $request) {
         $ids = $request->input("ids");
-        // Encuentra los movimientos con los IDs dados
-        $movements = ConContract::whereIn("contract_num", $ids)->get();
-    
-        // Cambia el estado de cada movimiento
-        foreach ($movements as $movement) {
-            $movement->status_id = "STS-0002"; // Cambia "STS-0002" por el estado que necesites
-            $movement->save();
+
+        // Encuentra los contratos con los IDs dados
+        $contracts = ConContract::whereIn("contract_num", $ids)->get();
+
+        // Cambia el estado de cada contrato y su dirección IP asociada
+        foreach ($contracts as $contract) {
+            // Cambiar el estado de la dirección IP asociada al contrato
+            $ip = Ips::find($contract->ip_address);
+            if ($ip && $ip->ip_status !== "0") {
+                $ip->ip_status = "0";
+                $ip->last_mile_nap_id = null;
+                $ip->save();
+            }
+
+            // Cambiar el estado del contrato a inactivo u otro estado deseado
+            $contract->status_id = "STS-0002"; // Cambia "STS-0002" por el estado que necesites
+            $contract->save();
         }
-    
-        return to_route("contracts.index");
+
+        return to_route("contracts2.index");
     }
 }

@@ -25,6 +25,7 @@ const Movement = ({ auth, Products, Movements, Orders }) => {
         reset,
         delete: destroy,
         patch,
+        clearErrors,
     } = useForm({
         product_id: "",
         work_order_id: "",
@@ -52,8 +53,10 @@ const Movement = ({ auth, Products, Movements, Orders }) => {
     }, [data.product_id]);
 
     const closeModalCreate = () => {
+        clearErrors();
         setShowCreate(false);
         reset();
+        setSelectedOption("");
     };
     const openCreateModal = () => {
         reset();
@@ -70,8 +73,10 @@ const Movement = ({ auth, Products, Movements, Orders }) => {
     };
 
     const closeEditModal = () => {
+        clearErrors();
         setShowEdit(false);
         setEditData(null);
+        reset();
     };
     const openEditModal = (movement) => {
         setShowEdit(true);
@@ -82,7 +87,7 @@ const Movement = ({ auth, Products, Movements, Orders }) => {
         const work_order_namei = order
             ? `${order.work_order_id} - ${order.report_name}`
             : "";
-        console.log(work_order_namei);
+
         setData({
             product_id: movement.product_id,
             movement_date: movement.movement_date,

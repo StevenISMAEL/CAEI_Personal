@@ -69,19 +69,35 @@ Route::prefix("manage-customers")
     });
 
 Route::prefix("manage-contracts")
-->middleware(["auth", "verified", "role:vendedor"])
-->group(function () {
-    
-    Route::resource("contracts", ConContractController::class)->except([
-        "create",
-        "show",
-        "edit",
-    ]);
-    Route::delete("/contracts", [
-        ConContractController::class,
-        "destroyMultiple",
-    ])->name("contracts.multiple.destroy");
-});
+    ->middleware(["auth", "verified", "role:vendedor"])
+    ->group(function () {
+        Route::resource("contracts", ConContractController::class)->except([
+            "create",
+            "show",
+            "edit",
+        ]);
+    });
+Route::prefix("annulments-contracts")
+    ->middleware(["auth", "verified", "role:admin"])
+    ->group(function () {
+        // Ruta para listar anulaciones de contratos (index2)
+        Route::get("/contracts2", [
+            ConContractController::class,
+            "index2",
+        ])->name("contracts2.index");
+
+        // Ruta para listar anulaciones de contratos (index3)
+        Route::get("/contracts3", [
+            ConContractController::class,
+            "index3",
+        ])->name("contracts3.index");
+
+        // Ruta para eliminar múltiples contratos anulados
+        Route::delete("/", [
+            ConContractController::class,
+            "destroyMultiple",
+        ])->name("contracts.multiple.destroy");
+    });
 
 Route::prefix("manage-ips")
     ->middleware(["auth", "verified", "role:admin"])

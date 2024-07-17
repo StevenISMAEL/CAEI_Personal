@@ -3,15 +3,14 @@ import { Head, useForm } from "@inertiajs/react";
 import Header from "@/Components/Header";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import Tab from "@/Layouts/TabLayout";
-import { AddButton, DeleteButton } from "@/Components/CustomButtons";
+import { AddButton } from "@/Components/CustomButtons";
 import InputError from "@/Components/InputError";
 import ModalCreate from "@/Components/ContractModel";
 import ModalEdit from "@/Components/ContractEdit";
 import Box from "@/Layouts/Box";
 import ExportData from "@/Components/ExportData";
 import tabs from "./tabs";
-import DeleteModal from "@/Components/DeleteModal";
-import TableCustom from "@/Components/TableCustom";
+import TableContract from "@/Components/TableContract";
 import CardsCustom from "@/Components/CardCustom";
 import { useNotify } from "@/Components/Toast";
 import ModalCreateOrder from "@/Components/orderModel";
@@ -41,7 +40,7 @@ const Contract = ({
         processing,
         errors,
         reset,
-        delete: destroy,
+
         patch,
         clearErrors,
     } = useForm({
@@ -100,10 +99,10 @@ const Contract = ({
         ids: [],
     });
     const [showCreate, setShowCreate] = useState(false);
-    const [showDelete, setShowDelete] = useState(false);
+
     const [showEdit, setShowEdit] = useState(false);
     const [editData, setEditData] = useState(null);
-    const [dataToDelete, setDataToDelete] = useState(null);
+
     const [selectedContracts, setSelectedContracts] = useState([]);
     //napdistribution
     const [selectedOlt, setSelectedOlt] = useState("");
@@ -163,7 +162,7 @@ const Contract = ({
                 nap.last_mile_nap_splitter >= ipsAssignedToLastMileNap.length
             );
         });
-        console.log(filteredLastMileNaps);
+
         setFilteredLastMileNaps(filteredLastMileNaps);
 
         // Filtrar las direcciones IP basadas en la NAP de Distribución seleccionada y estado de IP
@@ -197,8 +196,6 @@ const Contract = ({
 
     const closeModalCreate = () => {
         clearErrors();
-
-        setSelectedOption("");
         setShowCreate(false);
     };
 
@@ -223,16 +220,6 @@ const Contract = ({
         setShowCreate(true);
     };
 
-    const closeDeleteModal = () => {
-        setShowDelete(false);
-        setDataToDelete(null);
-    };
-
-    const openDeleteModal = (id) => {
-        setShowDelete(true);
-        setDataToDelete(id);
-    };
-
     const closeEditModal = () => {
         clearErrors();
         setShowEdit(false);
@@ -241,7 +228,6 @@ const Contract = ({
     };
 
     const openEditModal = (contract) => {
-        console.log(contract);
         const ip = Ips.find((ip) => ip.ip_address === contract.ip_address);
 
         // Encontrar la NAP de Última Milla asociada a la IP
@@ -338,31 +324,6 @@ const Contract = ({
         });
     };
 
-    const handleDelete = (id) => {
-        if (Array.isArray(id)) {
-            data.ids = id;
-            destroy(route("contracts.multiple.destroy"), {
-                preserveScroll: true,
-                onSuccess: () => {
-                    setSelectedContracts([]);
-                    closeDeleteModal();
-                    notify("success", "Contratos eliminados.");
-                },
-                onError: (error) =>
-                    console.error(Object.values(error).join(", ")),
-            });
-        } else {
-            destroy(route("contracts.destroy", { id }), {
-                preserveScroll: true,
-                onSuccess: () => {
-                    closeDeleteModal();
-                    notify("success", "Contrato eliminado.");
-                },
-                onError: (error) =>
-                    console.error(Object.values(error).join(", ")),
-            });
-        }
-    };
     const handleClientIdChange = (id) => {
         // Actualiza el client_id en el estado
         setData("client_id", id);
@@ -416,8 +377,11 @@ const Contract = ({
     const handleChange = (value) => {
         setSelectedOption(value); // Actualiza el estado cuando cambia la selección
         setData("maximum_date", value); // Asegura que movement_type también se actualice
-        console.log(data.distribution_nap_id);
     };
+    const filteredStatus = Status.filter(
+        (status) => status.status_id !== "STS-0002",
+    );
+
     const contractInputs = [
         {
             label: "Num Contrato",
@@ -461,7 +425,7 @@ const Contract = ({
             labelKey: "status_name",
             valueKey: "status_id",
             label: "Estado",
-            options: Status,
+            options: filteredStatus,
             value: data.status_id,
             onSelect: (id) => setData("status_id", id),
             inputError: (
@@ -664,6 +628,7 @@ const Contract = ({
             options: filteredDistributionNaps,
             label: "Nap de Distribución",
             value: data.distribution_nap_id,
+
             inputError: (
                 <InputError
                     message={errors.distribution_nap_id}
@@ -702,7 +667,7 @@ const Contract = ({
                 />
             ),
             onSelect: handleLastMileNapChange,
-            disabled: !selectedOlt,
+            disabled: !data.distribution_nap_id,
             defaultValue: data.last_mile_nap_name,
         },
 
@@ -1190,15 +1155,14 @@ const Contract = ({
         }
     };
 
-    const openDeleteModalForSelected = () => {
-        setShowDelete(true);
-        setDataToDelete(selectedContracts);
-    };
     /* para order */
     const [showCreateOrder, setShowCreateOrder] = useState(false);
     const [showModalConfirm, setShowModalConfirm] = useState(false);
     const closeModalConfirm = () => {
         setShowModalConfirm(false);
+
+        reset();
+        setSelectedOption("");
     };
 
     const handleConfirm = () => {
@@ -1221,8 +1185,6 @@ const Contract = ({
             work_order_id: orderId,
         });
         setShowCreate(true);
-
-        console.log(data);
     };
 
     const closeModalCreateOrder = () => {
@@ -1245,6 +1207,10 @@ const Contract = ({
     };
 
     /*finnnn*/
+    const filteredContracts = Contracts.filter(
+        (contract) => contract.status_id !== "STS-0002",
+    );
+    console.log(filteredContracts);
 
     return (
         <Authenticated
@@ -1258,13 +1224,9 @@ const Contract = ({
                     <div className="flex flex-wrap items-center justify-center md:justify-between gap-2">
                         <div className="w-full sm:w-auto flex flex-wrap justify-center gap-2">
                             <AddButton onClick={openCreateModal} />
-                            <DeleteButton
-                                disabled={selectedContracts.length === 0}
-                                onClick={openDeleteModalForSelected}
-                            />
                         </div>
                         <ExportData
-                            data={Contracts}
+                            data={filteredContracts}
                             searchColumns={searchColumns}
                             headers={theaders}
                             fileName="Contratos"
@@ -1281,13 +1243,7 @@ const Contract = ({
                     handleSubmitAdd={handleSubmitAdd}
                     numContract={data.contract_num}
                 />
-                <DeleteModal
-                    showDelete={showDelete}
-                    closeDeleteModal={closeDeleteModal}
-                    title={"Borrar Contratos"}
-                    handleDelete={() => handleDelete(dataToDelete)}
-                    processing={processing}
-                />
+
                 <ModalEdit
                     title="Editar Contratos"
                     showEdit={showEdit}
@@ -1318,11 +1274,10 @@ const Contract = ({
                 />
 
                 <Box className="mt-3 hidden md:block">
-                    <TableCustom
+                    <TableContract
                         headers={theaders}
-                        data={Contracts}
+                        data={filteredContracts}
                         searchColumns={searchColumns}
-                        onDelete={openDeleteModal}
                         onEdit={openEditModal}
                         idKey="contract_num"
                         onSelectChange={handleCheckboxChange}
@@ -1333,9 +1288,8 @@ const Contract = ({
                 <Box className="mt-3  md:hidden">
                     <CardsCustom
                         headers={theaders}
-                        data={Contracts}
+                        data={filteredContracts}
                         searchColumns={searchColumns}
-                        onDelete={openDeleteModal}
                         onEdit={openEditModal}
                         idKey="contract_num"
                         onSelectChange={handleCheckboxChange}

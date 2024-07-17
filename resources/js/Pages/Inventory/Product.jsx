@@ -25,6 +25,7 @@ const Product = ({ auth, Products }) => {
         reset,
         delete: destroy,
         patch,
+        clearErrors,
     } = useForm({
         product_name: "",
         product_description: "",
@@ -41,9 +42,15 @@ const Product = ({ auth, Products }) => {
     const [editData, setEditData] = useState(null);
     const [dataToDelete, setDataToDelete] = useState(null);
     const [selectedProducts, setSelectedProducts] = useState([]);
+    const [selectedOption, setSelectedOption] = useState("");
     const notify = useNotify();
 
-    const closeModalCreate = () => setShowCreate(false);
+    const closeModalCreate = () => {
+        clearErrors();
+        setShowCreate(false);
+        reset();
+        setSelectedOption("");
+    };
     const openCreateModal = () => setShowCreate(true);
 
     const closeDeleteModal = () => {
@@ -56,8 +63,10 @@ const Product = ({ auth, Products }) => {
     };
 
     const closeEditModal = () => {
+        clearErrors();
         setShowEdit(false);
         setEditData(null);
+        reset();
     };
     const openEditModal = (product) => {
         setShowEdit(true);
@@ -70,6 +79,7 @@ const Product = ({ auth, Products }) => {
             product_brand: product.product_brand,
             product_vat: product.product_vat,
         });
+        setSelectedOption(product.product_brand);
     };
 
     const handleSubmitAdd = (e) => {
@@ -123,6 +133,16 @@ const Product = ({ auth, Products }) => {
             });
         }
     };
+    const handleChange = (value) => {
+        setSelectedOption(value); // Actualiza el estado cuando cambia la selección
+        setData("product_brand", value);
+    };
+    const BrandOptions = [
+        { value: "Cisco", label: "Cisco" },
+        { value: "Linksys ", label: "Linksys " },
+        { value: "Juniper Networks ", label: "Juniper Networks " },
+        { value: "Huawei", label: "Huawei" },
+    ];
 
     const inputs = [
         {
@@ -180,17 +200,17 @@ const Product = ({ auth, Products }) => {
             defaultValue: data.product_quantity,
         },
         {
+            type: "combobox",
             label: "Marca",
-            id: "product_brand",
-            type: "text",
-            name: "product_brand",
-            value: data.product_brand,
-            onChange: (e) => setData("product_brand", e.target.value),
+            options: BrandOptions,
+            value: selectedOption,
+            onChange: handleChange,
             inputError: (
                 <InputError message={errors.product_brand} className="mt-2" />
             ),
             defaultValue: data.product_brand,
         },
+
         {
             label: "Iva",
             id: "product_vat",

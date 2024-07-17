@@ -6,6 +6,7 @@ import PrimaryButton from "./PrimaryButton";
 import ComboBox from "./ComboBox";
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
+import { usePage } from "@inertiajs/react";
 
 const ModalCreate = ({
     showCreate,
@@ -19,11 +20,10 @@ const ModalCreate = ({
 }) => {
     const handleDownloadPDF = () => {
         const doc = new jsPDF();
-        /*const { logoDectell, auth } = usePage().props;
+        const { logoDectell, auth } = usePage().props;
         if (logoDectell) {
             doc.addImage(logoDectell, "PNG", 73, 5, 60, 20, "Dectell Logo");
         }
-*/
 
         const generateTableRows = (inputs) => {
             return inputs.map((input) => [input.label, input.value]);
