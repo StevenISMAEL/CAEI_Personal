@@ -26,13 +26,13 @@ class SupTypeReportRequest extends FormRequest
                 return [
                     "type_order_id" => "required|string|max:8|exists:sup_type_order,type_order_id",
                     "name_type_report" => "required|string|max:50",
-                    "description_type_report" => "nullable|string|max:150",
+                    "description_type_report" => "required|string|max:150",
                 ];
             case "PATCH":
                 return [
                     "type_order_id" => "sometimes|required|string|max:8|exists:sup_type_order,type_order_id",
                     "name_type_report" => "sometimes|required|string|max:50",
-                    "description_type_report" => "sometimes|nullable|string|max:150",
+                    "description_type_report" => "sometimes|required|string|max:150",
                 ];
             case "DELETE":
                 return [

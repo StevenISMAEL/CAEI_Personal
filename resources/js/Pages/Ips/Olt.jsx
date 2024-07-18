@@ -52,11 +52,13 @@ const Olts = ({ auth, Olts}) => {
     const closeModalCreate = () => {
         setShowCreate(false);
         reset();
+        clearErrors();
     };
 
     const closeDeleteModal = () => {
         setShowDelete(false);
         setDataToDelete(null);
+        clearErrors();
     };
     const openDeleteModal = (id) => {
         setShowDelete(true);
@@ -66,6 +68,7 @@ const Olts = ({ auth, Olts}) => {
     const closeEditModal = () => {
         setShowEdit(false);
         setEditData(null);
+        clearErrors();
     };
     const openEditModal = (olt) => {
         setShowEdit(true);
