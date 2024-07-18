@@ -1276,6 +1276,7 @@ const Contract = ({
                     supportInputs={suportInputs}
                     processing={processing}
                     handleSubmitAdd={handleSubmitAddOrder}
+                    numOrder={data.work_order_id}
                 />
 
                 <Box className="mt-3 hidden md:block">
