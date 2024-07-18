@@ -12,7 +12,7 @@ import { DarkModeContext } from "@/Components/DarkModeContext";
 import { MdInventory } from "react-icons/md";
 import { IoPlanet } from "react-icons/io5";
 import { TiDocumentText } from "react-icons/ti";
-import { MdOutlineNetworkWifi } from "react-icons/md";
+import { FcSupport } from "react-icons/fc";
 import { FaUsersGear } from "react-icons/fa6";
 import { FaFileContract } from "react-icons/fa6";
 import { TbTableOptions } from "react-icons/tb";
@@ -20,6 +20,8 @@ import SessionExpiredModal from "@/Components/SessionExpiredModal";
 import useSessionChecker from "@/Hooks/useSessionChecker";
 import { AiOutlineAudit } from "react-icons/ai";
 import { MdFolderDelete } from "react-icons/md";
+import { Tooltip } from "react-tooltip";
+
 
 const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
     const { env } = usePage().props;
@@ -101,13 +103,13 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
             route: "typereport.index",
             subroute: "/manage-orders/",
             icon: <TiDocumentText />,
-            roles: [ "admin", "vendedor"],
+            roles: ["admin", "vendedor"],
         },
         {
             title: "Orden de Trabajo",
             route: "orderTecnico.index",
             subroute: "/manage-tecnico/",
-            icon: <TiDocumentText />,
+            icon: <FcSupport />,
             roles: ["tecnico"],
         },
         {
@@ -124,6 +126,20 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
             roles: ["auditor"],
         },
     ];
+
+    const tooltipStyle = {
+        "--rt-color-dark": isDarkMode ? "#7c3aed" : "#22c55e",
+        "--rt-color-white": "#fff",
+        "--rt-color-success": isDarkMode ? "#7c3aed" : "#22c55e",
+        "--rt-opacity": "0.8",
+        "--rt-transition-show-delay": "0.20s",
+        "--rt-transition-closing-delay": "0.20s",
+        "--rt-tooltip-background": isDarkMode ? "#7c3aed" : "#22c55e",
+        "--rt-tooltip-color": "#fff",
+        "--rt-tooltip-padding": "10px 15px",
+        "--rt-tooltip-border-radius": "30px",
+        "--rt-tooltip-font-size": "12px",
+    };
 
     return (
         <div className="flex min-h-screen  bg-gray-100 dark:bg-gray-900">
@@ -172,6 +188,9 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
                                         : route().current(Menu.route)
                                 }
                                 className={`${!open && "justify-center"}`}
+                                data-tooltip-id={`tooltip-${index}`}
+                                data-tooltip-content={Menu.title}
+                                data-tooltip-place="right"
                             >
                                 <span className="text-xl">{Menu.icon}</span>
                                 <span
@@ -182,6 +201,12 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
                                     {Menu.title}
                                 </span>
                             </LinkCustom>
+                            {!open && (
+                                <Tooltip
+                                    id={`tooltip-${index}`}
+                                    style={tooltipStyle}
+                                />
+                            )}
                         </li>
                     ))}
                 </ul>
