@@ -18,13 +18,13 @@ const ModalEdit = ({
     handleSubmitEdit,
     numContract,
 }) => {
+    const { logoDectell } = usePage().props;
     const handleDownloadPDF = () => {
         const doc = new jsPDF();
-        /*   const { logoDectell, auth } = usePage().props;
 
         if (logoDectell) {
             doc.addImage(logoDectell, "PNG", 73, 5, 60, 20, "Dectell Logo");
-        }*/
+        }
 
         const generateTableRows = (inputs) => {
             return inputs.map((input) => [input.label, input.value]);
@@ -78,7 +78,7 @@ const ModalEdit = ({
         }, []);
 
         doc.autoTable({
-            startY: 20,
+            startY: 35,
             body: allRows,
             ...tableStyles,
         });
@@ -126,9 +126,7 @@ const ModalEdit = ({
                                         />
                                     )}
                                     {input.inputError && (
-                                        <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-                                            {input.inputError}
-                                        </p>
+                                        <>{input.inputError}</>
                                     )}
                                 </div>
                             ))}
@@ -161,9 +159,7 @@ const ModalEdit = ({
                                         />
                                     )}
                                     {input.inputError && (
-                                        <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-                                            {input.inputError}
-                                        </p>
+                                        <>{input.inputError}</>
                                     )}
                                 </div>
                             ))}
@@ -196,9 +192,7 @@ const ModalEdit = ({
                                         />
                                     )}
                                     {input.inputError && (
-                                        <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-                                            {input.inputError}
-                                        </p>
+                                        <>{input.inputError}</>
                                     )}
                                 </div>
                             ))}
