@@ -101,7 +101,7 @@ Route::group(
             "store",
         ])
             ->middleware(["auth", "throttle:6,1"])
-            ->name("password.confirm");
+            ->name("password.confirm.2fa");
 
         Route::get("/two-factor-challenge", [
             TwoFactorAuthenticatedSessionController::class,

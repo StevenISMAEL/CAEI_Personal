@@ -36,7 +36,7 @@ const ConfirmsPassword = ({
         setForm({ ...form, processing: true });
 
         axios
-            .post(route("password.confirm"), {
+            .post(route("password.confirm.2fa"), {
                 password: form.password,
             })
             .then(() => {
