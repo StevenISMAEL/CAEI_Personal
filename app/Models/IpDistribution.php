@@ -86,11 +86,19 @@ class IpDistribution extends Model  implements Auditable{
     
             $ipAddress = "10.0.$startIpThirdOctet.$fourthOctetFormatted";
     
-            Ips::create([
+            $ip = new Ips([
                 "ip_address" => $ipAddress,
                 "distribution_nap_id" => $this->distribution_nap_id,
                 "ip_status" => false,
             ]);
+    
+            if ($fourthOctet == 2 || $fourthOctet == 254) {
+                $ip->save();
+            } else {
+                $ip->disableAuditing();
+                $ip->save();
+                $ip->enableAuditing();
+            }
         }
     }
     
