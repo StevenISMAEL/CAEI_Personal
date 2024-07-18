@@ -111,7 +111,7 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
             roles: ["tecnico"],
         },
         {
-            title: "Plans",
+            title: "Planes",
             route: "plans.index",
             subroute: "/manage-plans/",
             icon: <TbTableOptions />,

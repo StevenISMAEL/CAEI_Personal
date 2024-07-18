@@ -291,7 +291,6 @@ const Client = ({ auth, Sectors, Clients }) => {
     const handleConfirm = () => {
         closeModalConfirm();
         setShowCreatePhone(true);
-        console.log(data);
     };
 
     const closeModalCreatePhone = () => {

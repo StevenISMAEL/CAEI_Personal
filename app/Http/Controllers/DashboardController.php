@@ -22,6 +22,8 @@ class DashboardController extends Controller {
             "monthlySalesData" => $this->dashboardService->getMonthlySalesData(),
             "clientsByParishData" => $this->dashboardService->getClientsByParishData(),
             "discountsAppliedData" => $this->dashboardService->getDiscountsAppliedData(),
+            "totalContractsCount" => $this->dashboardService->getTotalContractsCount(),
+            "getTotalPlansCount" => $this->dashboardService->getTotalPlansCount(),
         ]);
     }
 }

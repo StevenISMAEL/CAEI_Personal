@@ -10,6 +10,9 @@ import {
     RoleActivityChart,
     EntityActivityChart,
     SalesFunnelChart,
+    ClientsByPlanChart,
+    MonthlySalesChart,
+    ParishHeatmapChart,
 } from "@/Components/CustomChart";
 import {
     transformAuditData,
@@ -17,9 +20,21 @@ import {
     transformRoleActivityData,
     transformEntityActivityData,
 } from "@/Utils/transformAuditData";
+import StatCard from "@/Components/StatCard";
+import { FaUsers, FaMoneyBill } from "react-icons/fa";
+import { PiFileCloudBold } from "react-icons/pi";
 
-export default function Dashboard({ auth, audits, salesFunnelData }) {
-    console.log(salesFunnelData);
+export default function Dashboard({
+    auth,
+    audits,
+    salesFunnelData,
+    clientsByPlanData,
+    monthlySalesData,
+    clientsByParishData,
+    totalContractsCount,
+    getTotalPlansCount
+}) {
+    console.log("totalContractsCount", totalContractsCount);
     const likertData = transformAuditData(audits);
     const roleActivityData = transformRoleActivityData(audits);
     const entityActivityData = transformEntityActivityData(audits);
@@ -51,10 +66,43 @@ export default function Dashboard({ auth, audits, salesFunnelData }) {
             </Box>,
         ],
         vendedor: [
+            <Box key="box-0-3" className="pt-6">
+                <div className="flex flex-wrap">
+                    <div className="w-full md:w-1/2 p-2">
+                        <StatCard
+                            icon={FaUsers}
+                            title="Contratos Totales"
+                            value={totalContractsCount}
+                            color="blue"
+                        />
+                    </div>
+                    <div className="w-full md:w-1/2 p-2">
+                        <StatCard
+                            icon={PiFileCloudBold}
+                            title="Planes"
+                            value={getTotalPlansCount}
+                            color="green"
+                        />
+                    </div>
+                </div>
+            </Box>,
             <Box key="box-3" className="pt-6">
                 <div className="flex flex-wrap">
                     <div className="w-full md:w-1/2 p-2">
                         <SalesFunnelChart data={salesFunnelData} />
+                    </div>
+                    <div className="w-full md:w-1/2 p-2">
+                        <ClientsByPlanChart data={clientsByPlanData} />
+                    </div>
+                </div>
+            </Box>,
+            <Box key="box-4" className="pt-6">
+                <div className="flex flex-wrap">
+                    <div className="w-full md:w-1/2 p-2">
+                        <MonthlySalesChart data={monthlySalesData} />
+                    </div>
+                    <div className="w-full md:w-1/2 p-2">
+                        <ParishHeatmapChart data={clientsByParishData} />
                     </div>
                 </div>
             </Box>,

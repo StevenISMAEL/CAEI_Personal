@@ -169,3 +169,95 @@ export const SalesFunnelChart = ({ data }) => {
         </div>
     );
 };
+
+export const ClientsByPlanChart = ({ data }) => {
+    const { isDarkMode } = useContext(DarkModeContext);
+
+    const chartData = {
+        labels: data.map((item) => item.plan_name),
+        datasets: [
+            {
+                label: "Clientes",
+                data: data.map((item) => item.count),
+                backgroundColor: "rgba(16, 185, 129, 0.6)",
+                borderColor: "rgba(16, 185, 129, 1)",
+                borderWidth: 1,
+            },
+        ],
+    };
+    return (
+        <div className="w-full h-full">
+            <div className="bg-white dark:bg-gray-700 p-4 rounded-lg shadow-lg h-full">
+                <div className="relative" style={{ height: "400px" }}>
+                    <Bar
+                        data={chartData}
+                        options={chartOptions("Tipos de Planes", isDarkMode)}
+                    />
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export const MonthlySalesChart = ({ data }) => {
+    const { isDarkMode } = useContext(DarkModeContext);
+
+    const chartData = {
+        labels: data.map((item) => item.month),
+        datasets: [
+            {
+                label: "Recuento de ventas",
+                data: data.map((item) => item.count),
+                backgroundColor: "rgba(249, 115, 22, 0.6)",
+                borderColor: "rgba(249, 115, 22, 1)",
+                borderWidth: 2,
+                fill: false,
+            },
+        ],
+    };
+
+    return (
+        <div className="w-full h-full">
+            <div className="bg-white dark:bg-gray-700 p-4 rounded-lg shadow-lg h-full">
+                <div className="relative" style={{ height: "400px" }}>
+                    <Line
+                        data={chartData}
+                        options={chartOptions(
+                            "Datos de ventas mensuales",
+                            isDarkMode,
+                        )}
+                    />
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export const ParishHeatmapChart = ({ data }) => {
+    const { isDarkMode } = useContext(DarkModeContext);
+
+    const chartData = {
+        labels: data.map(item => item.parish_name),
+        datasets: [
+            {
+                label: "Cantidad de Clientes",
+                data: data.map(item => item.count),
+                backgroundColor: "rgba(234, 179, 8, 0.6)", 
+                borderColor: "rgba(234, 179, 8, 1)",                borderWidth: 1,
+            },
+        ],
+    };
+
+    return (
+        <div className="w-full h-full">
+            <div className="bg-white dark:bg-gray-700 dark:text-white p-4 rounded-lg shadow-lg h-full">
+                <div className="relative" style={{ height: "400px" }}>
+                    <Bar
+                        data={chartData}
+                        options={chartOptions("Clientes por Parroquia", isDarkMode)}
+                    />
+                </div>
+            </div>
+        </div>
+    );
+};

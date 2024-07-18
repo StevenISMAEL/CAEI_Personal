@@ -1215,7 +1215,7 @@ const Contract = ({
     const filteredContracts = Contracts.filter(
         (contract) => contract.status_id !== "STS-0002",
     );
-    console.log(filteredContracts);
+    //console.log(filteredContracts);
 
     return (
         <Authenticated

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\ConContract;
+use App\Models\Plans;
 
 class DashboardService {
     public function getSalesFunnelData() {
@@ -79,5 +80,13 @@ class DashboardService {
             ->selectRaw("con_discounts.discount_name, count(*) as count")
             ->orderBy("count", "desc")
             ->get();
+    }
+
+    public function getTotalContractsCount() {
+        return ConContract::count();
+    }
+
+    public function getTotalPlansCount() {
+        return Plans::count();
     }
 }
