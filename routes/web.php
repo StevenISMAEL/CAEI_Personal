@@ -115,7 +115,7 @@ Route::group(
             "store",
         ])
             ->middleware(["guest", "throttle:6,1"])
-            ->name("two-factor.login");
+            ->name("two-factor.login.submit");
 
         Route::post("/user/two-factor-authentication", [
             TwoFactorAuthenticationController::class,

@@ -33,7 +33,7 @@ const TwoFactorChallenge = () => {
 
     const onSubmit = (e) => {
         e.preventDefault();
-        form.post(route("two-factor.login"));
+        form.post(route("two-factor.login.submit"));
     };
 
     return (

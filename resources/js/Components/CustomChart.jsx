@@ -140,26 +140,32 @@ export const TimelineChart = ({ data }) => {
     );
 };
 
-export function SalesFunnelChart({ data }) {
+export const SalesFunnelChart = ({ data }) => {
+    const { isDarkMode } = useContext(DarkModeContext);
+
     const chartData = {
-        labels: data.labels,
+        labels: data.map((item) => item.status_name),
         datasets: [
             {
-                label: "Contratos",
-                data: data.values,
-                backgroundColor: "rgba(75, 192, 192, 0.6)",
+                label: "Contador",
+                data: data.map((item) => item.count),
+                backgroundColor: "rgba(139, 92, 246, 0.6)",
+                borderColor: "rgba(139, 92, 246, 1)",
+                borderWidth: 1,
             },
         ],
     };
 
-    const options = {
-        indexAxis: "y",
-        scales: {
-            x: {
-                beginAtZero: true,
-            },
-        },
-    };
-
-    return <Bar data={chartData} options={options} />;
-}
+    return (
+        <div className="w-full h-full">
+            <div className="bg-white dark:bg-gray-700 bg-vio dark:text-white p-4 rounded-lg shadow-lg h-full">
+                <div className="relative" style={{ height: "400px" }}>
+                    <Bar
+                        data={chartData}
+                        options={chartOptions("Contratos", isDarkMode)}
+                    />
+                </div>
+            </div>
+        </div>
+    );
+};

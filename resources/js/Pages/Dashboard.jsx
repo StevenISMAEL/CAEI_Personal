@@ -19,6 +19,7 @@ import {
 } from "@/Utils/transformAuditData";
 
 export default function Dashboard({ auth, audits, salesFunnelData }) {
+    console.log(salesFunnelData);
     const likertData = transformAuditData(audits);
     const roleActivityData = transformRoleActivityData(audits);
     const entityActivityData = transformEntityActivityData(audits);
@@ -50,7 +51,7 @@ export default function Dashboard({ auth, audits, salesFunnelData }) {
             </Box>,
         ],
         vendedor: [
-            <Box key="box-2" className="pt-6">
+            <Box key="box-3" className="pt-6">
                 <div className="flex flex-wrap">
                     <div className="w-full md:w-1/2 p-2">
                         <SalesFunnelChart data={salesFunnelData} />

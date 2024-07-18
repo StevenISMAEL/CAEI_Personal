@@ -163,7 +163,6 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
                         item.roles.some((role) => roles.includes(role)),
                     ).map((Menu, index) => (
                         <li key={index} className="px-1">
-                            {console.log(route().current(), currentUrl)}
                             <LinkCustom
                                 href={route(Menu.route)}
                                 active={
