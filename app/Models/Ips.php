@@ -31,11 +31,11 @@ class Ips extends Model implements Auditable {
                     "ip_address" => $ip->ip_address,
                     "distribution_nap_id" => $ip->distribution_nap_id,
                     "ip_status" => $ip->ip_status,
-                    "last_mile_nap_id" => $ip->last_mile_nap_id ?? null,
+                    "last_mile_nap_id" => $ip->last_mile_nap_id ?? '',
                     "distribution_nap_name" =>
                         $ip->distributionNap->distribution_nap_name ?? null,
                     "last_mile_nap_name" =>
-                        $ip->lastMileNap->last_mile_nap_name ?? null, // Incluir el nombre de la NAP de última milla
+                        $ip->lastMileNap->last_mile_nap_name ?? '', // Incluir el nombre de la NAP de última milla
                 ];
             });
     }

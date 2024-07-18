@@ -3,15 +3,18 @@ import { CgUnavailable } from "react-icons/cg";
 import { RiArrowUpDownFill } from "react-icons/ri";
 import FloatInputText from "@/Components/FloatInputText";
 import { FaArrowDownShortWide, FaArrowUpShortWide } from "react-icons/fa6";
+import {
+    EditCircleButton
+} from "@/Components/CustomButtons";
 import SecondaryButton from "@/Components/SecondaryButton";
 import { IoIosArrowForward, IoIosArrowBack } from "react-icons/io";
+import Checkbox from "@/Components/Checkbox";
 import Modal from "@/Components/Modal";
 
-const CardsCustom = ({
+const CardsCustomT = ({
     headers,
     data,
     searchColumns,
-    onDelete,
     onEdit,
     idKey,
     onSelectChange,
@@ -40,7 +43,12 @@ const CardsCustom = ({
         setSearchValue(value);
         const filtered = data.filter((item) => {
             return searchColumns.some((column) => {
-                const fieldValue = item[column].toString().toLowerCase();
+                if (column === "roles" && Array.isArray(item[column])) {
+                    return item[column].some((role) =>
+                        role.role_name.toLowerCase().includes(value),
+                    );
+                }
+                const fieldValue = String(item[column]).toLowerCase();
                 return fieldValue.includes(value);
             });
         });
@@ -55,6 +63,21 @@ const CardsCustom = ({
         }
         setSortConfig({ key: columnKey, direction });
         const sortedData = [...filteredData].sort((a, b) => {
+            if (
+                columnKey === "roles" &&
+                Array.isArray(a[columnKey]) &&
+                Array.isArray(b[columnKey])
+            ) {
+                const rolesA = a[columnKey]
+                    .map((role) => role.role_name)
+                    .join(", ");
+                const rolesB = b[columnKey]
+                    .map((role) => role.role_name)
+                    .join(", ");
+                return direction === "asc"
+                    ? rolesA.localeCompare(rolesB)
+                    : rolesB.localeCompare(rolesA);
+            }
             if (a[columnKey] < b[columnKey]) {
                 return direction === "asc" ? -1 : 1;
             }
@@ -98,13 +121,26 @@ const CardsCustom = ({
     const currentData = filteredData.slice(startIndex, endIndex);
 
     const handleViewDetails = (item) => {
-        setModalData(item);
-        setIsModalOpen(true);
+        if (item) {
+            setModalData(item);
+            setIsModalOpen(true);
+        }
     };
 
     const closeModal = () => {
         setIsModalOpen(false);
         setModalData(null);
+    };
+
+    const renderFieldValue = (item, column) => {
+        if (column === "roles") {
+            if (Array.isArray(item[column]) && item[column].length > 0) {
+                return item[column].map((role) => role.role_name).join(", ");
+            } else {
+                return "Sin Rol";
+            }
+        }
+        return String(item[column]);
     };
 
     return (
@@ -133,10 +169,21 @@ const CardsCustom = ({
                             value={searchValue}
                             className="my-3"
                         />
+                        <div className="flex items-center my-3">
+                            <Checkbox
+                                className={styles}
+                                checked={selectedItems.length === data.length}
+                                onChange={onSelectAll}
+                                id="checkbox-all"
+                            />
+                            <label htmlFor="checkbox-all" className="ml-2">
+                                Seleccionar todo
+                            </label>
+                        </div>
                     </nav>
                     {filteredData.length > 0 ? (
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            {currentData.map((item, index) => (
+                            {currentData.map((item) => (
                                 <div
                                     key={item[idKey]}
                                     className={`border rounded-lg p-4 shadow-md dark:border-gray-700 dark:bg-gray-800 ${
@@ -145,13 +192,30 @@ const CardsCustom = ({
                                             : "bg-white dark:bg-gray-800"
                                     }`}
                                 >
+                                    <div className="flex justify-between items-center mb-2">
+                                        <Checkbox
+                                            className={styles}
+                                            checked={selectedItems.includes(
+                                                item[idKey],
+                                            )}
+                                            onChange={() =>
+                                                onSelectChange(item[idKey])
+                                            }
+                                        />
+                                        <div className="flex gap-2">
+                                            <EditCircleButton
+                                                onClick={() => onEdit(item)}
+                                            />
+                                           
+                                        </div>
+                                    </div>
                                     {searchColumns.map((column, idx) => (
                                         <div
                                             key={idx}
                                             className="mb-2 whitespace-pre-wrap truncate"
                                         >
                                             <strong>{headers[idx]}: </strong>
-                                            {item[column]}
+                                            {renderFieldValue(item, column)}
                                         </div>
                                     ))}
                                     <button
@@ -208,7 +272,7 @@ const CardsCustom = ({
                                         <strong className="font-bold">
                                             {headers[idx]}:{" "}
                                         </strong>
-                                        {modalData[column]}
+                                        {renderFieldValue(modalData, column)}
                                     </div>
                                 ))}
                                 <div className="mt-6 flex justify-end">
@@ -230,4 +294,4 @@ const CardsCustom = ({
     );
 };
 
-export default CardsCustom;
+export default CardsCustomT;

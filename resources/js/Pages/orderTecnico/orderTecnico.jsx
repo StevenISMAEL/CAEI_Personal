@@ -1,18 +1,15 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Head, useForm, router } from "@inertiajs/react";
 import Header from "@/Components/Header";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import Tab from "@/Layouts/TabLayout";
-import { AddButton, DeleteButton } from "@/Components/CustomButtons";
 import InputError from "@/Components/InputError";
-import ModalCreateOrder from "@/Components/orderModel";
 import ModalEdit from "@/Components/EditWork";
 import Box from "@/Layouts/Box";
 import ExportData from "@/Components/ExportData";
 import tabs from "./tabs";
-import DeleteModal from "@/Components/DeleteModal";
-import TableCustom from "@/Components/TableCustom";
-import CardsCustom from "@/Components/CardCustom";
+import TableCustomT from "@/Components/tableTecnic";
+import CardsCustomT from "@/Components/CardCustomTecnic";
 import { useNotify } from "@/Components/Toast";
 import PrimaryButton from "@/Components/PrimaryButton";
 
@@ -39,7 +36,6 @@ const WorkOrder = ({
         processing,
         errors,
         reset,
-        delete: destroy,
         patch,
         clearErrors,
     } = useForm({
@@ -79,68 +75,15 @@ const WorkOrder = ({
         value_due: "",
         ids: [],
     });
-    const [showCreate, setShowCreate] = useState(false);
-    const [showDelete, setShowDelete] = useState(false);
     const [showEdit, setShowEdit] = useState(false);
     const [editData, setEditData] = useState(null);
-    const [dataToDelete, setDataToDelete] = useState(null);
     const [selectedWorkOrders, setSelectedWorkOrders] = useState([]);
     const [selectedStatus, setSelectedStatus] = useState("");
-    const [selectedEmploy, setSelectedEmploy] = useState("");
-    const [reportsOptions, setReportsOptions] = useState([]);
-    const [preceOptions, setpreceOptions] = useState([]);
     const [workOrders, setWorkOrders] = useState([]);
+
     const notify = useNotify();
 
-    const closeModalCreate = () => {
-
-        // Reiniciar los estados relacionados con las opciones
-        setReportsOptions([]);
-        setpreceOptions([]);
-
-        // Limpiar otros estados o realizar reinicios adicionales según sea necesario
-        clearErrors();
-        reset();
-        setSelectedStatus([]);
-
-        // Cerrar el modal de creación
-        setShowCreate(false);
-    };
-
-    const openCreateModal = () => {
-        // Encontrar el último número de orden de trabajo para generar el siguiente
-        const latestOrder = WorkOrders.reduce((maxNum, order) => {
-            const numParts = order.work_order_id.split("-");
-            const num = parseInt(numParts[numParts.length - 1]);
-            return num > maxNum ? num : maxNum;
-        }, 0);
-
-        const nextNumber = latestOrder + 1;
-        const orderId = `ORT-${nextNumber.toString().padStart(4, "0")}`;
-
-        // Setear los valores en el formulario
-        setData({
-            ...data,
-            work_order_id: orderId,
-        });
-        setShowCreate(true);
-    };
-
-    const closeDeleteModal = () => {
-        setShowDelete(false);
-        setDataToDelete(null);
-    };
-
-    const openDeleteModal = (id) => {
-        setShowDelete(true);
-        setDataToDelete(id);
-    };
-
     const closeEditModal = () => {
-
-        // Reiniciar los estados relacionados con las opciones
-        setReportsOptions([]);
-        setpreceOptions([]);
 
         // Limpiar otros estados o realizar reinicios adicionales según sea necesario
         clearErrors();
@@ -295,34 +238,20 @@ const WorkOrder = ({
                     order_status: workOrder.order_status,
                 };
 
-                setEditData(workOrder);
+                setEditData(newData);
                 setData(newData);
                 setShowEdit(true);
-                setpreceOptions(workOrder.order_precedents);
                 setSelectedStatus(workOrder.order_status || "");
-                setSelectedEmploy(employeeOptions);
             }
         }
     };
 
-    const handleSubmitAdd = (e) => {
-        e.preventDefault();
-
-        post(route("workorder.store"), {
-            preserveScroll: true,
-            onSuccess: () => {
-                closeModalCreate();
-                notify("success", "Orden de trabajo creada.");
-            },
-            onError: (error) => console.error(Object.values(error).join(", ")),
-        });
-    };
 
     const handleSubmitEdit = (e) => {
         e.preventDefault();
 
         patch(
-            route("workorder.update", { workorder: editData.work_order_id }),
+            route("orderTecnico.updateT", { id: editData.work_order_id }),
             {
                 preserveScroll: true,
                 onSuccess: () => {
@@ -335,144 +264,13 @@ const WorkOrder = ({
         );
     };
 
-    const handleDelete = (id) => {
-        if (Array.isArray(id)) {
-            data.ids = id;
-            destroy(route("workorder.multiple.destroy"), {
-                preserveScroll: true,
-                onSuccess: () => {
-                    setSelectedWorkOrders([]);
-                    closeDeleteModal();
-                    notify("success", "Ordenes de trabajo eliminadas.");
-                },
-                onError: (error) =>
-                    console.error(Object.values(error).join(", ")),
-            });
-        } else {
-            destroy(route("workorders.destroy", { id }), {
-                preserveScroll: true,
-                onSuccess: () => {
-                    closeDeleteModal();
-                    notify("success", "Orden de trabajo eliminada.");
-                },
-                onError: (error) =>
-                    console.error(Object.values(error).join(", ")),
-            });
-        }
-    };
 
-    const handleEmployeeChange = (id) => {
-        setData("employee_id", id);
-    };
-
-    const handleTypeReportChange = (id) => {
-        setData("type_report_id", id);
-    };
-    const handleTypeOrderChange = (id) => {
-        const filteredReports = TypeReports.filter(
-            (report) => report.type_order_id === id,
-        );
-
-        setReportsOptions(filteredReports);
-        setData({
-            ...data,
-            type_order_id: id,
-            type_report_id: "",
-        });
-    };
-
-    const handleContractIdChange = (id) => {
-        const contract = Contracts.find(
-            (contract) => contract.contract_num === id,
-        );
-
-        if (contract) {
-            const client = Clients.find(
-                (client) => client.client_id === contract.client_id,
-            );
-
-            if (client) {
-                const clientPhones = Phones.filter(
-                    (phone) => phone.client_id === contract.client_id,
-                );
-                const phoneNumbers = clientPhones
-                    .map((phone) => phone.phone_number)
-                    .join(" / ");
-                const sector = Sector.find(
-                    (sector) => sector.sector_id === client.sector_id,
-                );
-                let planDetails = "";
-
-                const plan = Plans.find(
-                    (plan) => plan.plan_id === contract.plan_id,
-                );
-                if (plan) {
-                    planDetails = `${plan.plan_id} / ${plan.plan_name} / ${plan.plan_value} / ${plan.plan_megas}`;
-                }
-
-                const ip = Ips.find(
-                    (ip) => ip.ip_address === contract.ip_address,
-                );
-
-                let oltName = "";
-                let distributionNapName = "";
-                let lastMileNapName = "";
-
-                if (ip) {
-                    const lastMileNap = LastMiles.find(
-                        (lastMile) =>
-                            ip.last_mile_nap_id === lastMile.last_mile_nap_id,
-                    );
-                    if (lastMileNap) {
-                        lastMileNapName = lastMileNap.last_mile_nap_name;
-
-                        const distributionNap = Distributions.find(
-                            (distribution) =>
-                                distribution.distribution_nap_id ===
-                                lastMileNap.distribution_nap_id,
-                        );
-                        if (distributionNap) {
-                            distributionNapName =
-                                distributionNap.distribution_nap_name;
-
-                            const olt = Olts.find(
-                                (olt) => olt.olt_id === distributionNap.olt_id,
-                            );
-                            if (olt) {
-                                oltName = olt.olt_name;
-                            }
-                        }
-                    }
-                }
-
-                setData((prevData) => ({
-                    ...prevData,
-                    contract_num: contract.contract_num,
-                    contract_id: `${contract.contract_id} - ${client.client_name}`,
-                    client_id: client ? client.client_id : "",
-                    client_name: client ? client.client_name : "",
-                    address: client ? client.address : "",
-                    reference: client ? client.reference : "",
-                    phone_number: phoneNumbers,
-                    sector_name: sector ? sector.sector_name : "",
-                    plan_details: planDetails,
-                    ip_address: ip ? ip.ip_address : "",
-                    last_mile_nap_name: lastMileNapName || "",
-                    distribution_nap_name: distributionNapName || "",
-                    olt_name: oltName || "",
-                }));
-            }
-        }
-    };
 
     const handleChangeStatus = (value) => {
         setSelectedStatus(value);
         setData("order_status", value);
     };
-    const handleChangepreceO = (value) => {
-        setpreceOptions(value);
-        setData("order_precedents", value);
-    };
+
 
     const transformForCombobox = (arrays) => {
         return arrays.map((array) => ({
@@ -480,14 +278,7 @@ const WorkOrder = ({
             label: `${array}`,
         }));
     };
-    const transformCombobox = (arrays) => {
-        return arrays.map((array) => ({
-            value: array === "Si" ? 1 : 0,
 
-            label: `${array}`,
-        }));
-    };
-    const comboboxpreced = transformCombobox(["Si", "No"]);
 
     const comboboxstatus = transformForCombobox(["Pendiente", "Realizado"]);
     // Función para generar opciones de empleados
@@ -498,7 +289,6 @@ const WorkOrder = ({
         }));
     };
 
-    const employeesOptions = generateEmployeeOptions();
 
     // Función para generar opciones de contratos
 
@@ -521,47 +311,38 @@ const WorkOrder = ({
             inputError: (
                 <InputError message={errors.work_order_id} className="mt-1" />
             ),
-            defaultValue: data.employee_name,
         },
         {
             placeholder: "Empleado",
             label: "Empleado",
-            type: "select",
-            labelKey: "name",
-            valueKey: "id",
-            value: data.employee_id || '',
-            options: employeesOptions,
-            onSelect: handleEmployeeChange,
+            type: "text",
+            value: data.employee_name || '',
+            disabled:true,
             inputError: (
                 <InputError message={errors.employee_id} className="mt-2" />
             ),
-            defaultValue: data.employee_name,
         },
         {
             placeholder: "Contrato",
             label: "Contrato",
-            type: "select",
-            labelKey: "contract_id",
-            valueKey: "contract_num",
+            type: "text",
             options: contr,
-            value: data.contract_id || '',
-            onSelect: handleContractIdChange,
+            value: data.contract_id|| '',
+            disabled:true,
             inputError: (
                 <InputError message={errors.contract_num} className="mt-2" />
             ),
-            defaultValue: data.contract_id,
         },
         {
             label: "Dirección",
             id: "address",
             type: "text",
             name: "address",
-            value: data.address || '',
+            value: data.address|| '',
             disabled: true,
             inputError: (
                 <InputError message={errors.address} className="mt-2" />
             ),
-            defaultValue: data.address,
         },
         {
             label: "Sector",
@@ -573,7 +354,6 @@ const WorkOrder = ({
             inputError: (
                 <InputError message={errors.sector_name} className="mt-2" />
             ),
-            defaultValue: data.sector_name,
         },
         {
             label: "Plan",
@@ -585,7 +365,6 @@ const WorkOrder = ({
             inputError: (
                 <InputError message={errors.plan_details} className="mt-2" />
             ),
-            defaultValue: data.plan_details,
         },
         {
             label: "Teléfonos",
@@ -597,7 +376,6 @@ const WorkOrder = ({
             inputError: (
                 <InputError message={errors.phone_numbers} className="mt-1" />
             ),
-            defaultValue: data.phone_number,
         },
         {
             label: "IP Asociada",
@@ -610,7 +388,6 @@ const WorkOrder = ({
                 <InputError message={errors.ip_address} className="mt-2" />
             ),
 
-            defaultValue: data.ip_address,
         },
         {
             label: "NAP de Última Milla",
@@ -625,7 +402,6 @@ const WorkOrder = ({
                     className="mt-2"
                 />
             ),
-            defaultValue: data.last_mile_nap_name,
         },
         {
             label: "NAP de Distribución",
@@ -640,7 +416,6 @@ const WorkOrder = ({
                     className="mt-2"
                 />
             ),
-            defaultValue: data.distribution_nap_name,
         },
         {
             label: "OLT",
@@ -652,37 +427,28 @@ const WorkOrder = ({
             inputError: (
                 <InputError message={errors.olt_name} className="mt-2" />
             ),
-            defaultValue: data.olt_name,
         },
     ];
     const suportInputs = [
         {
             placeholder: "Tipo de Orden",
             label: "Tipo de Orden",
-            type: "select",
-            labelKey: "name_type_order",
-            valueKey: "type_order_id",
-            value: data.type_order_id || '',
-            options: TypeOrders,
-            onSelect: handleTypeOrderChange,
+            type: "text",
+            value: data.name_type_order || '',
+            disabled: true,
             inputError: (
                 <InputError message={errors.type_order_id} className="mt-2" />
             ),
-            defaultValue: data.name_type_order,
         },
         {
             placeholder: "Tipo de Reporte",
             label: "Tipo de reporte",
-            type: "select",
-            labelKey: "name_type_report",
-            valueKey: "type_report_id",
-            value: data.type_report_id || '',
-            options: reportsOptions,
-            onSelect: handleTypeReportChange,
+            type: "text",
+            value: data.name_type_report || '',
+            disabled: true,
             inputError: (
                 <InputError message={errors.type_report_id} className="mt-2" />
             ),
-            defaultValue: data.name_type_report,
         },
 
         {
@@ -691,17 +457,17 @@ const WorkOrder = ({
             type: "text",
             name: "order_channel",
             value: data.order_channel || '',
-            onChange: (e) => setData("order_channel", e.target.value),
+            disabled: true,
             inputError: (
                 <InputError message={errors.order_channel} className="mt-2" />
             ),
-            defaultValue: data.order_channel,
         },
         {
             label: "Fecha de Problema",
             id: "issue_date",
             type: "datetime-local",
             name: "issue_date",
+            disabled: true,
             value: data.issue_date
                 ? new Date(data.issue_date).toISOString().slice(0, 16)
                 : "",
@@ -709,9 +475,7 @@ const WorkOrder = ({
             inputError: (
                 <InputError message={errors.issue_date} className="mt-2" />
             ),
-            defaultValue: data.issue_date
-                ? new Date(data.issue_date).toISOString().slice(0, 16)
-                : "",
+
         },
         {
             type: "combobox",
@@ -719,6 +483,7 @@ const WorkOrder = ({
             id: "order_status",
             options: comboboxstatus,
             value: selectedStatus || '',
+            disabled: true,
             onChange: handleChangeStatus,
             inputError: (
                 <InputError message={errors.order_status} className="mt-2" />
@@ -731,18 +496,17 @@ const WorkOrder = ({
             type: "text",
             name: "order_abclaim",
             value: data.order_abclaim || '',
-            onChange: (e) => setData("order_abclaim", e.target.value),
+            disabled: true,
             inputError: (
                 <InputError message={errors.order_abclaim} className="mt-2" />
             ),
             defaultValue: data.order_abclaim,
         },
         {
-            type: "combobox",
+            type: "text",
             label: "Precedentes",
-            options: comboboxpreced,
-            value: preceOptions || '', // Usa data en lugar de preceOptions
-            onChange: handleChangepreceO,
+            disabled: true,
+            value: data.order_precedents === 1 ? "Sí" : "No" || '', // Usa data en lugar de preceOptions
             inputError: (
                 <InputError
                     message={errors.order_precedents}
@@ -882,7 +646,6 @@ const WorkOrder = ({
             ),
             defaultValue: data.value_due,
         },
-
     ];
 
     const theaders = ["ID", "Empleado", "Tipo de Reporte", "Cliente", "Estado"];
@@ -934,7 +697,7 @@ const WorkOrder = ({
             workOrderIds: selectedIds,
             newStatus: 'Realizado'
         };
-        router.post(route('work-orders.update-status'), data, {
+        router.post(route('manage-tecnico.update-status'), data, {
             preserveState: true,
             preserveScroll: true,
             onSuccess: () => {
@@ -956,10 +719,6 @@ const WorkOrder = ({
         });
     };
     
-    const openDeleteModalForSelected = () => {
-        setShowDelete(true);
-        setDataToDelete(selectedWorkOrders);
-    };
 
     return (
         <Authenticated
@@ -972,11 +731,6 @@ const WorkOrder = ({
                 <Box>
                     <div className="flex flex-wrap items-center justify-center md:justify-between gap-2">
                         <div className="w-full sm:w-auto flex flex-wrap justify-center gap-2">
-                            <AddButton onClick={openCreateModal} /> 
-                            <DeleteButton
-                                disabled={selectedWorkOrders.length === 0}
-                                onClick={openDeleteModalForSelected}
-                            />
                             <PrimaryButton
                                 disabled={selectedWorkOrders.length === 0}
                                 onClick={handleUpdateSelectedStatus}
@@ -992,23 +746,6 @@ const WorkOrder = ({
                         />
                     </div>
                 </Box>
-                <ModalCreateOrder
-                    showCreate={showCreate}
-                    closeModalCreate={closeModalCreate}
-                    title="Crear Órden de Trabajo"
-                    contractInputs={contractInputs}
-                    supportInputs={suportInputs}
-                    processing={processing}
-                    handleSubmitAdd={handleSubmitAdd}
-                    numOrder={data.work_order_id}
-                />
-                <DeleteModal
-                    showDelete={showDelete}
-                    closeDeleteModal={closeDeleteModal}
-                    title="Eliminar Órden de Trabajo"
-                    handleDelete={() => handleDelete(dataToDelete)}
-                    processing={processing}
-                />
                 <ModalEdit
                     title="Editar Orden de Trabajo"
                     showEdit={showEdit}
@@ -1021,11 +758,10 @@ const WorkOrder = ({
                 />
 
                 <Box className="mt-3 hidden md:block">
-                    <TableCustom
+                    <TableCustomT
                         headers={theaders}
                         data={WorkOrders}
                         searchColumns={searchColumns}
-                        onDelete={openDeleteModal}
                         onEdit={openEditModal}
                         idKey="work_order_id"
                         onSelectChange={handleCheckboxChange}
@@ -1034,11 +770,10 @@ const WorkOrder = ({
                     />
                 </Box>
                 <Box className="mt-3 md:hidden">
-                    <CardsCustom
+                    <CardsCustomT
                         headers={theaders}
                         data={WorkOrders}
                         searchColumns={searchColumns}
-                        onDelete={openDeleteModal}
                         onEdit={openEditModal}
                         idKey="work_order_id"
                         onSelectChange={handleCheckboxChange}

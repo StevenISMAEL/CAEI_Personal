@@ -5,7 +5,7 @@ use App\Http\Controllers\SupWorkOrderController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix("manage-orders")
-    ->middleware(["auth", "verified", "role:admin|vendedor|tecnico"])
+    ->middleware(["auth", "verified", "role:admin|vendedor"])
     ->group(function () {
         Route::resource("typereport", SupTypeReportController::class)->except([
             "create",
@@ -32,4 +32,16 @@ Route::prefix("manage-orders")
             SupWorkOrderController::class,
             "updateStatus",
         ])->name("work-orders.update-status");
+    });
+
+Route::prefix("manage-tecnico")
+    ->middleware(["auth", "verified", "role:tecnico"])
+    ->group(function () {
+        Route::get('orderTecnico', [SupWorkOrderController::class, 'orderTecnicoIndex'])->name('orderTecnico.index');
+        Route::patch('/{id}/updateT', [SupWorkOrderController::class, 'updateT'])->name('orderTecnico.updateT');
+
+        Route::post("/manage-tecnico/update-status", [
+            SupWorkOrderController::class,
+            "updateStatus2",
+        ])->name("manage-tecnico.update-status");
     });

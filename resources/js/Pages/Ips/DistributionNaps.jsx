@@ -26,12 +26,14 @@ const distributionNap = ({ auth, Olts, DistributionNaps }) => {
         post,
         processing,
         errors,
+        clearErrors,
         reset,
         delete: destroy,
         patch,
     } = useForm({
         olt_id: "",
         olt_ports: "",
+        olt_name:"",
         distribution_nap_name: "",
         distribution_nap_address: "",
         distribution_nap_coordx: "",
@@ -58,14 +60,8 @@ const distributionNap = ({ auth, Olts, DistributionNaps }) => {
             fetchAvailablePorts(selectedOlt);
         }
     }, [selectedOlt]);
-    useEffect(() => {
-        if (editData) {
-            setSelectedOption(editData.olt_ports);
-        }
-    }, [editData]);
-    useEffect(() => {
-        console.log("Datos del contrato para editar:", data);
-    }, [data]);
+
+ 
     const fetchAvailablePorts = (oltId) => {
         axios
             .get(`/manage-ips/distributionNaps/${oltId}/available-ports`)
@@ -98,27 +94,28 @@ const distributionNap = ({ auth, Olts, DistributionNaps }) => {
 
     const closeModalCreate = () => {
         setShowCreate(false);
-        setSelectedOption("");
+        reset();
+        clearErrors();
     };
 
     const closeEditModal = () => {
         setShowEdit(false);
         setEditData(null);
         reset();
-        setSelectedOption("");
+        clearErrors();
     };
 
     const openEditModal = (distributionNap) => {
         setShowEdit(true);
         setEditData(distributionNap); 
         setSelectedSplitter(distributionNap.distribution_nap_splitter);
-        setSelectedOption(distributionNap.olt_ports);
             const olt = Olts.find(
                 (olt) => olt.olt_id === distributionNap.olt_id,
             );
         
         setData({
             olt_id: olt.olt_id,
+            olt_name: olt.olt_name,
             distribution_nap_name: distributionNap.distribution_nap_name,
             distribution_nap_address: distributionNap.distribution_nap_address,
             distribution_nap_coordx: distributionNap.distribution_nap_coordx,
@@ -127,6 +124,7 @@ const distributionNap = ({ auth, Olts, DistributionNaps }) => {
             distribution_nap_splitter:
                 distributionNap.distribution_nap_splitter,
         });
+
         if (distributionNap.olt_id) {
             fetchAvailablePorts(distributionNap.olt_id);
         }
@@ -230,7 +228,7 @@ const distributionNap = ({ auth, Olts, DistributionNaps }) => {
                 setData("olt_id", id);
             },
             inputError: <InputError message={errors.olt_id} className="mt-2" />,
-            defaultValue: data.olt_id,
+            defaultValue: data.olt_name,
         },
         {
             type: "combobox",

@@ -156,9 +156,6 @@ const Combobox = ({
                 </div>
             )}
 
-            {inputError && (
-                <div className="text-red-500 text-sm mt-1">{inputError}</div>
-            )}
         </div>
     );
 };

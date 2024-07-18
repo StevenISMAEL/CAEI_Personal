@@ -15,7 +15,8 @@ import TableCustom from "@/Components/TableCustom";
 import CardsCustom from "@/Components/CardCustom";
 
 const Plan = ({ auth, Plans }) => {
-    const { data, setData, post, patch, delete: destroy, processing, errors, reset } = useForm({
+    const { data, setData, post, patch, delete: destroy, processing, errors,
+        clearErrors, reset } = useForm({
         plan_id: "",
         plan_name: "",
         plan_value: "",
@@ -38,6 +39,7 @@ const Plan = ({ auth, Plans }) => {
     const closeModalCreate = () => {
         setShowCreate(false);
         reset();
+        clearErrors();
     };
 
     const closeDeleteModal = () => {
@@ -55,6 +57,7 @@ const Plan = ({ auth, Plans }) => {
         setShowEdit(false);
         setEditData(null);
         reset();
+        clearErrors();
     };
 
     const openEditModal = (plan) => {
