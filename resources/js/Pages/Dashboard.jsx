@@ -15,12 +15,14 @@ import {
     ParishHeatmapChart,
     OrdersByTypeChart,
     AverageResolutionTimeChart,
+    EventDistributionChart
 } from "@/Components/CustomChart";
 import {
     transformAuditData,
     transformTimelineData,
     transformRoleActivityData,
     transformEntityActivityData,
+    transformEventCounts,
 } from "@/Utils/transformAuditData";
 import StatCard from "@/Components/StatCard";
 import { GrDocumentUser } from "react-icons/gr";
@@ -46,11 +48,11 @@ export default function Dashboard({
     averageResolutionTime,
     managedOrdersPending,
 }) {
-    console.log("averageResolutionTime", averageResolutionTime);
     const likertData = transformAuditData(audits);
     const roleActivityData = transformRoleActivityData(audits);
     const entityActivityData = transformEntityActivityData(audits);
     const timelineData = transformTimelineData(audits);
+    const eventCounts = transformEventCounts(audits);
 
     const DashboardComponents = {
         auditor: [
@@ -64,7 +66,7 @@ export default function Dashboard({
             <Box key="box-1-1" className="pt-6">
                 <div className="flex flex-wrap">
                     <div className="w-full md:w-1/2 p-2">
-                        {/* <LikertChart data={likertData} /> */}
+                        <EventDistributionChart data={eventCounts} />
                     </div>
                     <div className="w-full md:w-1/2 p-2">
                         <EntityActivityChart data={entityActivityData} />

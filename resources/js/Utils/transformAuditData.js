@@ -154,3 +154,24 @@ export const transformTimelineData = (audits) => {
         ],
     };
 };
+
+export const transformEventCounts = (audits) => {
+    const eventCounts = {
+        creado: 0,
+        actualizado: 0,
+        eliminado: 0,
+        restaurado: 0,
+        "cambio de rol": 0,
+    };
+
+    audits.forEach((audit) => {
+        if (!audit.event) return;
+
+        const event = auditEvent(audit.event);
+        if (eventCounts.hasOwnProperty(event)) {
+            eventCounts[event] += 1;
+        }
+    });
+
+    return eventCounts;
+};

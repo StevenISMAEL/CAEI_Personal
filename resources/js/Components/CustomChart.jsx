@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Pie, Bar, Line } from "react-chartjs-2";
+import { Pie, Bar, Line, Doughnut } from "react-chartjs-2";
 import {
     Chart as ChartJS,
     ArcElement,
@@ -26,44 +26,63 @@ ChartJS.register(
     Title,
 );
 
-const chartOptions = (title, isDarkMode) => ({
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-        title: {
-            display: true,
-            text: title,
-            color: isDarkMode ? "white" : "var(--text-color)",
-        },
-        legend: {
-            labels: {
+export const chartOptions = (title, isDarkMode, chartType) => {
+    const commonOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            title: {
+                display: true,
+                text: title,
                 color: isDarkMode ? "white" : "var(--text-color)",
             },
-        },
-    },
-    scales: {
-        x: {
-            ticks: {
-                color: isDarkMode ? "white" : "var(--text-color)",
-            },
-            grid: {
-                color: isDarkMode
-                    ? "rgba(255, 255, 255, 0.2)"
-                    : "rgba(0, 0, 0, 0.1)",
+            legend: {
+                labels: {
+                    color: isDarkMode ? "white" : "var(--text-color)",
+                },
             },
         },
-        y: {
-            ticks: {
-                color: isDarkMode ? "white" : "var(--text-color)",
+    };
+
+    if (chartType === "doughnut" || chartType === "pie") {
+        return {
+            ...commonOptions,
+            plugins: {
+                ...commonOptions.plugins,
+                legend: {
+                    ...commonOptions.plugins.legend,
+                    display: true,
+                },
             },
-            grid: {
-                color: isDarkMode
-                    ? "rgba(255, 255, 255, 0.2)"
-                    : "rgba(0, 0, 0, 0.1)",
+        };
+    } else {
+        return {
+            ...commonOptions,
+            scales: {
+                x: {
+                    ticks: {
+                        color: isDarkMode ? "white" : "var(--text-color)",
+                    },
+                    grid: {
+                        color: isDarkMode
+                            ? "rgba(255, 255, 255, 0.2)"
+                            : "rgba(0, 0, 0, 0.1)",
+                    },
+                },
+                y: {
+                    ticks: {
+                        color: isDarkMode ? "white" : "var(--text-color)",
+                    },
+                    grid: {
+                        color: isDarkMode
+                            ? "rgba(255, 255, 255, 0.2)"
+                            : "rgba(0, 0, 0, 0.1)",
+                    },
+                },
             },
-        },
-    },
-});
+        };
+    }
+};
 
 const pieChartOptions = (title, isDarkMode) => ({
     responsive: true,
@@ -90,7 +109,11 @@ export const RoleActivityChart = ({ data }) => {
             <div className="bg-white dark:bg-gray-700 p-4 rounded-lg shadow-lg h-full">
                 <Pie
                     data={data}
-                    options={pieChartOptions("Actividad por Rol", isDarkMode)}
+                    options={pieChartOptions(
+                        "Actividad por Rol",
+                        isDarkMode,
+                        "pie",
+                    )}
                 />
             </div>
         </div>
@@ -365,6 +388,54 @@ export const AverageResolutionTimeChart = ({ data }) => {
                         options={chartOptions(
                             "Tiempo Promedio de Resolución",
                             isDarkMode,
+                        )}
+                    />
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export const EventDistributionChart = ({ data }) => {
+    const { isDarkMode } = useContext(DarkModeContext);
+
+    const donutChartData = {
+        labels: Object.keys(data),
+        datasets: [
+            {
+                label: "Distribución de Eventos",
+                data: Object.values(data),
+                backgroundColor: [
+                    "rgba(99, 102, 241, 0.6)",
+                    "rgba(255, 99, 132, 0.6)",
+                    "rgba(255, 205, 86, 0.6)",
+                    "rgba(75, 192, 192, 0.6)",
+                    "rgba(153, 102, 255, 0.6)",
+                ],
+                borderColor: [
+                    "rgba(99, 102, 241, 1)",
+                    "rgba(255, 99, 132, 1)",
+                    "rgba(255, 205, 86, 1)",
+                    "rgba(75, 192, 192, 1)",
+                    "rgba(153, 102, 255, 1)",
+                ],
+                borderWidth: 1,
+            },
+        ],
+    };
+
+    return (
+        <div className="w-full h-full">
+            <div
+                className={`p-4 rounded-lg shadow-lg h-full ${isDarkMode ? "bg-gray-700 text-white" : "bg-white"}`}
+            >
+                <div className="relative" style={{ height: "400px" }}>
+                    <Doughnut
+                        data={donutChartData}
+                        options={chartOptions(
+                            "Distribución de Eventos",
+                            isDarkMode,
+                            "doughnut",
                         )}
                     />
                 </div>
