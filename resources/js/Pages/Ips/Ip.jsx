@@ -101,6 +101,7 @@ const Ips = ({ auth, Ips, lastMileNaps }) => {
                             data={Ips}
                             searchColumns={searchColumns}
                             headers={theaders}
+                            fileName="Ips"
                         />
                     </div>
                 </Box>

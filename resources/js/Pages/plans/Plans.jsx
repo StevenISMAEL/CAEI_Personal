@@ -13,10 +13,20 @@ import tabs from "./tabs";
 import DeleteModal from "@/Components/DeleteModal";
 import TableCustom from "@/Components/TableCustom";
 import CardsCustom from "@/Components/CardCustom";
+import { useNotify } from "@/Components/Toast";
 
 const Plan = ({ auth, Plans }) => {
-    const { data, setData, post, patch, delete: destroy, processing, errors,
-        clearErrors, reset } = useForm({
+    const {
+        data,
+        setData,
+        post,
+        patch,
+        delete: destroy,
+        processing,
+        errors,
+        clearErrors,
+        reset,
+    } = useForm({
         plan_id: "",
         plan_name: "",
         plan_value: "",
@@ -30,6 +40,7 @@ const Plan = ({ auth, Plans }) => {
     const [editData, setEditData] = useState(null);
     const [dataToDelete, setDataToDelete] = useState(null);
     const [selectedPlans, setSelectedPlans] = useState([]);
+    const notify = useNotify();
 
     const openCreateModal = () => {
         reset();
@@ -77,8 +88,10 @@ const Plan = ({ auth, Plans }) => {
 
         post(route("plans.store"), {
             preserveScroll: true,
-            onSuccess: () => {closeModalCreate();
+            onSuccess: () => {
+                closeModalCreate();
                 closeDeleteModal();
+                notify("success", "Plan agregado.");
             },
             onError: (error) => console.error(Object.values(error).join(", ")),
         });
@@ -89,7 +102,10 @@ const Plan = ({ auth, Plans }) => {
 
         patch(route("plans.update", { id: editData.plan_id }), {
             preserveScroll: true,
-            onSuccess: () => closeEditModal(),
+            onSuccess: () => {
+                closeEditModal();
+                notify("success", "Plan actualizado.");
+            },
             onError: (error) => console.error(Object.values(error).join(", ")),
         });
     };
@@ -102,14 +118,20 @@ const Plan = ({ auth, Plans }) => {
                 onSuccess: () => {
                     setSelectedPlans([]);
                     closeDeleteModal();
+                    notify("success", "Planes eliminados.");
                 },
-                onError: (error) => console.error(Object.values(error).join(", ")),
+                onError: (error) =>
+                    console.error(Object.values(error).join(", ")),
             });
         } else {
             destroy(route("plans.destroy", { id }), {
                 preserveScroll: true,
-                onSuccess: () => closeDeleteModal(),
-                onError: (error) => console.error(Object.values(error).join(", ")),
+                onSuccess: () => {
+                    closeDeleteModal();
+                    notify("success", "Plan eliminado.");
+                },
+                onError: (error) =>
+                    console.error(Object.values(error).join(", ")),
             });
         }
     };
@@ -122,7 +144,9 @@ const Plan = ({ auth, Plans }) => {
             name: "plan_name",
             value: data.plan_name,
             onChange: (e) => setData("plan_name", e.target.value),
-            inputError: <InputError message={errors.plan_name} className="mt-2" />,
+            inputError: (
+                <InputError message={errors.plan_name} className="mt-2" />
+            ),
             defaultValue: data.plan_name,
         },
         {
@@ -132,7 +156,9 @@ const Plan = ({ auth, Plans }) => {
             name: "plan_value",
             value: data.plan_value,
             onChange: (e) => setData("plan_value", e.target.value),
-            inputError: <InputError message={errors.plan_value} className="mt-2" />,
+            inputError: (
+                <InputError message={errors.plan_value} className="mt-2" />
+            ),
             defaultValue: data.plan_value,
         },
         {
@@ -142,9 +168,11 @@ const Plan = ({ auth, Plans }) => {
             name: "plan_megas",
             value: data.plan_megas,
             onChange: (e) => setData("plan_megas", e.target.value),
-            inputError: <InputError message={errors.plan_megas} className="mt-2" />,
+            inputError: (
+                <InputError message={errors.plan_megas} className="mt-2" />
+            ),
             defaultValue: data.plan_megas,
-            min: "0", 
+            min: "0",
         },
         {
             label: "Descripción",
@@ -153,18 +181,17 @@ const Plan = ({ auth, Plans }) => {
             name: "plan_description",
             value: data.plan_description,
             onChange: (e) => setData("plan_description", e.target.value),
-            inputError: <InputError message={errors.plan_description} className="mt-2" />,
+            inputError: (
+                <InputError
+                    message={errors.plan_description}
+                    className="mt-2"
+                />
+            ),
             defaultValue: data.plan_description,
         },
     ];
 
-    const theaders = [
-        "Plan ID",
-        " Nombre",
-        " Valor",
-        " Megas",
-        "Descripción",
-    ];
+    const theaders = ["Plan ID", " Nombre", " Valor", " Megas", "Descripción"];
 
     const searchColumns = [
         "plan_id",
@@ -218,6 +245,7 @@ const Plan = ({ auth, Plans }) => {
                             data={Plans}
                             searchColumns={searchColumns}
                             headers={theaders}
+                            fileName="Planes"
                         />
                     </div>
                 </Box>

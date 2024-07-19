@@ -393,6 +393,7 @@ const distributionNap = ({ auth, Olts, DistributionNaps }) => {
                             data={DistributionNaps}
                             searchColumns={searchColumns}
                             headers={theaders}
+                            fileName="Naps de Distribución"
                         />
                     </div>
                 </Box>

@@ -39,7 +39,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ) {
             if (
                 !app()->environment(["local", "testing"]) &&
-                in_array($response->getStatusCode(), [500, 503, 404, 403])
+                in_array($response->getStatusCode(), [500, 502, 503, 404, 403])
             ) {
                 return Inertia::render("ErrorPage", [
                     "status" => $response->getStatusCode(),
@@ -53,8 +53,41 @@ return Application::configure(basePath: dirname(__DIR__))
                             "La página ha caducado, por favor inténtalo de nuevo.",
                     ])
                     ->with("type", "warning");
+            } elseif ($response->getStatusCode() === 429) {
+                return back()
+                    ->with([
+                        "message" =>
+                            "Demasiadas peticiones, por favor espera un minuto.",
+                    ])
+                    ->with("type", "error");
+            } elseif ($response->getStatusCode() === 401) {
+                return back()
+                    ->with([
+                        "message" => "No autorizado, por favor inicia sesión.",
+                    ])
+                    ->with("type", "error");
+            } elseif ($response->getStatusCode() === 400) {
+                return back()
+                    ->with([
+                        "message" =>
+                            "Solicitud incorrecta, por favor verifica los datos enviados.",
+                    ])
+                    ->with("type", "error");
+            } elseif ($response->getStatusCode() === 422) {
+                return back()
+                    ->with([
+                        "message" =>
+                            "Entidad no procesable, por favor revisa los errores de validación.",
+                    ])
+                    ->with("type", "error");
+            } elseif ($response->getStatusCode() === 408) {
+                return back()
+                    ->with([
+                        "message" =>
+                            "Tiempo de espera de la solicitud agotado, por favor intenta de nuevo.",
+                    ])
+                    ->with("type", "error");
             }
-
             return $response;
         });
     })

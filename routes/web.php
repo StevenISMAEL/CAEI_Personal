@@ -100,7 +100,7 @@ Route::group(
             ConfirmablePasswordController::class,
             "store",
         ])
-            ->middleware(["auth", "throttle:6,1"])
+            ->middleware(["auth", "throttle:5,1"])
             ->name("password.confirm.2fa");
 
         Route::get("/two-factor-challenge", [
@@ -114,7 +114,7 @@ Route::group(
             TwoFactorAuthenticatedSessionController::class,
             "store",
         ])
-            ->middleware(["guest", "throttle:6,1"])
+            ->middleware(["guest", "throttle:3,1"])
             ->name("two-factor.login.submit");
 
         Route::post("/user/two-factor-authentication", [

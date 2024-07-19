@@ -16,6 +16,7 @@ export default function ErrorPage({ status }) {
     const title =
         {
             503: "Servicio No Disponible",
+            502: "Puerta de Enlace Incorrecta",
             500: "Error del Servidor",
             404: "Página No Encontrada",
             403: "Prohibido",
@@ -24,6 +25,7 @@ export default function ErrorPage({ status }) {
     const description =
         {
             503: "Lo siento, estamos haciendo mantenimiento. Por favor, vuelve pronto.",
+            502: "El servidor está experimentando problemas y no puede completar la solicitud en este momento. Por favor, inténtalo de nuevo más tarde.",
             500: "Vaya, algo salió mal en nuestros servidores.",
             404: "Lo siento, no se pudo encontrar la página que estás buscando.",
             403: "Lo siento, no tienes permiso para acceder a esta página.",

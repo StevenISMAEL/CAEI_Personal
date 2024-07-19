@@ -39,9 +39,26 @@ class SecurityQuestionVerificationController extends Controller {
             ->where("security_question_id", $request->security_question_id)
             ->first();
 
-        $decryptedAnswer = Crypt::decryptString($securityQuestionEntry->answer);
-        if (preg_match('/^s:\d+:"(.+)";$/', $decryptedAnswer, $matches)) {
-            $decryptedAnswer = $matches[1];
+        if (!$securityQuestionEntry) {
+            return back()->withErrors([
+                "security_question_id" =>
+                    "No se encontró una respuesta para esta pregunta de seguridad.",
+            ]);
+        }
+
+        try {
+            $decryptedAnswer = Crypt::decryptString(
+                $securityQuestionEntry->answer
+            );
+
+            if (preg_match('/^s:\d+:"(.+)";$/', $decryptedAnswer, $matches)) {
+                $decryptedAnswer = $matches[1];
+            }
+        } catch (\Exception $e) {
+            return back()->withErrors([
+                "answer" =>
+                    "Hubo un error al procesar la respuesta. Inténtalo de nuevo.",
+            ]);
         }
 
         if ($decryptedAnswer !== $request->answer) {

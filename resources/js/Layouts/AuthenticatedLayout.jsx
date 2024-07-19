@@ -21,12 +21,32 @@ import useSessionChecker from "@/Hooks/useSessionChecker";
 import { AiOutlineAudit } from "react-icons/ai";
 import { MdFolderDelete } from "react-icons/md";
 import { Tooltip } from "react-tooltip";
-
+import { useNotify } from "@/Components/Toast";
 
 const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
     const { env } = usePage().props;
     const { sessionActive } = useSessionChecker(env.SESSION_LIFETIME);
     const [showSessionModal, setShowSessionModal] = useState(false);
+
+    const { flash } = usePage().props;
+    const notify = useNotify();
+    const [message, setMessage] = useState(flash.message);
+    const [messageType, setMessageType] = useState(flash.type);
+
+    useEffect(() => {
+        if (message) {
+            notify(messageType, message, { autoClose: 5000 });
+            setMessage(null);
+            setMessageType(null);
+        }
+    }, [message, messageType]);
+
+    useEffect(() => {
+        if (flash.message) {
+            setMessage(flash.message);
+            setMessageType(flash.type);
+        }
+    }, [flash]);
 
     useEffect(() => {
         if (!sessionActive) {

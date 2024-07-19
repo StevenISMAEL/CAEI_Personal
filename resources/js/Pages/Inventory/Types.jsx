@@ -169,6 +169,7 @@ const Type = ({ auth, Types }) => {
                             data={Types}
                             searchColumns={searchColumns}
                             headers={theaders}
+                            fileName="Tipos"
                         />
                     </div>
                 </Box>

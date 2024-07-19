@@ -1,38 +1,18 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Checkbox from "@/Components/Checkbox";
 import GuestLayout from "@/Layouts/GuestLayout";
 import InputError from "@/Components/InputError";
 import PrimaryButton from "@/Components/PrimaryButton";
 import FloatInputText from "@/Components/FloatInputText";
 import { Head, Link, useForm, usePage } from "@inertiajs/react";
-import { useNotify } from "@/Components/Toast";
 import LoadingSpinner from "@/Components/LoadingSpinner";
 
 export default function Login({ status, canResetPassword }) {
-    const { flash } = usePage().props;
-    const notify = useNotify();
-    const [message, setMessage] = useState(flash.message);
-    const [messageType, setMessageType] = useState(flash.type);
     const { data, setData, post, processing, errors, reset } = useForm({
         login: "",
         password: "",
         remember: false,
     });
-
-    useEffect(() => {
-        if (message) {
-            notify(messageType, message, { autoClose: 5000 });
-            setMessage(null);
-            setMessageType(null);
-        }
-    }, [message, messageType]);
-
-    useEffect(() => {
-        if (flash.message) {
-            setMessage(flash.message);
-            setMessageType(flash.type);
-        }
-    }, [flash]);
 
     useEffect(() => {
         return () => {

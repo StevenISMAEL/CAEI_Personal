@@ -13,9 +13,20 @@ import tabs from "./tabs";
 import DeleteModal from "@/Components/DeleteModal";
 import TableCustom from "@/Components/TableCustom";
 import CardsCustom from "@/Components/CardCustom";
+import { useNotify } from "@/Components/Toast";
 
-const Olts = ({ auth, Olts}) => {
-    const { data, setData, post, processing, errors,clearErrors, reset,patch, delete:destroy } = useForm({
+const Olts = ({ auth, Olts }) => {
+    const {
+        data,
+        setData,
+        post,
+        processing,
+        errors,
+        clearErrors,
+        reset,
+        patch,
+        delete: destroy,
+    } = useForm({
         olt_id: "",
         olt_name: "",
         olt_address: "",
@@ -31,13 +42,14 @@ const Olts = ({ auth, Olts}) => {
     const [dataToDelete, setDataToDelete] = useState(null);
     const [selectedOlts, setSelectedOlts] = useState([]);
     const [selectedOption, setSelectedOption] = useState("");
-    
+    const notify = useNotify();
+
     useEffect(() => {
         if (editData) {
             setSelectedOption(editData.olt_ports);
         }
     }, [editData]);
-   
+
     const transformForCombobox = (arrays) => {
         return arrays.map((array) => ({
             value: array,
@@ -88,10 +100,13 @@ const Olts = ({ auth, Olts}) => {
     };
     const handleSubmitAdd = (e) => {
         e.preventDefault();
-        clearErrors('olt_ports');  // Limpia los errores específicos de olt_ports
+        clearErrors("olt_ports"); // Limpia los errores específicos de olt_ports
         post(route("olts.store"), {
             preserveScroll: true,
-            onSuccess: () => closeModalCreate(),
+            onSuccess: () => {
+                closeModalCreate();
+                notify("success", "OLT agregada.");
+            },
             onError: (error) => console.error(Object.values(error).join(", ")),
         });
     };
@@ -101,7 +116,10 @@ const Olts = ({ auth, Olts}) => {
 
         patch(route("olts.update", { id: editData.olt_id }), {
             preserveScroll: true,
-            onSuccess: () => closeEditModal(),
+            onSuccess: () => {
+                closeEditModal();
+                notify("success", "OLT actualizada.");
+            },
             onError: (error) => console.error(Object.values(error).join(", ")),
         });
     };
@@ -114,18 +132,24 @@ const Olts = ({ auth, Olts}) => {
                 onSuccess: () => {
                     setSelectedOlts([]);
                     closeDeleteModal();
+                    notify("success", "OLTs eliminadas.");
                 },
-                onError: (error) => console.error(Object.values(error).join(", ")),
+                onError: (error) =>
+                    console.error(Object.values(error).join(", ")),
             });
         } else {
             destroy(route("olts.destroy", { id }), {
                 preserveScroll: true,
-                onSuccess: () => closeDeleteModal(),
-                onError: (error) => console.error(Object.values(error).join(", ")),
+                onSuccess: () => {
+                    closeDeleteModal();
+                    notify("success", "OLT eliminada.");
+                },
+                onError: (error) =>
+                    console.error(Object.values(error).join(", ")),
             });
         }
     };
-    const comboboxports = transformForCombobox([4,8,16,24]);
+    const comboboxports = transformForCombobox([4, 8, 16, 24]);
 
     const inputs = [
         {
@@ -161,8 +185,9 @@ const Olts = ({ auth, Olts}) => {
             onChange: (e) => {
                 let inputValue = e.target.value;
                 if (inputValue.length > 25) {
-            inputValue = inputValue.slice(0, 25);
-        }                const onlyNumbers = inputValue.replace(/[^0-9]/g, ''); // Eliminar todo lo que no sea número
+                    inputValue = inputValue.slice(0, 25);
+                }
+                const onlyNumbers = inputValue.replace(/[^0-9]/g, ""); // Eliminar todo lo que no sea número
                 setData("olt_coordx", onlyNumbers);
             },
             inputError: (
@@ -180,8 +205,9 @@ const Olts = ({ auth, Olts}) => {
             onChange: (e) => {
                 let inputValue = e.target.value;
                 if (inputValue.length > 25) {
-            inputValue = inputValue.slice(0, 25);
-        }                const onlyNumbers = inputValue.replace(/[^0-9]/g, ''); // Eliminar todo lo que no sea número
+                    inputValue = inputValue.slice(0, 25);
+                }
+                const onlyNumbers = inputValue.replace(/[^0-9]/g, ""); // Eliminar todo lo que no sea número
                 setData("olt_coordy", onlyNumbers);
             },
             inputError: (
@@ -196,25 +222,15 @@ const Olts = ({ auth, Olts}) => {
             value: selectedOption,
             onChange: handleChange,
             inputError: (
-                <InputError message={errors.olt_ports} className="mt-2" />),
+                <InputError message={errors.olt_ports} className="mt-2" />
+            ),
             defaultValue: data.olt_ports,
         },
     ];
 
+    const theaders = [" ID", "Nombre", " Direccion", "Puertos"];
 
-    const theaders = [
-        " ID",
-        "Nombre",
-        " Direccion",
-        "Puertos",
-    ];
-    
-    const searchColumns = [
-        "olt_id",
-        "olt_name",
-        "olt_address",
-        "olt_ports",
-    ];
+    const searchColumns = ["olt_id", "olt_name", "olt_address", "olt_ports"];
 
     const handleCheckboxChange = (id) => {
         setSelectedOlts((prevSelected) => {
@@ -230,7 +246,7 @@ const Olts = ({ auth, Olts}) => {
         if (selectedOlts.length === Olts.length) {
             setSelectedOlts([]);
         } else {
-            setSelectedOlts(Olts.map((olt) =>olt.olt_id));
+            setSelectedOlts(Olts.map((olt) => olt.olt_id));
         }
     };
 
