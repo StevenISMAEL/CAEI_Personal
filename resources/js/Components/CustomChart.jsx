@@ -13,6 +13,7 @@ import {
     Title,
 } from "chart.js";
 import { DarkModeContext } from "@/Components/DarkModeContext";
+import { transformRoleEventData } from "@/Utils/transformAuditData";
 
 ChartJS.register(
     ArcElement,
@@ -440,6 +441,142 @@ export const EventDistributionChart = ({ data }) => {
                     />
                 </div>
             </div>
+        </div>
+    );
+};
+
+const roleColors = {
+    admin: "#FF6384",
+    vendedor: "#36A2EB",
+    tecnico: "#FFCE56",
+    auditor: "#4BC0C0",
+};
+
+export const LikertChart2 = ({ audits }) => {
+    const { isDarkMode } = useContext(DarkModeContext);
+    const chartData = transformRoleEventData(audits);
+
+    const chartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: "top",
+                labels: {
+                    color: isDarkMode ? "white" : "var(--text-color)",
+                    font: {
+                        size: 14,
+                    },
+                },
+            },
+            tooltip: {
+                mode: "index",
+                intersect: false,
+            },
+        },
+        scales: {
+            x: {
+                title: {
+                    display: true,
+                    text: "Nivel de Actividad",
+                    color: isDarkMode ? "white" : "var(--text-color)",
+                    font: {
+                        size: 14,
+                        weight: "bold",
+                    },
+                },
+                ticks: {
+                    color: isDarkMode ? "white" : "var(--text-color)",
+                    font: {
+                        size: 12,
+                    },
+                },
+                grid: {
+                    color: isDarkMode
+                        ? "rgba(255, 255, 255, 0.2)"
+                        : "rgba(0, 0, 0, 0.1)",
+                },
+            },
+            y: {
+                title: {
+                    display: true,
+                    text: "Cantidad",
+                    color: isDarkMode ? "white" : "var(--text-color)",
+                    font: {
+                        size: 14,
+                        weight: "bold",
+                    },
+                },
+                ticks: {
+                    color: isDarkMode ? "white" : "var(--text-color)",
+                    font: {
+                        size: 12,
+                    },
+                    beginAtZero: true,
+                },
+                grid: {
+                    color: isDarkMode
+                        ? "rgba(255, 255, 255, 0.2)"
+                        : "rgba(0, 0, 0, 0.1)",
+                },
+            },
+        },
+        layout: {
+            padding: {
+                top: 20,
+                right: 20,
+                bottom: 20,
+                left: 20,
+            },
+        },
+        animation: {
+            duration: 1000,
+            easing: "easeInOutQuart",
+        },
+    };
+
+    return (
+        <div className="w-full h-full grid grid-cols-2 gap-4">
+            {chartData.map(({ event, datasets }) => (
+                <div
+                    key={event}
+                    className="bg-white dark:bg-gray-700 p-4 rounded-lg shadow-lg"
+                    style={{ height: "600px", width: "100%" }}
+                >
+                    <h3 className="text-center mb-2 text-lg font-bold">{`Actividad: ${event}`}</h3>
+                    <div style={{ height: "calc(100% - 40px)", width: "100%" }}>
+                        <Bar
+                            data={{
+                                labels: ["nula", "muy poca", "media", "alta"],
+                                datasets: datasets.map((dataset) => ({
+                                    ...dataset,
+                                    backgroundColor: roleColors[dataset.label],
+                                    hoverBackgroundColor:
+                                        roleColors[dataset.label],
+                                    barPercentage: 0.8,
+                                    categoryPercentage: 0.9,
+                                })),
+                            }}
+                            options={{
+                                ...chartOptions,
+                                plugins: {
+                                    ...chartOptions.plugins,
+                                    title: {
+                                        display: true,
+                                        color: isDarkMode
+                                            ? "white"
+                                            : "var(--text-color)",
+                                        font: {
+                                            size: 18,
+                                            weight: "bold",
+                                        },
+                                    },
+                                },
+                            }}
+                        />
+                    </div>
+                </div>
+            ))}
         </div>
     );
 };

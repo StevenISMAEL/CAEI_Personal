@@ -15,7 +15,8 @@ import {
     ParishHeatmapChart,
     OrdersByTypeChart,
     AverageResolutionTimeChart,
-    EventDistributionChart
+    EventDistributionChart,
+    LikertChart2,
 } from "@/Components/CustomChart";
 import {
     transformAuditData,
@@ -48,6 +49,7 @@ export default function Dashboard({
     averageResolutionTime,
     managedOrdersPending,
 }) {
+    console.log("audits: ", audits);
     const likertData = transformAuditData(audits);
     const roleActivityData = transformRoleActivityData(audits);
     const entityActivityData = transformEntityActivityData(audits);
@@ -59,7 +61,7 @@ export default function Dashboard({
             <Box key="box-1" className="pt-6">
                 <div className="flex flex-wrap">
                     <div className="w-full p-2">
-                        <LikertChart data={likertData} />
+                        <LikertChart2 audits={audits} />
                     </div>
                 </div>
             </Box>,
@@ -70,6 +72,13 @@ export default function Dashboard({
                     </div>
                     <div className="w-full md:w-1/2 p-2">
                         <EntityActivityChart data={entityActivityData} />
+                    </div>
+                </div>
+            </Box>,
+            <Box key="box-1-2" className="pt-6">
+                <div className="flex flex-wrap">
+                    <div className="w-full p-2">
+                        <LikertChart data={likertData} />
                     </div>
                 </div>
             </Box>,

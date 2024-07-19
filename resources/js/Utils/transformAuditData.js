@@ -175,3 +175,53 @@ export const transformEventCounts = (audits) => {
 
     return eventCounts;
 };
+
+const getActivityLevel = (count) => {
+    if (count === 0) return "nula";
+    if (count <= 15) return "muy poca";
+    if (count <= 40) return "media";
+    return "alta";
+};
+
+export const transformRoleEventData = (audits) => {
+    const events = ["creado", "actualizado", "eliminado", "cambio de rol"];
+    const roles = ["admin", "vendedor", "tecnico", "auditor"];
+    const activityLevels = ["nula", "muy poca", "media", "alta"];
+    const data = {};
+
+    events.forEach((event) => {
+        data[event] = {};
+        roles.forEach((role) => {
+            data[event][role] = { count: 0 };
+        });
+    });
+
+    audits.forEach((audit) => {
+        if (
+            !audit.user_roles ||
+            !Array.isArray(audit.user_roles) ||
+            !audit.event
+        ) {
+            return;
+        }
+
+        const event = auditEvent(audit.event);
+        if (!events.includes(event)) return;
+
+        audit.user_roles.forEach((role) => {
+            if (!roles.includes(role)) return;
+            data[event][role].count += 1;
+        });
+    });
+
+    return events.map((event) => ({
+        event,
+        datasets: roles.map((role) => ({
+            label: role,
+            data: activityLevels.map((level) => {
+                const count = data[event][role].count;
+                return getActivityLevel(count) === level ? count : 0;
+            }),
+        })),
+    }));
+};
