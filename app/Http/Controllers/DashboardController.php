@@ -23,7 +23,13 @@ class DashboardController extends Controller {
             "clientsByParishData" => $this->dashboardService->getClientsByParishData(),
             "discountsAppliedData" => $this->dashboardService->getDiscountsAppliedData(),
             "totalContractsCount" => $this->dashboardService->getTotalContractsCount(),
-            "getTotalPlansCount" => $this->dashboardService->getTotalPlansCount(),
+            "totalPlansCount" => $this->dashboardService->getTotalPlansCount(),
+            "totalEmployees" => $this->dashboardService->getTotalEmployees(),
+            "managedOrders" => $this->dashboardService->getManagedOrders(),
+            "managedOrdersPending" => $this->dashboardService->getManagedOrdersPending(),
+            "mostUsedPlan" => $this->dashboardService->getMostUsedPlan(),
+            "ordersByType" => $this->dashboardService->getOrdersByType(),
+            "averageResolutionTime" => $this->dashboardService->getAverageResolutionTime(),
         ]);
     }
 }

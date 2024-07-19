@@ -212,6 +212,7 @@ export const MonthlySalesChart = ({ data }) => {
                 borderColor: "rgba(249, 115, 22, 1)",
                 borderWidth: 2,
                 fill: false,
+                tension: 0.5,
             },
         ],
     };
@@ -237,13 +238,14 @@ export const ParishHeatmapChart = ({ data }) => {
     const { isDarkMode } = useContext(DarkModeContext);
 
     const chartData = {
-        labels: data.map(item => item.parish_name),
+        labels: data.map((item) => item.parish_name),
         datasets: [
             {
                 label: "Cantidad de Clientes",
-                data: data.map(item => item.count),
-                backgroundColor: "rgba(234, 179, 8, 0.6)", 
-                borderColor: "rgba(234, 179, 8, 1)",                borderWidth: 1,
+                data: data.map((item) => item.count),
+                backgroundColor: "rgba(234, 179, 8, 0.6)",
+                borderColor: "rgba(234, 179, 8, 1)",
+                borderWidth: 1,
             },
         ],
     };
@@ -254,7 +256,116 @@ export const ParishHeatmapChart = ({ data }) => {
                 <div className="relative" style={{ height: "400px" }}>
                     <Bar
                         data={chartData}
-                        options={chartOptions("Clientes por Parroquia", isDarkMode)}
+                        options={chartOptions(
+                            "Clientes por Parroquia",
+                            isDarkMode,
+                        )}
+                    />
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export const OrdersByTypeChart = ({ data }) => {
+    const { isDarkMode } = useContext(DarkModeContext);
+
+    const chartData = {
+        labels: data.map((item) => item.name_type_order),
+        datasets: [
+            {
+                label: "Cantidad de Órdenes",
+                data: data.map((item) => item.total),
+                backgroundColor: "rgba(99, 102, 241, 0.6)",
+                borderColor: "rgba(99, 102, 241, 1)",
+                borderWidth: 1,
+            },
+        ],
+    };
+
+    return (
+        <div className="w-full h-full">
+            <div className="bg-white dark:bg-gray-700 dark:text-white p-4 rounded-lg shadow-lg h-full bg-ind">
+                <div className="relative" style={{ height: "400px" }}>
+                    <Bar
+                        data={chartData}
+                        options={chartOptions("Órdenes por Tipo", isDarkMode)}
+                    />
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export const AverageResolutionTimeChart = ({ data }) => {
+    const { isDarkMode } = useContext(DarkModeContext);
+
+    if (!Array.isArray(data) || data.length === 0) {
+        return (
+            <div
+                className={`w-full h-full p-4 rounded-lg shadow-lg ${isDarkMode ? "bg-gray-700 text-white" : "bg-white"}`}
+            >
+                <p>No hay datos disponibles para mostrar.</p>
+            </div>
+        );
+    }
+
+    const groupedData = data.reduce((acc, { date, avg_resolution_time }) => {
+        if (!date || avg_resolution_time == null) return acc;
+
+        const [year, month] = date.split("-");
+        const key = `${year}-${month}`;
+
+        if (!acc[key]) {
+            acc[key] = [];
+        }
+        acc[key].push(parseFloat(avg_resolution_time) || 0);
+        return acc;
+    }, {});
+
+    const labels = Object.keys(groupedData).sort();
+    const dataValues = labels.map((key) => {
+        const times = groupedData[key];
+        return times.length > 0
+            ? times.reduce((sum, time) => sum + time, 0) / times.length
+            : 0;
+    });
+
+    const formattedLabels = labels.map((key) => {
+        const [year, month] = key.split("-");
+        return new Date(year, month - 1).toLocaleString("default", {
+            month: "short",
+            year: "numeric",
+        });
+    });
+
+    const chartData = {
+        labels: formattedLabels,
+        datasets: [
+            {
+                label: "Tiempo Promedio de Resolución (Horas)",
+                data: dataValues,
+                backgroundColor: "rgba(99, 102, 241, 0.6)",
+                borderColor: "rgba(99, 102, 241, 1)",
+                borderWidth: 2,
+                fill: false,
+                tension: 0.5,
+            },
+        ],
+    };
+
+    return (
+        <div className="w-full h-full">
+            <div
+                className={`p-4 rounded-lg shadow-lg h-full ${isDarkMode ? "bg-gray-700 text-white" : "bg-white"}`}
+            >
+                <div className="relative" style={{ height: "400px" }}>
+                    <Line
+                        data={chartData}
+                        options={chartOptions(
+                            "Tiempo Promedio de Resolución",
+                            isDarkMode,
+                        )}
                     />
                 </div>
             </div>

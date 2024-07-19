@@ -13,6 +13,8 @@ import {
     ClientsByPlanChart,
     MonthlySalesChart,
     ParishHeatmapChart,
+    OrdersByTypeChart,
+    AverageResolutionTimeChart,
 } from "@/Components/CustomChart";
 import {
     transformAuditData,
@@ -21,8 +23,12 @@ import {
     transformEntityActivityData,
 } from "@/Utils/transformAuditData";
 import StatCard from "@/Components/StatCard";
+import { GrDocumentUser } from "react-icons/gr";
+import { RiToolsLine } from "react-icons/ri";
 import { FaUsers, FaMoneyBill } from "react-icons/fa";
-import { PiFileCloudBold } from "react-icons/pi";
+import { PiFileCloudBold, PiUsersThreeFill } from "react-icons/pi";
+import { SiMattermost } from "react-icons/si";
+import { MdPendingActions } from "react-icons/md";
 
 export default function Dashboard({
     auth,
@@ -32,9 +38,15 @@ export default function Dashboard({
     monthlySalesData,
     clientsByParishData,
     totalContractsCount,
-    getTotalPlansCount
+    totalPlansCount,
+    totalEmployees,
+    managedOrders,
+    mostUsedPlan,
+    ordersByType,
+    averageResolutionTime,
+    managedOrdersPending,
 }) {
-    console.log("totalContractsCount", totalContractsCount);
+    console.log("averageResolutionTime", averageResolutionTime);
     const likertData = transformAuditData(audits);
     const roleActivityData = transformRoleActivityData(audits);
     const entityActivityData = transformEntityActivityData(audits);
@@ -44,8 +56,15 @@ export default function Dashboard({
         auditor: [
             <Box key="box-1" className="pt-6">
                 <div className="flex flex-wrap">
-                    <div className="w-full md:w-1/2 p-2">
+                    <div className="w-full p-2">
                         <LikertChart data={likertData} />
+                    </div>
+                </div>
+            </Box>,
+            <Box key="box-1-1" className="pt-6">
+                <div className="flex flex-wrap">
+                    <div className="w-full md:w-1/2 p-2">
+                        {/* <LikertChart data={likertData} /> */}
                     </div>
                     <div className="w-full md:w-1/2 p-2">
                         <EntityActivityChart data={entityActivityData} />
@@ -54,6 +73,26 @@ export default function Dashboard({
             </Box>,
         ],
         admin: [
+            <Box key="box-0-2" className="pt-6">
+                <div className="flex flex-wrap">
+                    <div className="w-full md:w-1/2 p-2">
+                        <StatCard
+                            icon={PiUsersThreeFill}
+                            title="Empleados Totales"
+                            value={totalEmployees}
+                            color="yellow"
+                        />
+                    </div>
+                    <div className="w-full md:w-1/2 p-2">
+                        <StatCard
+                            icon={PiFileCloudBold}
+                            title="Planes"
+                            value={totalPlansCount}
+                            color="purple"
+                        />
+                    </div>
+                </div>
+            </Box>,
             <Box key="box-2" className="pt-6">
                 <div className="flex flex-wrap">
                     <div className="w-full md:w-1/2 p-2">
@@ -70,7 +109,7 @@ export default function Dashboard({
                 <div className="flex flex-wrap">
                     <div className="w-full md:w-1/2 p-2">
                         <StatCard
-                            icon={FaUsers}
+                            icon={GrDocumentUser}
                             title="Contratos Totales"
                             value={totalContractsCount}
                             color="blue"
@@ -78,10 +117,10 @@ export default function Dashboard({
                     </div>
                     <div className="w-full md:w-1/2 p-2">
                         <StatCard
-                            icon={PiFileCloudBold}
-                            title="Planes"
-                            value={getTotalPlansCount}
-                            color="green"
+                            icon={SiMattermost}
+                            title="Plan más usado"
+                            value={mostUsedPlan}
+                            color="red"
                         />
                     </div>
                 </div>
@@ -108,8 +147,38 @@ export default function Dashboard({
             </Box>,
         ],
         tecnico: [
-            // Componentes específicos para el rol técnico
-            // Ejemplo: <TecnicoChart key="tecnico" data={someTecnicoData} />
+            <Box key="box-5" className="pt-6">
+                <div className="flex flex-wrap">
+                    <div className="w-full md:w-1/2 p-2">
+                        <StatCard
+                            icon={RiToolsLine}
+                            title="Órdenes Realizadas"
+                            value={managedOrders}
+                            color="green"
+                        />
+                    </div>
+                    <div className="w-full md:w-1/2 p-2">
+                        <StatCard
+                            icon={MdPendingActions}
+                            title="Órdenes Pendientes"
+                            value={managedOrdersPending}
+                            color="red"
+                        />
+                    </div>
+                </div>
+            </Box>,
+            <Box key="box-6" className="pt-6">
+                <div className="flex flex-wrap">
+                    <div className="w-full md:w-1/2 p-2">
+                        <OrdersByTypeChart data={ordersByType} />
+                    </div>
+                    <div className="w-full md:w-1/2 p-2">
+                        <AverageResolutionTimeChart
+                            data={averageResolutionTime}
+                        />
+                    </div>
+                </div>
+            </Box>,
         ],
     };
 

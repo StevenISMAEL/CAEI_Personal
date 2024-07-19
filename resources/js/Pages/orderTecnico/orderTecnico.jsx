@@ -84,7 +84,6 @@ const WorkOrder = ({
     const notify = useNotify();
 
     const closeEditModal = () => {
-
         // Limpiar otros estados o realizar reinicios adicionales según sea necesario
         clearErrors();
         reset();
@@ -97,9 +96,12 @@ const WorkOrder = ({
 
     const formatDateForFrontend = (dateString) => {
         if (!dateString) return "";
-        // Asumiendo que dateString está en formato "YYYY-MM-DD HH:mm:ss"
-        const date = new Date(dateString.replace(" ", "T"));
-        return date.toISOString().slice(0, 16);
+        // Si la fecha ya tiene una 'T', asumimos que está en el formato correcto
+        if (dateString.includes("T")) {
+            return dateString.slice(0, 16); // Recorta los segundos y la zona horaria si existen
+        }
+        // Si no tiene 'T', asumimos que está en formato "YYYY-MM-DD HH:mm:ss"
+        return dateString.replace(" ", "T").slice(0, 16);
     };
 
     const openEditModal = (workOrder) => {
@@ -246,31 +248,23 @@ const WorkOrder = ({
         }
     };
 
-
     const handleSubmitEdit = (e) => {
         e.preventDefault();
 
-        patch(
-            route("orderTecnico.updateT", { id: editData.work_order_id }),
-            {
-                preserveScroll: true,
-                onSuccess: () => {
-                    closeEditModal();
-                    notify("success", "Orden de trabajo actualizada.");
-                },
-                onError: (error) =>
-                    console.error(Object.values(error).join(", ")),
+        patch(route("orderTecnico.updateT", { id: editData.work_order_id }), {
+            preserveScroll: true,
+            onSuccess: () => {
+                closeEditModal();
+                notify("success", "Orden de trabajo actualizada.");
             },
-        );
+            onError: (error) => console.error(Object.values(error).join(", ")),
+        });
     };
-
-
 
     const handleChangeStatus = (value) => {
         setSelectedStatus(value);
         setData("order_status", value);
     };
-
 
     const transformForCombobox = (arrays) => {
         return arrays.map((array) => ({
@@ -278,7 +272,6 @@ const WorkOrder = ({
             label: `${array}`,
         }));
     };
-
 
     const comboboxstatus = transformForCombobox(["Pendiente", "Realizado"]);
     // Función para generar opciones de empleados
@@ -288,7 +281,6 @@ const WorkOrder = ({
             name: employee.name,
         }));
     };
-
 
     // Función para generar opciones de contratos
 
@@ -306,7 +298,7 @@ const WorkOrder = ({
             id: "work_order_id",
             type: "text",
             name: "work_order_id",
-            value: data.work_order_id || '',
+            value: data.work_order_id || "",
             disabled: true,
             inputError: (
                 <InputError message={errors.work_order_id} className="mt-1" />
@@ -316,8 +308,8 @@ const WorkOrder = ({
             placeholder: "Empleado",
             label: "Empleado",
             type: "text",
-            value: data.employee_name || '',
-            disabled:true,
+            value: data.employee_name || "",
+            disabled: true,
             inputError: (
                 <InputError message={errors.employee_id} className="mt-2" />
             ),
@@ -327,8 +319,8 @@ const WorkOrder = ({
             label: "Contrato",
             type: "text",
             options: contr,
-            value: data.contract_id|| '',
-            disabled:true,
+            value: data.contract_id || "",
+            disabled: true,
             inputError: (
                 <InputError message={errors.contract_num} className="mt-2" />
             ),
@@ -338,7 +330,7 @@ const WorkOrder = ({
             id: "address",
             type: "text",
             name: "address",
-            value: data.address|| '',
+            value: data.address || "",
             disabled: true,
             inputError: (
                 <InputError message={errors.address} className="mt-2" />
@@ -349,7 +341,7 @@ const WorkOrder = ({
             id: "sector_name",
             type: "text",
             name: "sector_name",
-            value: data.sector_name || '',
+            value: data.sector_name || "",
             disabled: true,
             inputError: (
                 <InputError message={errors.sector_name} className="mt-2" />
@@ -360,7 +352,7 @@ const WorkOrder = ({
             id: "plan_details",
             type: "text",
             name: "plan_details",
-            value: data.plan_details || '',
+            value: data.plan_details || "",
             disabled: true,
             inputError: (
                 <InputError message={errors.plan_details} className="mt-2" />
@@ -371,7 +363,7 @@ const WorkOrder = ({
             id: "phone_numbers",
             type: "text",
             name: "phone_numbers",
-            value: data.phone_number || '',
+            value: data.phone_number || "",
             disabled: true,
             inputError: (
                 <InputError message={errors.phone_numbers} className="mt-1" />
@@ -382,19 +374,18 @@ const WorkOrder = ({
             id: "ip_address",
             type: "text",
             name: "ip_address",
-            value: data.ip_address || '',
+            value: data.ip_address || "",
             disabled: true,
             inputError: (
                 <InputError message={errors.ip_address} className="mt-2" />
             ),
-
         },
         {
             label: "NAP de Última Milla",
             id: "last_mile_nap_id",
             type: "text",
             name: "last_mile_nap_name",
-            value: data.last_mile_nap_name || '',
+            value: data.last_mile_nap_name || "",
             disabled: true,
             inputError: (
                 <InputError
@@ -408,7 +399,7 @@ const WorkOrder = ({
             id: "distribution_nap_name",
             type: "text",
             name: "distribution_nap_name",
-            value: data.distribution_nap_name || '',
+            value: data.distribution_nap_name || "",
             disabled: true,
             inputError: (
                 <InputError
@@ -422,7 +413,7 @@ const WorkOrder = ({
             id: "olt_name",
             type: "text",
             name: "olt_name",
-            value: data.olt_name || '',
+            value: data.olt_name || "",
             disabled: true,
             inputError: (
                 <InputError message={errors.olt_name} className="mt-2" />
@@ -434,7 +425,7 @@ const WorkOrder = ({
             placeholder: "Tipo de Orden",
             label: "Tipo de Orden",
             type: "text",
-            value: data.name_type_order || '',
+            value: data.name_type_order || "",
             disabled: true,
             inputError: (
                 <InputError message={errors.type_order_id} className="mt-2" />
@@ -444,7 +435,7 @@ const WorkOrder = ({
             placeholder: "Tipo de Reporte",
             label: "Tipo de reporte",
             type: "text",
-            value: data.name_type_report || '',
+            value: data.name_type_report || "",
             disabled: true,
             inputError: (
                 <InputError message={errors.type_report_id} className="mt-2" />
@@ -456,7 +447,7 @@ const WorkOrder = ({
             id: "order_channel",
             type: "text",
             name: "order_channel",
-            value: data.order_channel || '',
+            value: data.order_channel || "",
             disabled: true,
             inputError: (
                 <InputError message={errors.order_channel} className="mt-2" />
@@ -467,22 +458,18 @@ const WorkOrder = ({
             id: "issue_date",
             type: "datetime-local",
             name: "issue_date",
-            disabled: true,
-            value: data.issue_date
-                ? new Date(data.issue_date).toISOString().slice(0, 16)
-                : "",
+            value: data.issue_date || "",
             onChange: (e) => setData("issue_date", e.target.value),
             inputError: (
                 <InputError message={errors.issue_date} className="mt-2" />
             ),
-
         },
         {
             type: "combobox",
             label: "Estado",
             id: "order_status",
             options: comboboxstatus,
-            value: selectedStatus || '',
+            value: selectedStatus || "",
             disabled: true,
             onChange: handleChangeStatus,
             inputError: (
@@ -495,7 +482,7 @@ const WorkOrder = ({
             id: "order_abclaim",
             type: "text",
             name: "order_abclaim",
-            value: data.order_abclaim || '',
+            value: data.order_abclaim || "",
             disabled: true,
             inputError: (
                 <InputError message={errors.order_abclaim} className="mt-2" />
@@ -506,7 +493,7 @@ const WorkOrder = ({
             type: "text",
             label: "Precedentes",
             disabled: true,
-            value: data.order_precedents === 1 ? "Sí" : "No" || '', // Usa data en lugar de preceOptions
+            value: data.order_precedents === 1 ? "Sí" : "No" || "", // Usa data en lugar de preceOptions
             inputError: (
                 <InputError
                     message={errors.order_precedents}
@@ -521,23 +508,18 @@ const WorkOrder = ({
             id: "solution_date",
             type: "datetime-local",
             name: "solution_date",
-            value: data.solution_date
-                ? new Date(data.solution_date).toISOString().slice(0, 16)
-                : "",
+            value: data.solution_date || "",
             onChange: (e) => setData("solution_date", e.target.value),
             inputError: (
                 <InputError message={errors.solution_date} className="mt-2" />
             ),
-            defaultValue: data.solution_date
-                ? new Date(data.solution_date).toISOString().slice(0, 16)
-                : "",
         },
         {
             label: "Inicio de ABIS",
             id: "order_initial_abis",
             type: "text",
             name: "order_initial_abis",
-            value: data.order_initial_abis || '',
+            value: data.order_initial_abis || "",
             onChange: (e) => setData("order_initial_abis", e.target.value),
             inputError: (
                 <InputError
@@ -552,7 +534,7 @@ const WorkOrder = ({
             id: "order_initial_abis",
             type: "text",
             name: "order_initial_potency",
-            value: data.order_initial_potency || '',
+            value: data.order_initial_potency || "",
             onChange: (e) => setData("order_initial_potency", e.target.value),
             inputError: (
                 <InputError
@@ -567,7 +549,7 @@ const WorkOrder = ({
             id: "order_final_abis",
             type: "text",
             name: "order_final_abis",
-            value: data.order_final_abis || '',
+            value: data.order_final_abis || "",
             onChange: (e) => setData("order_final_abis", e.target.value),
             inputError: (
                 <InputError
@@ -582,7 +564,7 @@ const WorkOrder = ({
             id: "order_initial_diagnosis",
             type: "text",
             name: "order_initial_diagnosis",
-            value: data.order_initial_diagnosis || '',
+            value: data.order_initial_diagnosis || "",
             onChange: (e) => setData("order_initial_diagnosis", e.target.value),
             inputError: (
                 <InputError
@@ -597,7 +579,7 @@ const WorkOrder = ({
             id: "order_solution",
             type: "text",
             name: "order_solution",
-            value: data.order_solution || '',
+            value: data.order_solution || "",
             onChange: (e) => setData("order_solution", e.target.value),
             inputError: (
                 <InputError message={errors.order_solution} className="mt-2" />
@@ -609,7 +591,7 @@ const WorkOrder = ({
             id: "order_final_potency",
             type: "text",
             name: "order_final_potency",
-            value: data.order_final_potency || '',
+            value: data.order_final_potency || "",
             onChange: (e) => setData("order_final_potency", e.target.value),
             inputError: (
                 <InputError
@@ -624,7 +606,7 @@ const WorkOrder = ({
             id: "order_final_diagnosis",
             type: "text",
             name: "order_final_diagnosis",
-            value: data.order_final_diagnosis || '',
+            value: data.order_final_diagnosis || "",
             onChange: (e) => setData("order_final_diagnosis", e.target.value),
             inputError: (
                 <InputError
@@ -639,7 +621,7 @@ const WorkOrder = ({
             id: "value_due",
             type: "number",
             name: "value_due",
-            value: data.value_due || '',
+            value: data.value_due || "",
             onChange: (e) => setData("value_due", e.target.value),
             inputError: (
                 <InputError message={errors.value_due} className="mt-2" />
@@ -682,43 +664,44 @@ const WorkOrder = ({
             notify("error", "No se han seleccionado órdenes de trabajo.");
             return;
         }
-    
+
         // Extraer solo los IDs de las órdenes seleccionadas
-        const selectedIds = selectedWorkOrders.map(order => 
-            typeof order === 'object' ? order.work_order_id : order
-        ).filter(id => id !== undefined);
-    
+        const selectedIds = selectedWorkOrders
+            .map((order) =>
+                typeof order === "object" ? order.work_order_id : order,
+            )
+            .filter((id) => id !== undefined);
+
         if (selectedIds.length === 0) {
             notify("error", "No se encontraron IDs válidos.");
             return;
         }
-    
+
         const data = {
             workOrderIds: selectedIds,
-            newStatus: 'Realizado'
+            newStatus: "Realizado",
         };
-        router.post(route('manage-tecnico.update-status'), data, {
+        router.post(route("manage-tecnico.update-status"), data, {
             preserveState: true,
             preserveScroll: true,
             onSuccess: () => {
                 // Actualizar el estado local de las órdenes de trabajo
-                setWorkOrders(prevOrders => 
-                    prevOrders.map(order => 
-                        selectedIds.includes(order.work_order_id) 
-                            ? {...order, order_status: 'Realizado'} 
-                            : order
-                    )
+                setWorkOrders((prevOrders) =>
+                    prevOrders.map((order) =>
+                        selectedIds.includes(order.work_order_id)
+                            ? { ...order, order_status: "Realizado" }
+                            : order,
+                    ),
                 );
                 setSelectedWorkOrders([]);
                 notify("success", "Estado actualizado correctamente.");
             },
             onError: (errors) => {
-                console.error('Error updating work orders:', errors);
+                console.error("Error updating work orders:", errors);
                 notify("error", "Error al actualizar las órdenes de trabajo.");
-            }
+            },
         });
     };
-    
 
     return (
         <Authenticated
@@ -734,7 +717,7 @@ const WorkOrder = ({
                             <PrimaryButton
                                 disabled={selectedWorkOrders.length === 0}
                                 onClick={handleUpdateSelectedStatus}
-                                >
+                            >
                                 Actualizar Estado
                             </PrimaryButton>
                         </div>

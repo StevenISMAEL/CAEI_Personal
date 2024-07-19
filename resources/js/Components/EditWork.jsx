@@ -6,6 +6,8 @@ import PrimaryButton from "./PrimaryButton";
 import ComboBox from "./ComboBox";
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
+import { usePage } from "@inertiajs/react";
+
 const ModalEdit = ({
     title,
     showEdit,
@@ -16,8 +18,12 @@ const ModalEdit = ({
     handleSubmitEdit,
     numOrder,
 }) => {
+    const { logoDectell } = usePage().props;
     const handleDownloadPDF = () => {
         const doc = new jsPDF();
+        if (logoDectell) {
+            doc.addImage(logoDectell, "PNG", 73, 5, 60, 20, "Dectell Logo");
+        }
         const generateTableRows = (inputs) => {
             return inputs.map((input) => [input.label, input.value]);
         };
@@ -68,7 +74,7 @@ const ModalEdit = ({
         }, []);
 
         doc.autoTable({
-            startY: 20,
+            startY: 35,
             body: allRows,
             ...tableStyles,
         });
@@ -114,9 +120,7 @@ const ModalEdit = ({
                                         />
                                     )}
                                     {input.inputError && (
-                                        <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-                                            {input.inputError}
-                                        </p>
+                                        <>{input.inputError}</>
                                     )}
                                 </div>
                             ))}
@@ -149,9 +153,7 @@ const ModalEdit = ({
                                         />
                                     )}
                                     {input.inputError && (
-                                        <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-                                            {input.inputError}
-                                        </p>
+                                        <>{input.inputError}</>
                                     )}
                                 </div>
                             ))}
@@ -160,12 +162,15 @@ const ModalEdit = ({
 
                 {/* Botones de Cancelar y Actualizar */}
                 <div className="mt-6 flex flex-col md:flex-row md:items-center md:justify-end">
-                    <SecondaryButton className="mb-2 md:mb-0 "onClick={closeEditModal}>
+                    <SecondaryButton
+                        className="mb-2 md:mb-0 "
+                        onClick={closeEditModal}
+                    >
                         Cancelar
                     </SecondaryButton>
                     <div className="flex flex-col md:flex-row gap-3  md:ml-4 ">
                         <PrimaryButton disabled={processing}>
-                            Guardar
+                            Actualizar
                         </PrimaryButton>
                         <PrimaryButton onClick={handleDownloadPDF}>
                             Convertir a PDF

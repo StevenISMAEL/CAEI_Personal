@@ -30,6 +30,16 @@ export const transformAuditData = (audits) => {
     const userTableMap = {};
 
     audits.forEach((audit) => {
+        if (
+            !audit.user ||
+            !audit.user.username ||
+            !audit.modified_table ||
+            !audit.modified_table.table_name ||
+            !audit.event
+        ) {
+            return;
+        }
+
         const user = audit.user.username;
         const table = audit.modified_table.table_name;
         const event = auditEvent(audit.event);
@@ -65,7 +75,12 @@ export const transformAuditData = (audits) => {
 
 export const transformRoleActivityData = (audits) => {
     const roleActivity = {};
+
     audits.forEach((audit) => {
+        if (!audit.user_roles || !Array.isArray(audit.user_roles)) {
+            return;
+        }
+
         audit.user_roles.forEach((role) => {
             if (!roleActivity[role]) {
                 roleActivity[role] = 0;
@@ -88,6 +103,10 @@ export const transformRoleActivityData = (audits) => {
 export const transformEntityActivityData = (audits) => {
     const entityActivity = {};
     audits.forEach((audit) => {
+        if (!audit.auditable_type) {
+            return;
+        }
+
         const entity = audit.auditable_type.split("\\").pop();
         if (!entityActivity[entity]) {
             entityActivity[entity] = 0;
@@ -110,6 +129,10 @@ export const transformEntityActivityData = (audits) => {
 export const transformTimelineData = (audits) => {
     const timeline = {};
     audits.forEach((audit) => {
+        if (!audit.created_at) {
+            return;
+        }
+
         const date = audit.created_at.split("T")[0];
         if (!timeline[date]) {
             timeline[date] = 0;
@@ -129,38 +152,5 @@ export const transformTimelineData = (audits) => {
                 tension: 0.1,
             },
         ],
-    };
-};
-
-export const transformHeatmapData = (audits) => {
-    const heatmapData = {};
-    const users = new Set();
-    const tables = new Set();
-
-    audits.forEach((audit) => {
-        const user = audit.user.name;
-        const table = audit.modified_table.table_name;
-        users.add(user);
-        tables.add(table);
-
-        if (!heatmapData[user]) {
-            heatmapData[user] = {};
-        }
-        if (!heatmapData[user][table]) {
-            heatmapData[user][table] = 0;
-        }
-        heatmapData[user][table]++;
-    });
-
-    return {
-        users: Array.from(users),
-        tables: Array.from(tables),
-        data: Object.keys(heatmapData).flatMap((user) =>
-            Object.keys(heatmapData[user]).map((table) => ({
-                x: table,
-                y: user,
-                v: heatmapData[user][table],
-            })),
-        ),
     };
 };

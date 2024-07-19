@@ -12,7 +12,6 @@ class SupWorkOrderRequest extends FormRequest {
         return true;
     }
 
-    
     /**
      * Get the validation rules that apply to the request.
      *
@@ -33,7 +32,8 @@ class SupWorkOrderRequest extends FormRequest {
                     "order_precedents" => "required|boolean",
                     "order_status" => "required|string|max:50",
                     "order_abclaim" => "nullable|string|max:250",
-                    "solution_date" => "nullable|date_format:Y-m-d\TH:i",
+                    "solution_date" =>
+                        "nullable|date_format:Y-m-d\TH:i|after:issue_date",
                     "order_initial_abis" => "nullable|string|max:150",
                     "order_initial_potency" => "nullable|string|max:150",
                     "order_final_abis" => "nullable|string|max:150",
@@ -56,7 +56,8 @@ class SupWorkOrderRequest extends FormRequest {
                     "order_precedents" => "sometimes|required|boolean",
                     "order_status" => "sometimes|required|string|max:50",
                     "order_abclaim" => "nullable|string|max:250",
-                    "solution_date" => "nullable|date_format:Y-m-d\TH:i",
+                    "solution_date" =>
+                        "nullable|date_format:Y-m-d\TH:i|after:issue_date",
                     "order_initial_abis" => "nullable|string|max:150",
                     "order_initial_potency" => "nullable|string|max:150",
                     "order_final_abis" => "nullable|string|max:150",
@@ -75,5 +76,11 @@ class SupWorkOrderRequest extends FormRequest {
                 return [];
         }
     }
-    
+
+    public function messages() {
+        return [
+            "solution_date.after" =>
+                "La fecha de solución debe ser mayor que la fecha del problema.",
+        ];
+    }
 }
