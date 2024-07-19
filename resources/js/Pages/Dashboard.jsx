@@ -49,7 +49,6 @@ export default function Dashboard({
     averageResolutionTime,
     managedOrdersPending,
 }) {
-    console.log("audits: ", audits);
     const likertData = transformAuditData(audits);
     const roleActivityData = transformRoleActivityData(audits);
     const entityActivityData = transformEntityActivityData(audits);
