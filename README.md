@@ -1,10 +1,10 @@
-<h1>Arquiproyect</h1>
+<h1>proyectoArqui</h1>
 
 ## Instalación
 
 1. Clonar repositorio.
    ```sh
-   git clone https://github.com/Tatiana-Quilca/proyectoArqui.git Arquiproyect 
+   git clone https://github.com/Tatiana-Quilca/proyectoArqui.git proyectoArqui 
    cd Arquiproyect
    code .
 
