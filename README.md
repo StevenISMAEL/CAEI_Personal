@@ -1,4 +1,4 @@
-<h1>Digitell</h1>
+<h1>Arquiproyect</h1>
 
 ## Instalación
 
