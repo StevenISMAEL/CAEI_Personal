@@ -5,7 +5,7 @@
 1. Clonar repositorio.
    ```sh
    git clone https://github.com/Tatiana-Quilca/proyectoArqui.git proyectoArqui 
-   cd Arquiproyect
+   cd proyectoArqui
    code .
 
 2. Backend
