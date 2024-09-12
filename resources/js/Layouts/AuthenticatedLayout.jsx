@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { MdKeyboardArrowLeft } from "react-icons/md";
 import { RiDashboard2Fill } from "react-icons/ri";
+import { HiDocumentArrowUp } from "react-icons/hi2";
 import LinkCustom from "@/Components/LinkCustom";
 import { Link, usePage } from "@inertiajs/react";
 import Dropdown from "@/Components/Dropdown";
@@ -75,7 +76,7 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
             title: "Dashboard",
             route: "dashboard",
             icon: <RiDashboard2Fill />,
-            roles: ["admin", "vendedor", "tecnico", "auditor"],
+            roles: ["admin"],
         },
         {
             title: "Empleados",
@@ -84,67 +85,67 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
             roles: ["admin"],
         },
         {
-            title: "Clientes",
-            route: "clients.index",
-            subroute: "/manage-customers/",
-            icon: <IoPeopleCircle />,
-            roles: ["vendedor"],
-        },
-        {
-            title: "Contratos",
-            route: "contracts.index",
-            subroute: "/manage-contracts/",
-            icon: <FaFileContract />,
-            roles: ["vendedor"],
-        },
-        {
-            title: "Anular Contratos",
-            route: "contracts2.index",
-            subroute: "/annulments-contracts/",
-            icon: <MdFolderDelete />,
+            title: "Tramites",
+            route: "tramite.index",
+            subroute: "/administrar-tramites/",
+            icon: <HiDocumentArrowUp />,
             roles: ["admin"],
         },
-        {
-            title: "Ips",
-            route: "olts.index",
-            subroute: "/manage-ips/",
-            icon: <IoPlanet />,
-            roles: ["admin"],
-        },
-        {
-            title: "Inventario",
-            route: "products.index",
-            subroute: "/manage-inventory/",
-            icon: <MdInventory />,
-            roles: ["admin"],
-        },
-        {
-            title: "Soporte",
-            route: "typereport.index",
-            subroute: "/manage-orders/",
-            icon: <TiDocumentText />,
-            roles: ["admin", "vendedor"],
-        },
-        {
-            title: "Orden de Trabajo",
-            route: "orderTecnico.index",
-            subroute: "/manage-tecnico/",
-            icon: <FcSupport />,
-            roles: ["tecnico"],
-        },
-        {
-            title: "Planes",
-            route: "plans.index",
-            subroute: "/manage-plans/",
-            icon: <TbTableOptions />,
-            roles: ["admin"],
-        },
-        {
-            title: "Auditoria",
-            route: "audit.index",
-            icon: <AiOutlineAudit />,
-            roles: ["auditor"],
-        },
+        // {
+        //     title: "Contratos",
+        //     route: "contracts.index",
+        //     subroute: "/manage-contracts/",
+        //     icon: <FaFileContract />,
+        //     roles: ["vendedor"],
+        // },
+        // {
+        //     title: "Anular Contratos",
+        //     route: "contracts2.index",
+        //     subroute: "/annulments-contracts/",
+        //     icon: <MdFolderDelete />,
+        //     roles: ["admin"],
+        // },
+        // {
+        //     title: "Ips",
+        //     route: "olts.index",
+        //     subroute: "/manage-ips/",
+        //     icon: <IoPlanet />,
+        //     roles: ["admin"],
+        // },
+        // {
+        //     title: "Inventario",
+        //     route: "products.index",
+        //     subroute: "/manage-inventory/",
+        //     icon: <MdInventory />,
+        //     roles: ["admin"],
+        // },
+        // {
+        //     title: "Soporte",
+        //     route: "typereport.index",
+        //     subroute: "/manage-orders/",
+        //     icon: <TiDocumentText />,
+        //     roles: ["admin", "vendedor"],
+        // },
+        // {
+        //     title: "Orden de Trabajo",
+        //     route: "orderTecnico.index",
+        //     subroute: "/manage-tecnico/",
+        //     icon: <FcSupport />,
+        //     roles: ["tecnico"],
+        // },
+        // {
+        //     title: "Planes",
+        //     route: "plans.index",
+        //     subroute: "/manage-plans/",
+        //     icon: <TbTableOptions />,
+        //     roles: ["admin"],
+        // },
+        // {
+        //     title: "Auditoria",
+        //     route: "audit.index",
+        //     icon: <AiOutlineAudit />,
+        //     roles: ["auditor"],
+        // },
     ];
 
     const tooltipStyle = {
@@ -170,27 +171,27 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
             <div
                 className={` ${
                     open ? "w-60" : "w-28 "
-                } hidden sm:block min-h-screen bg-white dark:bg-gray-800 border-e  shadow-md dark:shadow-gray-600 border-gray-100 dark:border-gray-700 relative duration-300`}
+                } hidden sm:block min-h-screen bg-blue-200 dark:bg-gray-800 border-e  shadow-md dark:shadow-gray-600 border-gray-100 dark:border-gray-700 relative duration-300`}
             >
                 <MdKeyboardArrowLeft
-                    className={`absolute hover:bg-green-50 cursor-pointer -right-3 top-9 bg-white dark:bg-gray-800 text-3xl w-7 text-gray-800 dark:text-gray-200 border-2 border-gray-900 dark:border-gray-200 rounded-full dark:hover:bg-gray-900 ${!open && "rotate-180 duration-300"}`}
+                    className={`absolute hover:bg-blue-50 cursor-pointer -right-3 top-9 bg-white dark:bg-gray-800 text-3xl w-7 text-gray-800 dark:text-gray-200 border-2 border-gray-900 dark:border-gray-200 rounded-full dark:hover:bg-gray-900 ${!open && "rotate-180 duration-300"}`}
                     onClick={() => setOpen(!open)}
                 />
                 <Link
                     href="/"
-                    className={`flex items-center gap-x-4 py-3 px-4 h-16 ${!open && " justify-center"} cursor-pointer hover:bg-green-50 dark:hover:bg-green-500 dark:hover:bg-opacity-5 rounded-sm group`}
+                    className={`flex items-center gap-x-4 py-3 px-4 h-16 ${!open && " justify-center"} cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-500 dark:hover:bg-opacity-5 rounded-sm group`}
                 >
-                    <ApplicationLogo
+                    {/* <ApplicationLogo
                         className={`cursor-pointer duration-500 ${
                             open && "rotate-[360deg]"
                         }`}
-                    />
+                    /> */}
                     <h1
-                        className={`text-gray-800 dark:text-gray-200 origin-left text-3xl ${
+                        className={`text-blue-800 dark:text-gray-200 origin-left text-3xl ${
                             !open && "duration-500 hidden"
                         } truncate overflow-hidden whitespace-nowrap font-semibold pb-2`}
                     >
-                        Digitell
+                        ArquiGest
                     </h1>
                 </Link>
 

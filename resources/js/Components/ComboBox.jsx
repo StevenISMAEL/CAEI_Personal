@@ -122,7 +122,7 @@ const Combobox = ({
                     onClick={toggleOpen}
                     onKeyDown={handleKeyDown}
                     inputError={inputError}
-                    className="w-full px-4 py-2 text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-green-500 focus:outline-none focus:ring-0 focus:border-green-600"
+                    className="w-full px-4 py-2 text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600"
                 />
                 <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
                     <FaChevronDown
@@ -134,7 +134,7 @@ const Combobox = ({
             </div>
             {isOpen && (
                 <div className="mt-2 bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-lg shadow-lg">
-                    <ul className="py-1 max-h-60 overflow-auto focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                    <ul className="py-1 max-h-60 overflow-auto focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                         {options.map((option, index) => (
                             <li
                                 key={option.value}
@@ -145,7 +145,7 @@ const Combobox = ({
                                 }}
                                 className={`px-4 py-2 text-sm cursor-pointer ${
                                     focusedIndex === index
-                                        ? "bg-green-100 dark:bg-green-600 text-green-800 dark:text-white"
+                                        ? "bg-blue-100 dark:bg-blue-600 text-blue-800 dark:text-white"
                                         : "bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200"
                                 } hover:bg-gray-100 dark:hover:bg-gray-700`}
                             >

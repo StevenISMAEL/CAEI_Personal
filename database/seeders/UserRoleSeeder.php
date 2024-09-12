@@ -14,9 +14,9 @@ class UserRoleSeeder extends Seeder {
      */
     public function run(): void {
         $adminRole = Role::create(["name" => "admin"]);
-        $vendedorRole = Role::create(["name" => "vendedor"]);
-        $tecnicoRole = Role::create(["name" => "tecnico"]);
-        $auditorRole = Role::create(["name" => "auditor"]);
+        $arquitectorRole = Role::create(["name" => "arquirevisor"]);
+        $RecepcionistaRole = Role::create(["name" => "recepcionista"]);
+        //$auditorRole = Role::create(["name" => "auditor"]);
 
         $super = User::factory()->create([
             "name" => "Super User",
@@ -25,24 +25,19 @@ class UserRoleSeeder extends Seeder {
         ]);
         $super->assignRole(
             $adminRole,
-            $vendedorRole,
-            $tecnicoRole,
-            $auditorRole
+            $arquitectorRole,
+            $RecepcionistaRole
         );
 
         //Permisos para vendedor
         $permissions = [
             "manage clients",
-            "manage phones",
-            "manage sectors",
-            "manage parishes",
-            "manage cantons",
         ];
 
         foreach ($permissions as $permission) {
             Permission::create(["name" => $permission]);
         }
-        $vendedorRole->givePermissionTo($permissions);
+        $RecepcionistaRole->givePermissionTo($permissions);
 
         //Usuarios por defecto
         $adminUser = User::factory()->create([
@@ -52,25 +47,25 @@ class UserRoleSeeder extends Seeder {
         ]);
         $adminUser->assignRole($adminRole);
 
-        $vendedorUser = User::factory()->create([
-            "name" => "Vendedor User",
-            "username" => "vender",
-            "email" => "vendedor@example.com",
+        $arquitectoRevisor = User::factory()->create([
+            "name" => "arquitecto revisor",
+            "username" => "arqui",
+            "email" => "arquitecto@example.com",
         ]);
-        $vendedorUser->assignRole($vendedorRole);
+        $arquitectoRevisor->assignRole($arquitectorRole);
 
-        $tecnicoUser = User::factory()->create([
-            "name" => "Tecnico User",
-            "username" => "tecni",
-            "email" => "tecnico@example.com",
+        $recepcionUser = User::factory()->create([
+            "name" => "recepcion",
+            "username" => "recepcion",
+            "email" => "recepcion@example.com",
         ]);
-        $tecnicoUser->assignRole([$tecnicoRole]);
+        $recepcionUser->assignRole([$RecepcionistaRole]);
 
-        $auditorUser = User::factory()->create([
-            "name" => "Auditor User",
-            "username" => "audi",
-            "email" => "auditor@example.com",
-        ]);
-        $auditorUser->assignRole([$auditorRole]);
+        // $auditorUser = User::factory()->create([
+        //     "name" => "Auditor User",
+        //     "username" => "audi",
+        //     "email" => "auditor@example.com",
+        // ]);
+        // $auditorUser->assignRole([$auditorRole]);
     }
 }

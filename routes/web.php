@@ -8,6 +8,8 @@ use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Http\Controllers\InvProductController;
 use App\Http\Controllers\PlansController;
+use App\Http\Controllers\TramitesController;
+
 use Laravel\Fortify\Http\Controllers\TwoFactorAuthenticatedSessionController;
 use App\Models\Audit;
 use App\Services\DashboardService;
@@ -26,7 +28,7 @@ Route::get("/", function () {
 });
 
 Route::get("/dashboard", [DashboardController::class, "index"])
-    ->middleware(["auth", "verified", "role:admin|vendedor|tecnico|auditor"])
+    ->middleware(["auth", "verified", "role:admin|recepcionista|arquirevisor"])
     ->name("dashboard");
 
 Route::middleware([
@@ -55,19 +57,7 @@ Route::middleware([
 
 
 
-Route::prefix("manage-plans")
-    ->middleware(["auth", "verified", "role:admin"])
-    ->group(function () {
-        Route::resource("plans", PlansController::class)->except([
-            "create",
-            "show",
-            "edit",
-        ]);
-        Route::delete("/plans", [
-            PlansController::class,
-            "destroyMultiple",
-        ])->name("plans.multiple.destroy");
-    });
+
 
 Route::get("/check-session", function (Request $request) {
     if (Auth::check()) {
@@ -168,7 +158,7 @@ Route::group(
 
 require __DIR__ . "/auth.php";
 require __DIR__ . "/audit.php";
-require __DIR__ . "/customer-management.php";
+require __DIR__ . "/administrar-tramites.php";
 require __DIR__ . "/customer-support.php";
 require __DIR__ . "/inventory-management.php";
 require __DIR__ . "/securities.php";

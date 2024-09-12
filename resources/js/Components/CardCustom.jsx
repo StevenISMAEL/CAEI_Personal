@@ -24,7 +24,7 @@ const CardsCustom = ({
     onSelectAll,
 }) => {
     const styles =
-        "text-violet-600 shadow-sm focus:ring-violet-500 dark:focus:ring-violet-600";
+        "text-blue-600 shadow-sm focus:ring-blue-500 dark:focus:ring-blue-600";
     const [searchValue, setSearchValue] = useState("");
     const [filteredData, setFilteredData] = useState(data);
     const [sortConfig, setSortConfig] = useState({
@@ -154,7 +154,7 @@ const CardsCustom = ({
                             <select
                                 onChange={handleItemsPerPageChange}
                                 value={itemsPerPage}
-                                className="bg-white dark:bg-gray-800 rounded-md border-gray-300 dark:border-gray-700 shadow-md focus:ring-violet-500 dark:focus:ring-violet-600 dark:focus:ring-offset-gray-800"
+                                className="bg-white dark:bg-gray-800 rounded-md border-gray-300 dark:border-gray-700 shadow-md focus:ring-blue-500 dark:focus:ring-blue-600 dark:focus:ring-offset-gray-800"
                             >
                                 <option value={5}>5</option>
                                 <option value={10}>10</option>
@@ -190,7 +190,7 @@ const CardsCustom = ({
                                     key={item[idKey]}
                                     className={`border rounded-lg p-4 shadow-md dark:border-gray-700 dark:bg-gray-800 ${
                                         selectedItems.includes(item[idKey])
-                                            ? "bg-violet-100 dark:bg-violet-900"
+                                            ? "bg-blue-100 dark:bg-blue-900"
                                             : "bg-white dark:bg-gray-800"
                                     }`}
                                 >
@@ -226,7 +226,7 @@ const CardsCustom = ({
                                     ))}
                                     <button
                                         onClick={() => handleViewDetails(item)}
-                                        className="mt-2 w-full bg-violet-500 text-white py-1 rounded-md hover:bg-violet-600"
+                                        className="mt-2 w-full bg-blue-500 text-white py-1 rounded-md hover:bg-blue-600"
                                     >
                                         Ver detalles
                                     </button>
