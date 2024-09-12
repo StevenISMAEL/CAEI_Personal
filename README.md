@@ -1,11 +1,11 @@
-<h1>Digitell</h1>
+<h1>proyectoArqui</h1>
 
 ## Instalación
 
 1. Clonar repositorio.
    ```sh
-   git clone https://github.com/Jordi021/Digitell-Project.git Digitell 
-   cd Digitell
+   git clone https://github.com/Tatiana-Quilca/proyectoArqui.git proyectoArqui 
+   cd proyectoArqui
    code .
 
 2. Backend
