@@ -13,7 +13,7 @@ export default function Edit({ auth, mustVerifyEmail, status }) {
             user={auth.user}
             header={
                 <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                    Profile
+                    Perfil
                 </h2>
             }
             roles={auth.user.roles.map((role) => role.name)}

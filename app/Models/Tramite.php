@@ -19,7 +19,6 @@ class Tramite extends Model
         "id_socio",
         "tramite",
         "propietario",
-        "detalle",
         "fecha_ingreso",
         "fecha_salida",
         "informe",
@@ -31,11 +30,12 @@ class Tramite extends Model
         "clave_catastral",
         "direccion",
         "estado_tramite",
-        "estado_ingreso"
+        "estado_ingreso",
+        "correo_electronico"
     ];
-    public $timestamps = false;
+    public $timestamps = true;
 
-    public static function getTipoTramites() {
+    public static function getTramites() {
         return self::with("tipostramites", "usuarios")
             ->get()
             ->map(function ($tramite) {
@@ -47,7 +47,6 @@ class Tramite extends Model
                     "id_socio" => $tramite->id_socio,
                     "tramite" => $tramite->tramite,
                     "propietario" => $tramite->propietario,
-                    "detalle" => $tramite->detalle,
                     "fecha_ingreso" => $tramite->fecha_ingreso,
                     "fecha_salida" => $tramite->fecha_salida,
                     "informe" => $tramite->informe,
@@ -60,6 +59,7 @@ class Tramite extends Model
                     "direccion" => $tramite->direccion,
                     "estado_tramite" => $tramite->estado_tramite,
                     "estado_ingreso" => $tramite->estado_ingreso,
+                    "correo_electronico" => $tramite->correo_electronico,
                     "nombre_tipotramite" => $tramite->tipostramites ? $tramite->tipostramites->nombre : null, 
                 ];
             });
@@ -76,7 +76,7 @@ class Tramite extends Model
     }
     
 
-    // public function planos() {
-    //     return $this->hasMany(ConClient::class, "sector_id", "sector_id");
-    // }
+    public function planos() {
+        return $this->hasMany(PlanoArq::class, "id_tramite", "id_tramite");
+    }
 }

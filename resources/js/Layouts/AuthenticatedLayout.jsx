@@ -1,29 +1,25 @@
 import React, { useState, useEffect, useContext } from "react";
 import { MdKeyboardArrowLeft } from "react-icons/md";
 import { RiDashboard2Fill } from "react-icons/ri";
-import { HiDocumentArrowUp } from "react-icons/hi2";
 import LinkCustom from "@/Components/LinkCustom";
 import { Link, usePage } from "@inertiajs/react";
 import Dropdown from "@/Components/Dropdown";
-import ApplicationLogo from "@/Components/ApplicationLogo";
+// import ApplicationLogo from "@/Components/ApplicationLogo";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
-import { IoPeopleCircle } from "react-icons/io5";
 import DarkModeToggle from "@/Components/NightMode";
 import { DarkModeContext } from "@/Components/DarkModeContext";
-import { MdInventory } from "react-icons/md";
-import { IoPlanet } from "react-icons/io5";
-import { TiDocumentText } from "react-icons/ti";
-import { FcSupport } from "react-icons/fc";
+import { TbMapShare } from "react-icons/tb";
 import { FaUsersGear } from "react-icons/fa6";
 import { FaFileContract } from "react-icons/fa6";
-import { TbTableOptions } from "react-icons/tb";
 import SessionExpiredModal from "@/Components/SessionExpiredModal";
 import useSessionChecker from "@/Hooks/useSessionChecker";
-import { AiOutlineAudit } from "react-icons/ai";
-import { MdFolderDelete } from "react-icons/md";
 import { Tooltip } from "react-tooltip";
 import { useNotify } from "@/Components/Toast";
-
+import { BiSolidCategory } from "react-icons/bi";
+import { VscFileSymlinkFile } from "react-icons/vsc";
+import { TbMapStar } from "react-icons/tb";
+import { HiMiniClipboardDocumentList } from "react-icons/hi2";
+import { FaPeopleGroup } from "react-icons/fa6";
 const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
     const { env } = usePage().props;
     const { sessionActive } = useSessionChecker(env.SESSION_LIFETIME);
@@ -85,47 +81,54 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
             roles: ["admin"],
         },
         {
-            title: "Tramites",
-            route: "tramite.index",
-            subroute: "/administrar-tramites/",
-            icon: <HiDocumentArrowUp />,
+            title: "Categorías",
+            route: "categoria.index",
+            subroute: "/administrar-tipotramites/",
+            icon: <BiSolidCategory />,
             roles: ["admin"],
         },
-        // {
-        //     title: "Contratos",
-        //     route: "contracts.index",
-        //     subroute: "/manage-contracts/",
-        //     icon: <FaFileContract />,
-        //     roles: ["vendedor"],
-        // },
-        // {
-        //     title: "Anular Contratos",
-        //     route: "contracts2.index",
-        //     subroute: "/annulments-contracts/",
-        //     icon: <MdFolderDelete />,
-        //     roles: ["admin"],
-        // },
-        // {
-        //     title: "Ips",
-        //     route: "olts.index",
-        //     subroute: "/manage-ips/",
-        //     icon: <IoPlanet />,
-        //     roles: ["admin"],
-        // },
-        // {
-        //     title: "Inventario",
-        //     route: "products.index",
-        //     subroute: "/manage-inventory/",
-        //     icon: <MdInventory />,
-        //     roles: ["admin"],
-        // },
-        // {
-        //     title: "Soporte",
-        //     route: "typereport.index",
-        //     subroute: "/manage-orders/",
-        //     icon: <TiDocumentText />,
-        //     roles: ["admin", "vendedor"],
-        // },
+        {
+            title: "Trámites",
+            route: "tramite.index",
+            subroute: "/administrar-tramites/",
+            icon: <VscFileSymlinkFile />,
+            roles: ["admin"],
+        },
+        {
+            title: "Planos Arquitectónicos",
+            route: "planoarq.index",
+            subroute: "/administrar-planosarq/",
+            icon: <FaFileContract />,
+            roles: ["admin"],
+        },
+        {
+            title: "Fraccionamientos",
+            route: "fraccionamiento.index",
+            subroute: "/administrar-fraccionamiento/",
+            icon: <TbMapStar />,
+            roles: ["admin"],
+        },
+        {
+            title: "Trabajos Varios",
+            route: "trabajosvar.index",
+            subroute: "/administrar-Trabajov/",
+            icon: <HiMiniClipboardDocumentList />,
+            roles: ["admin"],
+        },
+        {
+            title: "Propiedad Horizontal",
+            route: "propiedadh.index",
+            subroute: "/administrar-propiedadh/",
+            icon: <TbMapShare />,
+            roles: ["admin"],
+        },
+        {
+            title: "Aforos",
+            route: "aforos.index",
+            subroute: "/administrar-aforos/",
+            icon: <FaPeopleGroup />,
+            roles: ["admin"],
+        },
         // {
         //     title: "Orden de Trabajo",
         //     route: "orderTecnico.index",
@@ -290,11 +293,11 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
                                         href="/"
                                         className={`flex gap-x-4 py-3 px-4 h-16 ${open ? "items-center" : "justify-center"} cursor-pointer`}
                                     >
-                                        <ApplicationLogo
+                                        {/* <ApplicationLogo
                                             className={`cursor-pointer duration-500 ${
                                                 open && "rotate-[360deg]"
                                             }`}
-                                        />
+                                        /> */}
                                     </Link>
                                 </div>
                             </div>
@@ -322,7 +325,7 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
                                                     >
                                                         <path
                                                             fillRule="evenodd"
-                                                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 111.414 1.414l-4 4a1 1 01-1.414 0l-4-4a1 1 010-1.414z"
+                                                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
                                                             clipRule="evenodd"
                                                         />
                                                     </svg>

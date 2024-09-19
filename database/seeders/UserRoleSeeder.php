@@ -15,7 +15,7 @@ class UserRoleSeeder extends Seeder {
     public function run(): void {
         $adminRole = Role::create(["name" => "admin"]);
         $arquitectorRole = Role::create(["name" => "arquirevisor"]);
-        $RecepcionistaRole = Role::create(["name" => "recepcionista"]);
+        $SecretariaRole = Role::create(["name" => "secretaria"]);
         //$auditorRole = Role::create(["name" => "auditor"]);
 
         $super = User::factory()->create([
@@ -26,7 +26,7 @@ class UserRoleSeeder extends Seeder {
         $super->assignRole(
             $adminRole,
             $arquitectorRole,
-            $RecepcionistaRole
+            $SecretariaRole
         );
 
         //Permisos para vendedor
@@ -37,7 +37,7 @@ class UserRoleSeeder extends Seeder {
         foreach ($permissions as $permission) {
             Permission::create(["name" => $permission]);
         }
-        $RecepcionistaRole->givePermissionTo($permissions);
+        $SecretariaRole->givePermissionTo($permissions);
 
         //Usuarios por defecto
         $adminUser = User::factory()->create([
@@ -54,12 +54,12 @@ class UserRoleSeeder extends Seeder {
         ]);
         $arquitectoRevisor->assignRole($arquitectorRole);
 
-        $recepcionUser = User::factory()->create([
-            "name" => "recepcion",
-            "username" => "recepcion",
-            "email" => "recepcion@example.com",
+        $secretariaUser = User::factory()->create([
+            "name" => "secretaria",
+            "username" => "secretaria",
+            "email" => "secretaria@example.com",
         ]);
-        $recepcionUser->assignRole([$RecepcionistaRole]);
+        $secretariaUser->assignRole([$SecretariaRole]);
 
         // $auditorUser = User::factory()->create([
         //     "name" => "Auditor User",

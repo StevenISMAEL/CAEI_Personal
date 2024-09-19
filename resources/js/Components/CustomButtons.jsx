@@ -3,7 +3,7 @@ import { MdDelete } from "react-icons/md";
 import { PiExportBold } from "react-icons/pi";
 import { MdModeEdit } from "react-icons/md";
 import { TbFilterCog } from "react-icons/tb";
-
+import { BiDetail } from "react-icons/bi";
 const AddButton = ({ className = "", disabled, ...props }) => {
     return (
         <button
@@ -57,7 +57,7 @@ const ExportButton = ({ className = "", disabled, isLoading, ...props }) => {
         <button
             {...props}
             className={
-                `inline-flex items-center justify-center w-36 gap-2 rounded-md py-2 bg-blue-500 dark:bg-blue-400 border border-transparent font-semibold text-md text-white dark:text-gray-800 uppercase tracking-widest hover:bg-violet-600 dark:hover:bg-violet-400 focus:bg-violet-600 dark:focus:bg-violet-400 active:bg-violet-700 dark:active:bg-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-600 focus:ring-offset-2 dark:focus:ring-offset-violet-500 transition ease-in-out duration-150 ${
+                `inline-flex items-center justify-center w-36 gap-2 rounded-md py-2 bg-blue-500 dark:bg-blue-400 border border-transparent font-semibold text-md text-white dark:text-gray-800 uppercase tracking-widest hover:bg-blue-600 dark:hover:bg-blue-400 focus:bg-blue-600 dark:focus:bg-blue-400 active:bg-blue-700 dark:active:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 dark:focus:ring-offset-blue-500 transition ease-in-out duration-150 ${
                     disabled && "opacity-60"
                 } ` + className
             }
@@ -100,6 +100,22 @@ const DeleteCircleButton = ({ className = "", disabled, ...props }) => {
     );
 };
 
+const DetailsCircleButton = ({ className = "", disabled, ...props }) => {
+    return (
+        <button
+            {...props}
+            className={
+                `inline-flex items-center justify-center size-10 bg-violet-400 dark:bg-violet-300 border border-transparent rounded-md font-semibold text-md text-white dark:text-gray-800 uppercase tracking-widest hover:bg-violet-500 dark:hover:bg-violet-400 focus:bg-violet-500 dark:focus:bg-violet-400 active:bg-violet-600 dark:active:bg-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 dark:focus:ring-offset-violet-500 transition ease-in-out duration-150 ${
+                    disabled && "opacity-60"
+                } ` + className
+            }
+            disabled={disabled}
+        >
+            <BiDetail />
+        </button>
+    );
+};
+
 export {
     AddButton,
     FilterButton,
@@ -107,4 +123,5 @@ export {
     ExportButton,
     EditCircleButton,
     DeleteCircleButton,
+    DetailsCircleButton,
 };

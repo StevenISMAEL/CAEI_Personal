@@ -6,9 +6,9 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
-use App\Http\Controllers\InvProductController;
-use App\Http\Controllers\PlansController;
 use App\Http\Controllers\TramitesController;
+use App\Http\Controllers\PlanoArqController;
+
 
 use Laravel\Fortify\Http\Controllers\TwoFactorAuthenticatedSessionController;
 use App\Models\Audit;
@@ -159,7 +159,5 @@ Route::group(
 require __DIR__ . "/auth.php";
 require __DIR__ . "/audit.php";
 require __DIR__ . "/administrar-tramites.php";
-require __DIR__ . "/customer-support.php";
-require __DIR__ . "/inventory-management.php";
 require __DIR__ . "/securities.php";
 require __DIR__ . "/security_questions.php";

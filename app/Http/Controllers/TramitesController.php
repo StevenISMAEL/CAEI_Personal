@@ -6,18 +6,21 @@ use Illuminate\Http\Request;
 use App\Models\Tramite;
 use App\Models\TipoTramite;
 use App\Models\User;
-use App\Http\Requests\TramiteRequest; 
+use App\Http\Requests\TramiteRequest;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\TramiteUpdateNotification; // Asegúrate de que la clase de notificación esté importada
+use App\Models\categoria;
 
 
-class TramitesController extends Controller
-{
+class TramitesController extends Controller {
     public function index() {
-
         return Inertia::render("Tramites/Tramite", [
-       "Tramites" => Tramite::getTipoTramites(),
-       "TiposTramite" => TipoTramite::all(),
-       "Usuarios" => User::all(),
+            "Tramites" => Tramite::getTramites(),
+            "TiposTramite" => TipoTramite::all(),
+            "Usuarios" => User::all(),
+            "Categorias" => categoria::all(),
+
         ]);
     }
 
@@ -27,8 +30,8 @@ class TramitesController extends Controller
     }
 
     public function update(TramiteRequest $tramiteRequest, $id) {
-        $canton = Tramite::findOrFail($id);
-        $canton->update($tramiteRequest->validated());
+        $tramite = Tramite::findOrFail($id);
+        $tramite->update($tramiteRequest->validated());
         return to_route("tramite.index");
     }
 
@@ -46,4 +49,33 @@ class TramitesController extends Controller
         }
         return to_route("tramite.index");
     }
+
+    public function sendEmail(Request $request) {
+
+        // Validación de los datos recibidos
+        $request->validate([
+            "estado_tramite" => "required|string",
+            "propietario" => "required|string",
+            "tramite" => "required|string",
+            "correo_electronico" => "required|email",
+        ]);
+
+        $detalles = [
+            "tramite" => $request->tramite,
+            "propietario" => $request->propietario,
+            "estado_tramite" => $request->estado_tramite,
+             "correo_electronico"=>$request->correo_electronico,
+        ];
+
+        Mail::to($request->correo_electronico)->send(
+            new TramiteUpdateNotification($detalles)
+            
+        );
+        return redirect()->back()->with([
+            'message' => 'Correo enviado con éxito.',
+            'type' => 'success', // o 'error' dependiendo del caso
+        ]);
+        
+    }
+
 }

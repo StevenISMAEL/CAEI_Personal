@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string("id_tipotramite", 10);
             $table->string("tramite", 250);
             $table->string("propietario", 250);
-            $table->string("detalle", 200);
             $table->date("fecha_ingreso");
             $table->date("fecha_salida")->nullable();
             $table->string("informe", 30)->nullable();
@@ -30,7 +29,8 @@ return new class extends Migration
             $table->string("clave_catastral", 150)->nullable();
             $table->string("estado_ingreso", 15)->nullable();
             $table->string("estado_tramite", 15)->nullable();
-
+            $table->string("correo_electronico", 200);
+            $table->timestamps();
 
             $table
             ->foreign("id_usuario")

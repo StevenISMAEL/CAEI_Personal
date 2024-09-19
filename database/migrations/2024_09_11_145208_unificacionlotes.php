@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id("id_unificacion");
             $table->unsignedBigInteger("id_tramite");
             $table->decimal("area_aprobada", total: 8, places: 2);
-
+            $table->timestamps();
+            
             $table
             ->foreign("id_tramite")
             ->references("id_tramite")

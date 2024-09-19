@@ -6,17 +6,16 @@ import Tab from "@/Layouts/TabLayout";
 import { AddButton, DeleteButton } from "@/Components/CustomButtons";
 import InputError from "@/Components/InputError";
 import ModalCreate from "@/Components/TramiteModal";
-import ModalEdit from "@/Components/ModalEdit";
+import ModalEdit from "@/Components/ModalEditPA";
 import Box from "@/Layouts/Box";
 import ExportData from "@/Components/ExportData";
 import tabs from "./tabs";
 import DeleteModal from "@/Components/DeleteModal";
-import TableCustom from "@/Components/TableCustom";
+import TableCustom from "@/Components/TableCustomDetails";
 import CardsCustom from "@/Components/CardCustom";
 import { useNotify } from "@/Components/Toast";
 
-const Tramite = ({ auth, Tramites, TiposTramite, Usuarios }) => {
-    console.log(Tramites);
+const Tramite = ({ auth, Tramites, TiposTramite, Usuarios, Categorias }) => {
     const {
         data,
         setData,
@@ -29,21 +28,24 @@ const Tramite = ({ auth, Tramites, TiposTramite, Usuarios }) => {
         clearErrors,
     } = useForm({
         id_usuario: "",
-        nombre_usuario:"",
+        id_tramite: "",
+        nombre_usuario: "",
         id_tipotramite: "",
-        nombre_tipotramite:"",
+        nombre_tipotramite: "",
         tramite: "",
         propietario: "",
-        detalle: "",
         fecha_ingreso: "",
-        fecha_salida : "",
+        fecha_salida: "",
         informe: "",
         entregado: "",
-        fecha_entrega : "",
-        reasignado : "",
-        fecha_reasignacion : "",
+        fecha_entrega: "",
+        reasignado: "",
+        fecha_reasignacion: "",
         estado_ingreso: "",
         estado_tramite: "",
+        correo_electronico: "",
+        nombre_categoria: "",
+        id_categoria: "",
         ids: [],
     });
 
@@ -53,6 +55,11 @@ const Tramite = ({ auth, Tramites, TiposTramite, Usuarios }) => {
     const [editData, setEditData] = useState(null);
     const [dataToDelete, setDataToDelete] = useState(null);
     const [selectedTramites, setSelectedTramites] = useState([]);
+    const [selectedingreso, setSelectedIngreso] = useState("");
+    const [selectedestado, setSelectedEstado] = useState("");
+    const [selectedCategory, setSelectedCategory] = useState("");
+    const [filteredTypes, setFilteredTypes] = useState([]);
+
     const notify = useNotify();
 
     const closeModalCreate = () => {
@@ -61,7 +68,11 @@ const Tramite = ({ auth, Tramites, TiposTramite, Usuarios }) => {
         reset();
     };
 
-    const openCreateModal = () => setShowCreate(true);
+    const openCreateModal = () => {
+        setData("estado_ingreso", "");
+        setData("id_categoria", "");
+        setShowCreate(true);
+    };
 
     const closeDeleteModal = () => {
         setShowDelete(false);
@@ -80,19 +91,34 @@ const Tramite = ({ auth, Tramites, TiposTramite, Usuarios }) => {
         reset();
     };
 
-
     const openEditModal = (tramite) => {
         setEditData(tramite);
         const user = Usuarios.find((user) => user.id === tramite.id_usuario);
+        // Si ya tienes el id_tipotramite, buscar el tipo de trámite
+        const tipoTramite = TiposTramite.find(
+            (tipo) => tipo.id_tipotramite === tramite.id_tipotramite,
+        );
+
+        // Si el tipo de trámite existe, buscar la categoría por el id_categoria del tipo de trámite
+        const categoria = tipoTramite
+            ? Categorias.find(
+                  (categoria) =>
+                      categoria.id_categoria === tipoTramite.id_categoria,
+              )
+            : null;
+
+            console.log(categoria);
         setData({
+            id_tramite: tramite.id_tramite,
             id_usuario: tramite.id_usuario,
-            nombre_usuario: user? user.name: "",
+            nombre_usuario: user ? user.name : "",
             id_tipotramite: tramite.id_tipotramite,
             nombre_tipotramite: tramite.nombre_tipotramite,
+            nombre_categoria: categoria ? categoria.nombre : "",
             tramite: tramite.tramite,
             propietario: tramite.propietario,
-            detalle: tramite.detalle,
             fecha_ingreso: tramite.fecha_ingreso,
+            id_categoria: categoria ? categoria.id_categoria : "",
             estado_ingreso: tramite.estado_ingreso,
             estado_tramite: tramite.estado_tramite,
             fecha_salida: tramite.fecha_salida,
@@ -101,9 +127,11 @@ const Tramite = ({ auth, Tramites, TiposTramite, Usuarios }) => {
             informe: tramite.informe,
             entregado: tramite.entregado,
             fecha_entrega: tramite.fecha_entrega,
-
+            correo_electronico: tramite.correo_electronico,
         });
         setShowEdit(true);
+        setSelectedEstado(tramite.estado_tramite);
+        setSelectedIngreso(tramite.estado_ingreso); // Actualiza el estado
     };
 
     const handleSubmitAdd = (e) => {
@@ -158,27 +186,85 @@ const Tramite = ({ auth, Tramites, TiposTramite, Usuarios }) => {
         }
     };
 
+    const handleSubmitEmail = (e) => {
+        e.preventDefault();
+        const detalles = {
+            tramite: data.tramite,
+            propietario: data.propietario,
+            estado: data.estado_tramite,
+            correo_electronico: data.correo_electronico,
+        };
+        post("/administrar-tramites/tramite/send-email", detalles, {
+            preserveScroll: true,
+            onError: (error) => console.error(Object.values(error).join(", ")),
+        });
+    };
+
+    const handleCategoryChange = (id) => {
+        setSelectedCategory(id);
+        const filteredtypes = TiposTramite.filter(
+            (tipotramite) => tipotramite.id_categoria === id,
+        );
+        setFilteredTypes(filteredtypes);
+        setData("id_tipotramite", "");
+    };
+    const transformForCombobox = (arrays) => {
+        return arrays.map((array) => ({
+            value: array,
+            label: `${array}`,
+        }));
+    };
+    const handleChangeIngreso = (value) => {
+        setSelectedIngreso(value); // Actualiza el estado
+        setData("estado_ingreso", value);
+    };
+    const handleChangeEstado = (value) => {
+        setSelectedEstado(value); // Actualiza el estado
+        setData("estado_tramite", value);
+    };
+    const comboboxingresos = transformForCombobox(["Ingreso", "Reingreso"]);
+    const comboboxestado = transformForCombobox([
+        "Revisión",
+        "Observación",
+        "Negado",
+        "Aprobado",
+    ]);
+
     const inputstramite = [
+        {
+            placeholder: "Categoria",
+            type: "select",
+            labelKey: "nombre",
+            valueKey: "id_categoria",
+            options: Categorias,
+            value: selectedCategory,
+            onSelect: handleCategoryChange,
+            inputError: (
+                <InputError message={errors.id_categoria} className="mt-2" />
+            ),
+            defaultValue: data.nombre_categoria,
+        },
+        {
+            id: "estado_ingreso",
+            type: "combobox",
+            label: "Estado de Ingreso",
+            options: comboboxingresos,
+            value: selectedingreso,
+            onChange: handleChangeIngreso,
+            inputError: (
+                <InputError message={errors.estado_ingreso} className="mt-2" />
+            ),
+            defaultValue: data.estado_ingreso,
+        },
         {
             label: "Trámite",
             id: "tramite",
             type: "text",
             name: "tramite",
-            value: data.tramite|| "",
+            value: data.tramite || "",
             onChange: (e) => setData("tramite", e.target.value),
             inputError: (
                 <InputError message={errors.tramite} className="mt-2" />
-            ),
-        },
-        {
-            label: "Estado de Ingreso",
-            id: "estado_ingreso",
-            type: "text",
-            name: "estado_ingreso",
-            value: data.estado_ingreso|| "",
-            onChange: (e) => setData("estado_ingreso", e.target.value),
-            inputError: (
-                <InputError message={errors.estado_ingreso} className="mt-2" />
             ),
         },
         {
@@ -186,7 +272,8 @@ const Tramite = ({ auth, Tramites, TiposTramite, Usuarios }) => {
             type: "select",
             labelKey: "nombre",
             valueKey: "id_tipotramite",
-            options: TiposTramite,
+            options: filteredTypes,
+            value: data.id_tipotramite,
             onSelect: (id) => setData("id_tipotramite", id),
             inputError: (
                 <InputError message={errors.id_tipotramite} className="mt-2" />
@@ -198,14 +285,28 @@ const Tramite = ({ auth, Tramites, TiposTramite, Usuarios }) => {
             id: "propietario",
             type: "text",
             name: "propietario",
-            value: data.propietario|| "",
+            value: data.propietario || "",
             onChange: (e) => setData("propietario", e.target.value),
             inputError: (
                 <InputError message={errors.propietario} className="mt-2" />
             ),
         },
-         {
-            placeholder: "Usuario",
+        {
+            label: "Correo electrónico",
+            id: "correo_electronico",
+            type: "email",
+            name: "correo_electronico",
+            value: data.correo_electronico || "",
+            onChange: (e) => setData("correo_electronico", e.target.value),
+            inputError: (
+                <InputError
+                    message={errors.correo_electronico}
+                    className="mt-2"
+                />
+            ),
+        },
+        {
+            placeholder: "Arquitecto Revisor",
             type: "select",
             labelKey: "name",
             valueKey: "id",
@@ -217,22 +318,11 @@ const Tramite = ({ auth, Tramites, TiposTramite, Usuarios }) => {
             defaultValue: data.nombre_usuario,
         },
         {
-            label: "Detalle",
-            id: "detalle",
-            type: "text",
-            name: "detalle",
-            value: data.detalle|| "",
-            onChange: (e) => setData("detalle", e.target.value),
-            inputError: (
-                <InputError message={errors.detalle} className="mt-2" />
-            ),
-        },
-        {
             label: "Fecha de Ingreso",
             id: "fecha_ingreso",
             type: "date",
             name: "fecha_ingreso",
-            value: data.fecha_ingreso|| "",
+            value: data.fecha_ingreso || "",
             onChange: (e) => setData("fecha_ingreso", e.target.value),
             inputError: (
                 <InputError message={errors.fecha_ingreso} className="mt-2" />
@@ -243,44 +333,43 @@ const Tramite = ({ auth, Tramites, TiposTramite, Usuarios }) => {
             id: "fecha_salida",
             type: "date",
             name: "fecha_salida",
-            value: data.fecha_salida|| "",
+            value: data.fecha_salida || "",
             onChange: (e) => setData("fecha_salida", e.target.value),
             inputError: (
                 <InputError message={errors.fecha_salida} className="mt-2" />
             ),
         },
         {
+            type: "combobox",
             label: "Estado del Trámite",
             id: "estado_tramite",
-            type: "text",
-            name: "estado_tramite",
-            value: data.estado_tramite|| "",
-            onChange: (e) => setData("estado_tramite", e.target.value),
+            options: comboboxestado,
+            value: selectedestado,
+            onChange: handleChangeEstado,
             inputError: (
                 <InputError message={errors.estado_tramite} className="mt-2" />
             ),
+            defaultValue: data.estado_tramite,
         },
-        
     ];
-    const inputsclaves =[
-         
+    const inputsclaves = [
         {
             label: "informe",
             id: "informe",
             type: "text",
             name: "informe",
-            value: data.informe|| "",
+            value: data.informe || "",
             onChange: (e) => setData("informe", e.target.value),
             inputError: (
                 <InputError message={errors.informe} className="mt-2" />
             ),
         },
         {
-            label:"Entregado",
+            label: "Entregado",
             id: "entregado",
             type: "text",
             name: "entregado",
-            value: data.entregado|| "",
+            value: data.entregado || "",
             onChange: (e) => setData("entregado", e.target.value),
             inputError: (
                 <InputError message={errors.entregado} className="mt-2" />
@@ -291,18 +380,18 @@ const Tramite = ({ auth, Tramites, TiposTramite, Usuarios }) => {
             id: "fecha_entrega",
             type: "date",
             name: "fecha_entrega",
-            value: data.fecha_entrega|| "",
+            value: data.fecha_entrega || "",
             onChange: (e) => setData("fecha_entrega", e.target.value),
             inputError: (
                 <InputError message={errors.fecha_entrega} className="mt-2" />
             ),
         },
         {
-            label:"Reasignado",
+            label: "Reasignado",
             id: "reasignado",
             type: "text",
             name: "reasignado",
-            value: data.reasignado|| "",
+            value: data.reasignado || "",
             onChange: (e) => setData("reasignado", e.target.value),
             inputError: (
                 <InputError message={errors.reasignado} className="mt-2" />
@@ -313,16 +402,51 @@ const Tramite = ({ auth, Tramites, TiposTramite, Usuarios }) => {
             id: "fecha_reasignacion",
             type: "date",
             name: "fecha_reasignacion",
-            value: data.fecha_reasignacion|| "",
+            value: data.fecha_reasignacion || "",
             onChange: (e) => setData("fecha_reasignacion", e.target.value),
             inputError: (
-                <InputError message={errors.fecha_reasignacion} className="mt-2" />
+                <InputError
+                    message={errors.fecha_reasignacion}
+                    className="mt-2"
+                />
             ),
         },
     ];
 
-    const theaders = [ "Trámite",  "Arquiecto R", "Tipo de Trámite", "Propietario", "Fecha de Ingreso", "Estado"];
-    const searchColumns = [ "tramite","nombre_usuario", "nombre_tipotramite",  "propietario", "fecha_ingreso", "estado_tramite"];
+    const theaders = [
+        "Trámite",
+        "Tipo de Trámite",
+        "Propietario",
+        "Fecha de Ingreso",
+        "Estado",
+    ];
+    const searchColumns = [
+        "tramite",
+        "nombre_tipotramite",
+        "propietario",
+        "fecha_ingreso",
+        "estado_tramite",
+    ];
+    const theadersexsportar = [
+        "Estado",
+        "Trámite",
+        "Arquiecto R",
+        "Tipo de Trámite",
+        "Propietario",
+        "Fecha de Ingreso",
+        "Estado",
+        "Fecha salida",
+    ];
+    const columnasexportar = [
+        "estado_ingreso",
+        "tramite",
+        "nombre_usuario",
+        "nombre_tipotramite",
+        "propietario",
+        "fecha_ingreso",
+        "estado_tramite",
+        "fecha_salida",
+    ];
 
     const handleCheckboxChange = (id) => {
         setSelectedTramites((prevSelected) => {
@@ -366,9 +490,9 @@ const Tramite = ({ auth, Tramites, TiposTramite, Usuarios }) => {
                         </div>
                         <ExportData
                             data={Tramites}
-                            searchColumns={searchColumns}
-                            headers={theaders}
-                            fileName="Tramites"
+                            searchColumns={columnasexportar}
+                            headers={theadersexsportar}
+                            fileName="Trámites"
                         />
                     </div>
                 </Box>
@@ -376,31 +500,40 @@ const Tramite = ({ auth, Tramites, TiposTramite, Usuarios }) => {
                     showCreate={showCreate}
                     closeModalCreate={closeModalCreate}
                     title={"Añadir Trámite"}
+                    nombre1={"Trámite"}
                     inputsclaves={inputsclaves}
+                    nombre2={"Información adicional"}
                     inputstramite={inputstramite}
                     processing={processing}
+                    handleSubmitEmail={handleSubmitEmail}
                     handleSubmitAdd={handleSubmitAdd}
                 />
                 <DeleteModal
                     showDelete={showDelete}
                     closeDeleteModal={closeDeleteModal}
-                    title={"Borrar Trámites"}
+                    title={"Borrar Trámite"}
                     handleDelete={() => handleDelete(dataToDelete)}
                     processing={processing}
                 />
                 <ModalEdit
-                    title="Editar Trámite"
+                    title="Actualizar Trámite"
                     showEdit={showEdit}
                     closeEditModal={closeEditModal}
-                    inputs={inputstramite}
+                    nombre1={"Actualizar Trámite"}
+                    inputsclaves={inputsclaves}
+                    nombre2={"Información adicional"}
+                    inputstramite={inputstramite}
                     processing={processing}
                     handleSubmitEdit={handleSubmitEdit}
+                    handleSubmitEmail={handleSubmitEmail}
                 />
                 <Box className="mt-3 hidden md:block">
                     <TableCustom
                         headers={theaders}
                         data={Tramites}
                         searchColumns={searchColumns}
+                        theadersdetalles={theadersexsportar}
+                        columnasdetalles={columnasexportar}
                         onDelete={openDeleteModal}
                         onEdit={openEditModal}
                         idKey="id_tramite"

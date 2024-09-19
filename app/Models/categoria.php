@@ -18,8 +18,26 @@ class categoria extends Model
     protected $primaryKey = "id_categoria";
     public $incrementing = false;
     protected $keyType = "string";
-    protected $fillable = ["id_categoria", "nombres"];
+    protected $fillable = ["id_categoria", "nombre"];
+    public $timestamps = false;
 
+      // Generar id_categoria único con formato específico
+      protected static function booted()
+      {
+          static::creating(function ($model) {
+              // Obtener el último id_categoria en formato numérico
+              $latestCategoriaId = static::max("id_categoria");
+              
+              // Si no hay registros, el próximo id es 1
+              $nextNumber = $latestCategoriaId
+                  ? intval(substr($latestCategoriaId, 5)) + 1
+                  : 1;
+              
+              // Formatear el id_categoria con prefijo "CATG-" y longitud total de 7 caracteres
+              $model->id_categoria = "CATG-" . str_pad($nextNumber, 2, "0", STR_PAD_LEFT);
+          });
+      }
+ 
     public function tipotramites() {
         return $this->hasMany(ConCanton::class, "id_categoria", "id_categoria");
     }

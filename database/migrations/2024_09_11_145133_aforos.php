@@ -19,7 +19,8 @@ return new class extends Migration
             $table->integer("aforo_personas");
             $table->decimal("area_construccion", total: 8, places: 2);
             $table->date("inspeccion");
-
+            $table->timestamps();
+            
             $table
             ->foreign("id_tramite")
             ->references("id_tramite")

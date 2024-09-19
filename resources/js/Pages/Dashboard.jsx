@@ -3,8 +3,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import Header from "@/Components/Header";
 import { Head } from "@inertiajs/react";
 import Box from "@/Layouts/Box";
-
-// Importa la imagen que deseas mostrar
+import Carrusel from "@/Components/Carrusel";
 
 export default function Dashboard({ auth }) {
     return (
@@ -13,13 +12,14 @@ export default function Dashboard({ auth }) {
             header={<Header subtitle={"Dashboard"} />}
         >
             <Head title="Dashboard" />
-            <div className="text-center">
-                <h2 className="text-xl font-bold">Bienvenido al Dashboard</h2>
-                <p></p>
-            {/* <img src="../images/Laguna.jpg" alt="Descripción de la imagen" className="mt-4" /> */}
-
+            <div className="pt-4">
+                <div className="max-w-5xl mx-auto sm:px-6 lg:px-8">
+                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                        
+                    </div>
+                    <Carrusel />
+                </div>
             </div>
-            {/* Aquí puedes añadir más componentes si lo deseas */}
         </AuthenticatedLayout>
     );
 }

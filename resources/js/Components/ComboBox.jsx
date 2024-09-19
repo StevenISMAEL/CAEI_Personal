@@ -134,7 +134,7 @@ const Combobox = ({
             </div>
             {isOpen && (
                 <div className="mt-2 bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-lg shadow-lg">
-                    <ul className="py-1 max-h-60 overflow-auto focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    <ul className="py-1 max-h-20 overflow-auto focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                         {options.map((option, index) => (
                             <li
                                 key={option.value}

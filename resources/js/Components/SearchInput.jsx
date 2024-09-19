@@ -134,7 +134,7 @@ const SearchDropdown = ({
 
             {isDropdownOpen && (
                 <div className="mt-2 bg-white dark:bg-gray-800 border dark:border-gray-600 rounded-lg shadow-lg">
-                    <ul className="py-1 max-h-60 overflow-auto">
+                    <ul className="py-1 max-h-20 overflow-auto">
                         {filteredOptions.length > 0 ? (
                             filteredOptions.map((option, index) => (
                                 <li

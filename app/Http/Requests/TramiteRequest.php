@@ -25,7 +25,6 @@ class TramiteRequest extends FormRequest {
                     'id_tipotramite' => 'required|string|max:7|exists:tipos_tramites,id_tipotramite', // Relación con la tabla de tipos de trámites
                     'tramite' => 'required|string|max:250',
                     'propietario' => 'required|string|max:250',
-                    'detalle' => 'nullable|string|max:250',
                     'fecha_ingreso' => 'required|date',
                     'fecha_salida' => 'nullable|date',
                     'informe' => 'nullable|string|max:30',
@@ -38,6 +37,7 @@ class TramiteRequest extends FormRequest {
                     'direccion' => 'nullable|string|max:300',
                     'estado_tramite' => 'required|string|max:15',
                     'estado_ingreso' => 'required|string|max:15',
+                    'correo_electronico' => 'required|string|max:200',
                 ];
 
             case "PATCH":
@@ -46,7 +46,6 @@ class TramiteRequest extends FormRequest {
                     'id_tipotramite' => 'sometimes|required|string|max:7|exists:tipos_tramites,id_tipotramite',
                     'tramite' => 'sometimes|required|string|max:250',
                     'propietario' => 'sometimes|required|string|max:250',
-                    'detalle' => 'sometimes|nullable|string|max:250',
                     'fecha_ingreso' => 'sometimes|required|date',
                     'fecha_salida' => 'sometimes|nullable|date',
                     'informe' => 'sometimes|nullable|string|max:30',
@@ -58,13 +57,14 @@ class TramiteRequest extends FormRequest {
                     'clave_catastral' => 'sometimes|nullable|string|max:150',
                     'direccion' => 'sometimes|nullable|string|max:300',
                     'estado_tramite' => 'sometimes|required|string|max:15',
-                    'estado_ingreso' => 'required|string|max:15',
+                    'estado_ingreso' => 'sometimes|required|string|max:15',
+                    'correo_electronico' => 'sometimes|required|string|max:200',
 
                 ];
 
             case "DELETE":
                 return [
-                    'id' => 'required|integer|exists:tramites,id_tramite',
+                    'id_tramite' => 'required|integer|exists:tramites,id_tramite',
                 ];
 
             default:

@@ -7,7 +7,7 @@ import { ExportButton } from "@/Components/CustomButtons";
 
 const ExportData = ({ data, searchColumns, headers, fileName }) => {
     const [isExporting, setIsExporting] = useState(false);
-    const { logoDectell, auth } = usePage().props;
+    const { logoArquitectos, auth } = usePage().props;
     const user = auth.user.name;
 
     const filterData = useCallback(
@@ -71,12 +71,27 @@ const ExportData = ({ data, searchColumns, headers, fileName }) => {
         setIsExporting(true);
         try {
             const doc = new jsPDF();
+            // Color de fondo en el PDF
+            const backgroundColor = [255, 0, 0]; // Rojo en formato RGB
 
+            // Añadir fondo antes del logo
+            doc.setFillColor(...backgroundColor);
+            doc.rect(73, 5, 60, 20, "F"); // Ajustar tamaño y posición según el logo
+
+        
             const subtitle = `${fileName} - ${new Date().toLocaleDateString()}`;
             const reportBy = `Reporte realizado por: ${user}`;
 
-            if (logoDectell) {
-                doc.addImage(logoDectell, "PNG", 73, 5, 60, 20, "Dectell Logo");
+            if (logoArquitectos) {
+                doc.addImage(
+                    logoArquitectos,
+                    "PNG",
+                    73,
+                    5,
+                    60,
+                    20,
+                    "Logo colegio",
+                );
             }
 
             let currentY = 35;
@@ -93,7 +108,7 @@ const ExportData = ({ data, searchColumns, headers, fileName }) => {
 
             const styles = {
                 header: {
-                    fillColor: [237, 233, 254],
+                    fillColor: [252, 136, 111],
                     textColor: [55, 65, 81],
                     fontSize: 12,
                     fontStyle: "bold",
@@ -205,7 +220,7 @@ const ExportData = ({ data, searchColumns, headers, fileName }) => {
         } finally {
             setIsExporting(false);
         }
-    }, [data, searchColumns, headers, fileName, logoDectell, user]);
+    }, [data, searchColumns, headers, fileName, logoArquitectos, user]);
 
     return (
         <Dropdown>

@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id("id_trabajov");
             $table->unsignedBigInteger("id_tramite");
             $table->string("uso_suelo", 20);
-
+            $table->timestamps();
+            
             $table
             ->foreign("id_tramite")
             ->references("id_tramite")

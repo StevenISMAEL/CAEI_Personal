@@ -18,7 +18,8 @@ return new class extends Migration
             $table->boolean("modificatorio");
             $table->string("uso_suelo", 20);
             $table->decimal("area_construccion", total: 8, places: 2);
-
+            $table->timestamps();
+            
             $table
             ->foreign("id_tramite")
             ->references("id_tramite")
