@@ -13,7 +13,7 @@ class AforosController extends Controller
     public function index() {
         return Inertia::render("Aforos/aforosper", [
             "Aforos" => Aforos::getAforos(),
-            "Tramites" => Tramite::getTramites(),
+            "Tramites" => Tramite::getTramitesPorCategoria("CATG-05"),
             "Usuarios" => User::all(),
         ]);
     }

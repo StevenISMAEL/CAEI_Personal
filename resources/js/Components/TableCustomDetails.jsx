@@ -27,7 +27,7 @@ const TableCustom = ({
     onSelectAll,
 }) => {
     const styles =
-        "text-indigo-600 shadow-sm focus:ring-blue-500 dark:focus:ring-blue-600";
+        "text-indigo-600 shadow-sm focus:ring-gray-500 dark:focus:ring-gray-600";
     const [searchValue, setSearchValue] = useState("");
     const [filteredData, setFilteredData] = useState(data);
     const [sortConfig, setSortConfig] = useState({
@@ -150,7 +150,7 @@ const TableCustom = ({
                             <select
                                 onChange={handleItemsPerPageChange}
                                 value={itemsPerPage}
-                                className="bg-white dark:bg-gray-800 rounded-md border-gray-300 dark:border-gray-700 shadow-md focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:ring-offset-gray-800"
+                                className="bg-white dark:bg-gray-800 rounded-md border-gray-300 dark:border-gray-700 shadow-md focus:ring-gray-300 dark:focus:ring-gray-600 dark:focus:ring-offset-gray-800"
                             >
                                 <option value={5}>5</option>
                                 <option value={10}>10</option>
@@ -171,8 +171,8 @@ const TableCustom = ({
                     {filteredData.length > 0 ? (
                         <div className="relative overflow-x-scroll shadow-md sm:rounded-lg">
                             <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                                    <tr>
+                            <thead className="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
+                            <tr>
                                         <th scope="col" className="p-4">
                                             <div className="flex items-center">
                                                 <Checkbox
@@ -226,12 +226,12 @@ const TableCustom = ({
                                     {currentData.map((item, index) => (
                                         <tr
                                             key={item[idKey]}
-                                            className={`border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 ${
+                                            className={`border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-200 ${
                                                 selectedItems.includes(
                                                     item[idKey],
                                                 )
-                                                    ? "bg-blue-100 dark:bg-blue-100"
-                                                    : "bg-white dark:bg-gray-800"
+                                                ? "bg-gray-200 dark:bg-gray-600"
+                                                : "bg-white dark:bg-gray-800"
                                             }`}
                                         >
                                             <td className="w-4 p-4">

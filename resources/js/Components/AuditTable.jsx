@@ -7,7 +7,14 @@ import { IoIosArrowForward, IoIosArrowBack } from "react-icons/io";
 import { CgUnavailable } from "react-icons/cg";
 import Modal from "@/Components/Modal"; // Importar el modal de Laravel Breeze
 
-const TableCustomViewOnly = ({ headers, data, searchColumns, idKey }) => {
+const TableCustomViewOnly = ({
+    headers,
+    data,
+    searchColumns,
+    idKey,
+    columnasdetalles,
+    theadersdetalles,
+}) => {
     const [searchValue, setSearchValue] = useState("");
     const [filteredData, setFilteredData] = useState(data);
     const [sortConfig, setSortConfig] = useState({
@@ -18,7 +25,7 @@ const TableCustomViewOnly = ({ headers, data, searchColumns, idKey }) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [showModal, setShowModal] = useState(false);
     const [modalData, setModalData] = useState({});
-
+ 
     useEffect(() => {
         setFilteredData(data);
     }, [data]);
@@ -224,40 +231,37 @@ const TableCustomViewOnly = ({ headers, data, searchColumns, idKey }) => {
                     <CgUnavailable className="text-red-500 text-xl" />
                 </h2>
             )}
-            {showModal && (
+            {/* Modal para mostrar los detalles */}
+            {showModal && modalData && (
                 <Modal show={showModal} onClose={() => setShowModal(false)}>
-                    <div className="p-6 flex flex-col">
-                        <h2 className="text-lg font-bold mb-4 dark:text-white ">
-                            Detalles de la Auditoría
-                        </h2>
-                        <div className="flex mb-4">
-                            <div className="w-1/2 pl-2">
-                                <h3 className="font-semibold dark:text-white mb-3">
-                                    Valores Anteriores:
-                                </h3>
-                                <pre className="bg-gray-100 dark:text-white  dark:bg-gray-700 p-2 rounded-md whitespace-pre-wrap truncate">
-                                    {JSON.stringify(
-                                        JSON.parse(modalData.old_values),
-                                        null,
-                                        2,
-                                    )}
-                                </pre>
-                            </div>
-                            <div className="w-px bg-gray-300 dark:text-white dark:bg-gray-700 mx-2"></div>
-                            <div className="w-1/2 pr-2">
-                                <h3 className="font-semibold dark:text-white mb-3">
-                                    Valores Nuevos:
-                                </h3>
-                                <pre className="bg-gray-100 dark:text-white  dark:bg-gray-700 p-2 rounded-md whitespace-pre-wrap truncate">
-                                    {JSON.stringify(
-                                        JSON.parse(modalData.new_values),
-                                        null,
-                                        2,
-                                    )}
-                                </pre>
-                            </div>
+                    <div className="p-6">
+                        <h2 className="text-lg font-bold">Detalles</h2>
+                        <div>
+                            {columnasdetalles &&
+                            theadersdetalles &&
+                            columnasdetalles.length > 0 ? (
+                                columnasdetalles.map((column, idx) => (
+                                    <div
+                                        key={idx}
+                                        className="mb-2 dark:text-white"
+                                    >
+                                        <strong className="font-bold">
+                                            {theadersdetalles[idx] ??
+                                                "No disponible"}
+                                            :{" "}
+                                        </strong>
+                                        {modalData[column] ?? "No disponible"}
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="mb-2 dark:text-white">
+                                    <strong>
+                                        No hay detalles disponibles.
+                                    </strong>
+                                </div>
+                            )}
                         </div>
-                        <div className="flex justify-end mt-4">
+                        <div className="mt-6 flex justify-end">
                             <SecondaryButton
                                 onClick={() => setShowModal(false)}
                             >

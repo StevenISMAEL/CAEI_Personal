@@ -4,27 +4,28 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use App\Models\PropiedadHorizontal;
+use App\Models\UnificacionL;
 use App\Models\Tramite;
 use App\Models\User;
-use App\Http\Requests\PropiedadHorizontalRequest;
+use App\Http\Requests\UnificacionLRequest;
 
 
-class PropiedadHorizontalController extends Controller
+class UnificacionLController extends Controller
 {
     public function index() {
-        return Inertia::render("Propiedad/Phorizontal", [
-            "PropiedadHo" => PropiedadHorizontal::getPropiedadesH(),
-            "Tramites" => Tramite::getTramitesPorCategoria("CATG-03"),
+        return Inertia::render("UnificacionL/unificacionlotes", [
+            "Unificacionl" => UnificacionL::getUnificacionLotes(),
+            "Tramites" => Tramite::getTramites(),
             "Usuarios" => User::all(),
         ]);
     }
-    public function store(PropiedadHorizontalRequest $request) {
+
+    public function store(UnificacionLRequest $request) {
         $validatedData = $request->validated();
 
-        $propiedad = PropiedadHorizontal::create($validatedData);
+        $unificacionlot = UnificacionL::create($validatedData);
 
-        $tramiteId = $propiedad->id_tramite; 
+        $tramiteId = $unificacionlot->id_tramite; 
         // para actualizar los campos de tramite
         if ($tramiteId) {
             Tramite::updateOrCreate(
@@ -39,15 +40,16 @@ class PropiedadHorizontalController extends Controller
             );
         }
 
-        return to_route("propiedadh.index");
+        return to_route("unificacionlotes.index");
     }
 
-    public function update(PropiedadHorizontalRequest $request, $id) {
-        $propiedad = PropiedadHorizontal::findOrFail($id);
 
-        $propiedad->update($request->validated());
+    public function update(UnificacionLRequest $request, $id) {
+        $unificacionlot = UnificacionL::findOrFail($id);
 
-        $tramiteId = $propiedad->id_tramite;
+        $unificacionlot->update($request->validated());
+
+        $tramiteId = $unificacionlot->id_tramite;
         // para actualizar los campos de tramite
         if ($tramiteId) {
             Tramite::updateOrCreate(
@@ -55,29 +57,30 @@ class PropiedadHorizontalController extends Controller
                 [
                     "clave_catastral" => $request->input("clave_catastral"),
                     "direccion" => $request->input("direccion"),
-                    "arquitecto_responsable" => $request->input("arquitecto_responsable"),
+                    "arquitecto_responsable" => $request->input(
+                        "arquitecto_responsable"
+                    ),
                     "estado_tramite" => $request->input("estado_tramite"),
                     "fecha_salida" => $request->input("fecha_salida"),
-
                 ]
             );
         }
 
-        return to_route("propiedadh.index");
+        return to_route("unificacionlotes.index");
     }
 
     public function destroy($id) {
-        PropiedadHorizontal::find($id)->delete();
-        return to_route("propiedadh.index");
+        UnificacionL::find($id)->delete();
+        return to_route("unificacionlotes.index");
     }
 
     public function destroyMultiple(Request $request) {
         $ids = $request->input("ids");
-        $propiedades = PropiedadHorizontal::whereIn("id_propiedadh", $ids)->get();
+        $unificaciones = UnificacionL::whereIn("id_unificacion", $ids)->get();
 
-        foreach ($propiedades as $horizontal) {
-            $horizontal->delete();
+        foreach ($unificaciones as $unilotes) {
+            $unilotes->delete();
         }
-        return to_route("propiedadh.index");
+        return to_route("unificacionlotes.index");
     }
 }

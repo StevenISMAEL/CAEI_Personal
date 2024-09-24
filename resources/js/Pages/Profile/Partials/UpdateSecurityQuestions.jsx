@@ -120,7 +120,7 @@ export default function UpdateSecurityQuestions({ className = "" }) {
                     </label>
                     <select
                         id="security_question_id"
-                        className="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:border-green-600 focus:ring-green-600 sm:text-sm h-12"
+                        className="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:border-gray-600 focus:ring-gray-600 sm:text-sm h-12"
                         value={data.security_question_id}
                         onChange={(e) =>
                             setData("security_question_id", e.target.value)

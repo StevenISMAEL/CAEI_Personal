@@ -7,7 +7,14 @@ import SecondaryButton from "@/Components/SecondaryButton";
 import { IoIosArrowForward, IoIosArrowBack } from "react-icons/io";
 import Modal from "@/Components/Modal";
 
-const CardsCustomOnlyView = ({ headers, data, searchColumns, idKey }) => {
+const CardsCustomOnlyView = ({
+    headers,
+    data,
+    searchColumns,
+    idKey,
+    columnasdetalles,
+    theadersdetalles,
+}) => {
     const styles =
         "text-violet-600 shadow-sm focus:ring-violet-500 dark:focus:ring-violet-600";
     const [searchValue, setSearchValue] = useState("");
@@ -180,53 +187,38 @@ const CardsCustomOnlyView = ({ headers, data, searchColumns, idKey }) => {
                             <IoIosArrowForward />
                         </SecondaryButton>
                     </div>
+                    {/* Modal para mostrar los detalles */}
                     {isModalOpen && modalData && (
                         <Modal show={isModalOpen} onClose={closeModal}>
                             <div className="p-6">
                                 <h2 className="text-2xl font-bold mb-3 dark:text-white">
                                     Detalles
                                 </h2>
-                                {searchColumns.map((column, idx) => (
+                                <div>
+                            {columnasdetalles &&
+                            theadersdetalles &&
+                            columnasdetalles.length > 0 ? (
+                                columnasdetalles.map((column, idx) => (
                                     <div
                                         key={idx}
                                         className="mb-2 dark:text-white"
                                     >
                                         <strong className="font-bold">
-                                            {headers[idx]}:{" "}
+                                            {theadersdetalles[idx] ??
+                                                "No disponible"}
+                                            :{" "}
                                         </strong>
-                                        {modalData[column]}
+                                        {modalData[column] ?? "No disponible"}
                                     </div>
-                                ))}
-                                <div className="mt-4 flex justify-between space-x-4">
-                                    <div className="w-1/2">
-                                        <h3 className="font-semibold dark:text-white mb-3">
-                                            Valores Nuevos:
-                                        </h3>
-                                        <pre className="bg-gray-100 dark:text-white dark:bg-gray-700 p-2 rounded-md overflow-auto whitespace-pre-wrap break-all">
-                                            {JSON.stringify(
-                                                JSON.parse(
-                                                    modalData.new_values,
-                                                ),
-                                                null,
-                                                2,
-                                            )}
-                                        </pre>
-                                    </div>
-                                    <div className="w-1/2">
-                                        <h3 className="font-semibold dark:text-white mb-3">
-                                            Valores Anteriores:
-                                        </h3>
-                                        <pre className="bg-gray-100 dark:text-white dark:bg-gray-700 p-2 rounded overflow-auto whitespace-pre-wrap break-all">
-                                            {JSON.stringify(
-                                                JSON.parse(
-                                                    modalData.old_values,
-                                                ),
-                                                null,
-                                                2,
-                                            )}
-                                        </pre>
-                                    </div>
+                                ))
+                            ) : (
+                                <div className="mb-2 dark:text-white">
+                                    <strong>
+                                        No hay detalles disponibles.
+                                    </strong>
                                 </div>
+                            )}
+                        </div>
                                 <div className="mt-6 flex justify-end">
                                     <SecondaryButton onClick={closeModal}>
                                         Cerrar

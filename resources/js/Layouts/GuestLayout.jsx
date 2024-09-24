@@ -27,17 +27,10 @@ export default function Guest({ children }) {
     }, [flash]);
 
     return (
-        <div className="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gradient-to-b from-blue-500 dark:from-blue-950 dark:bg-gray-900">
-            <div>
-                <button onClick={toggleDarkMode}>
-                    <img src="/images/ag2.png" alt="imagen"   style={{ 
-        width: '100px',  // Ajusta el tamaño según sea necesario
-        height: '100px', // Mantén la proporción o ajusta según prefieras
-        objectFit: 'cover' // Opcional, para asegurar que la imagen se ajuste al tamaño
-    }}  />
+        <div className="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gradient-to-b from-neutral-500 dark:from-blue-950 dark:bg-gray-900">
+             <button onClick={toggleDarkMode}>
+                    <ApplicationLogo className="w-40 h-40" />
                 </button>
-            </div>
-
             <div className="w-full sm:max-w-md mt-6 px-6 py-4 bg-white dark:bg-gray-800 shadow-md overflow-hidden sm:rounded-lg">
                 {children}
             </div>

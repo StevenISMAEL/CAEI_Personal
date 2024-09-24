@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Head, useForm } from "@inertiajs/react";
 import Header from "@/Components/Header";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
@@ -14,8 +14,9 @@ import DeleteModal from "@/Components/DeleteModal";
 import TableCustom from "@/Components/TableCustomDetails";
 import CardsCustom from "@/Components/CardCustom";
 import { useNotify } from "@/Components/Toast";
+import React, { useEffect } from "react";
 
-const Trabajo = ({ auth, Tramites, Trabajosv, Usuarios }) => {
+const unificacionlote = ({ auth, Tramites, Unificacionl, Usuarios }) => {
     const {
         data,
         setData,
@@ -36,9 +37,9 @@ const Trabajo = ({ auth, Tramites, Trabajosv, Usuarios }) => {
         fecha_ingreso: "",
         fecha_salida: "",
         estado_tramite: "",
-        id_trabajov: "",
-        uso_suelo: "",
+        id_unificacion: "",
         direccion: "",
+        area_aprobada: "",
         clave_catastral: "",
         arquitecto_responsable: "",
         id_tramite: "",
@@ -51,7 +52,7 @@ const Trabajo = ({ auth, Tramites, Trabajosv, Usuarios }) => {
     const [showEdit, setShowEdit] = useState(false);
     const [editData, setEditData] = useState(null);
     const [dataToDelete, setDataToDelete] = useState(null);
-    const [selectedTrabajov, setSelectedTrabajov] = useState([]);
+    const [selectedUnificacionlo, setSelectedUnificacionlo] = useState([]);
     const notify = useNotify();
 
     const handleChangeEstado = (value) => {
@@ -85,24 +86,26 @@ const Trabajo = ({ auth, Tramites, Trabajosv, Usuarios }) => {
         reset();
     };
 
-    const openEditModal = (trabajov) => {
-        setEditData(trabajov);
-        const user = Usuarios.find((user) => user.id === trabajov.id_usuario);
+    const openEditModal = (unificacion) => {
+        setEditData(unificacion);
+        const user = Usuarios.find(
+            (user) => user.id === unificacion.id_usuario,
+        );
         setData({
-            id_usuario: trabajov.id_usuario,
+            id_usuario: unificacion.id_usuario,
             nombre_usuario: user ? user.name : "",
-            id_tipotramite: trabajov.id_tipotramite,
-            nombre_tipotramite: trabajov.nombre_tipotramite,
-            tramite: trabajov.tramite,
-            propietario: trabajov.propietario,
-            fecha_ingreso: trabajov.fecha_ingreso,
-            fecha_salida: trabajov.fecha_salida,
-            estado_tramite: trabajov.estado_tramite,
-            uso_suelo: trabajov.uso_suelo,
-            clave_catastral: trabajov.clave_catastral,
-            arquitecto_responsable: trabajov.arquitecto_responsable,
-            direccion: trabajov.direccion,
-
+            id_tipotramite: unificacion.id_tipotramite,
+            nombre_tipotramite: unificacion.nombre_tipotramite,
+            tramite: unificacion.tramite,
+            propietario: unificacion.propietario,
+            fecha_ingreso: unificacion.fecha_ingreso,
+            fecha_salida: unificacion.fecha_salida,
+            estado_tramite: unificacion.estado_tramite,
+            uso_suelo: unificacion.uso_suelo,
+            area_aprobada: unificacion.area_aprobada,
+            clave_catastral: unificacion.clave_catastral,
+            arquitecto_responsable: unificacion.arquitecto_responsable,
+            direccion: unificacion.direccion,
         });
         setShowEdit(true);
     };
@@ -110,49 +113,51 @@ const Trabajo = ({ auth, Tramites, Trabajosv, Usuarios }) => {
     const handleSubmitAdd = (e) => {
         e.preventDefault();
 
-        post(route("trabajosvar.store"), {
+        post(route("unificacionlotes.store"), {
             preserveScroll: true,
             onSuccess: () => {
                 closeModalCreate();
-                notify("success", "Trabajo Vario agregado.");
+                notify("success", "Unificación de Lotes agregado.");
             },
             onError: (error) => console.error(Object.values(error).join(", ")),
         });
     };
-
-
     const handleSubmitEdit = (e) => {
         e.preventDefault();
 
-        patch(route("trabajosvar.update", { id: editData.id_trabajov }), {
-            preserveScroll: true,
-            onSuccess: () => {
-                closeEditModal();
-                notify("success", "Trabajo vario actualizado.");
+        patch(
+            route("unificacionlotes.update", { id: editData.id_unificacion }),
+            {
+                preserveScroll: true,
+                onSuccess: () => {
+                    closeEditModal();
+                    notify("success", "Unificación de Lotes actualizado.");
+                },
+                onError: (error) =>
+                    console.error(Object.values(error).join(", ")),
             },
-            onError: (error) => console.error(Object.values(error).join(", ")),
-        });
+        );
     };
 
     const handleDelete = (id) => {
         if (Array.isArray(id)) {
             data.ids = id;
-            destroy(route("trabajosvar.multiple.destroy"), {
+            destroy(route("unificacionlotes.multiple.destroy"), {
                 preserveScroll: true,
                 onSuccess: () => {
-                    setSelectedTrabajov([]);
+                    setSelectedUnificacionlo([]);
                     closeDeleteModal();
-                    notify("success", "Trabajos varios eliminados.");
+                    notify("success", "Unificaciones eliminadas.");
                 },
                 onError: (error) =>
                     console.error(Object.values(error).join(", ")),
             });
         } else {
-            destroy(route("trabajosvar.destroy", { id }), {
+            destroy(route("unificacionlotes.destroy", { id }), {
                 preserveScroll: true,
                 onSuccess: () => {
                     closeDeleteModal();
-                    notify("success", "Trabajo vario eliminado.");
+                    notify("success", "Unificación eliminado.");
                 },
                 onError: (error) =>
                     console.error(Object.values(error).join(", ")),
@@ -160,7 +165,6 @@ const Trabajo = ({ auth, Tramites, Trabajosv, Usuarios }) => {
         }
     };
 
-    
     // const handleSubmitEmail = (e) => {
     //     console.log("entrre");
     //     e.preventDefault();
@@ -179,7 +183,6 @@ const Trabajo = ({ auth, Tramites, Trabajosv, Usuarios }) => {
     //     });
     // };
 
-
     const transformForCombobox = (arrays) => {
         return arrays.map((array) => ({
             value: array,
@@ -196,11 +199,14 @@ const Trabajo = ({ auth, Tramites, Trabajosv, Usuarios }) => {
 
     const handleTramiteChange = (id) => {
         setSelectedTramiteId(id);
+
     };
-    
+
     useEffect(() => {
         if (selectedTramiteId) {
-            const tramite = Tramites.find((t) => t.id_tramite === selectedTramiteId);
+            const tramite = Tramites.find(
+                (t) => t.id_tramite === selectedTramiteId,
+            );
             if (tramite) {
                 const user = Usuarios.find((u) => u.id === tramite.id_usuario);
                 setData((prevData) => ({
@@ -220,8 +226,6 @@ const Trabajo = ({ auth, Tramites, Trabajosv, Usuarios }) => {
             console.log(tramite);
         }
     }, [selectedTramiteId]);
-    
-  
 
     const inputstramite = [
         {
@@ -325,21 +329,21 @@ const Trabajo = ({ auth, Tramites, Trabajosv, Usuarios }) => {
             ),
         },
         {
-            label: "Uso suelo",
-            id: "uso_suelo",
+            label: "Area aprobada",
+            id: "area_aprobada",
             type: "text",
-            name: "uso_suelo",
-            value: data.uso_suelo || "",
-            onChange: (e) => setData("uso_suelo", e.target.value),
+            name: "area_aprobada",
+            value: data.area_aprobada || "",
+            onChange: (e) => setData("area_aprobada", e.target.value),
             inputError: (
-                <InputError message={errors.uso_suelo} className="mt-2" />
+                <InputError message={errors.area_aprobada} className="mt-2" />
             ),
         },
     ];
 
     const theaders = [
         "Trámite",
-        "Arquitecto Resp",
+        "Arquitecto R",
         // "Clave Catastral",
         "Propietario",
         "Fecha de Ingreso",
@@ -365,7 +369,7 @@ const Trabajo = ({ auth, Tramites, Trabajosv, Usuarios }) => {
         "Estado",
         "Arquitecto a cargo",
         "Dirección",
-        "Uso suelo",
+        "Area aprobada",
     ];
     const columnasexportar = [
         "tramite",
@@ -377,11 +381,11 @@ const Trabajo = ({ auth, Tramites, Trabajosv, Usuarios }) => {
         "estado_tramite",
         "arquitecto_responsable",
         "direccion",
-        "uso_suelo",
+        "area_aprobada",
     ];
 
     const handleCheckboxChange = (id) => {
-        setSelectedTrabajov((prevSelected) => {
+        setSelectedUnificacionlo((prevSelected) => {
             if (prevSelected.includes(id)) {
                 return prevSelected.filter((item) => item !== id);
             } else {
@@ -391,102 +395,104 @@ const Trabajo = ({ auth, Tramites, Trabajosv, Usuarios }) => {
     };
 
     const handleSelectAll = () => {
-        if (selectedTrabajov.length === Trabajosv.length) {
-            setSelectedTrabajov([]);
+        if (selectedUnificacionlo.length === Unificacionl.length) {
+            setSelectedUnificacionlo([]);
         } else {
-            setSelectedTrabajov(
-                Trabajosv.map((trabajov) => trabajov.id_trabajov),
+            setSelectedUnificacionlo(
+                Unificacionl.map(
+                    (unificacionlotes) => unificacionlotes.id_unificacion,
+                ),
             );
         }
     };
 
     const openDeleteModalForSelected = () => {
         setShowDelete(true);
-        setDataToDelete(selectedTrabajov);
+        setDataToDelete(selectedUnificacionlo);
     };
 
     return (
         <Authenticated
             user={auth.user}
-            header={<Header subtitle="Administrar Trabajos Varios" />}
+            header={<Header subtitle="Administrar Unificación de Lotes" />}
             roles={auth.user.roles.map((role) => role.name)}
         >
-            <Head title="Trabajos varios" />
+            <Head title="Unificaciones" />
             <Tab tabs={tabs}>
-            <Box>
-                <div className="flex flex-wrap items-center justify-center md:justify-between gap-2">
-                    <div className="w-full sm:w-auto flex flex-wrap justify-center gap-2">
-                        <AddButton onClick={openCreateModal} />
-                        <DeleteButton
-                            disabled={selectedTrabajov.length === 0}
-                            onClick={openDeleteModalForSelected}
+                <Box>
+                    <div className="flex flex-wrap items-center justify-center md:justify-between gap-2">
+                        <div className="w-full sm:w-auto flex flex-wrap justify-center gap-2">
+                            <AddButton onClick={openCreateModal} />
+                            <DeleteButton
+                                disabled={selectedUnificacionlo.length === 0}
+                                onClick={openDeleteModalForSelected}
+                            />
+                        </div>
+                        <ExportData
+                            data={Unificacionl}
+                            searchColumns={columnasexportar}
+                            headers={theadersexsportar}
+                            fileName="Unificaciones de lotes"
                         />
                     </div>
-                    <ExportData
-                        data={Trabajosv}
-                        searchColumns={columnasexportar}
-                        headers={theadersexsportar}
-                        fileName="Trabajos Varios"
+                </Box>
+                <ModalCreate
+                    showCreate={showCreate}
+                    closeModalCreate={closeModalCreate}
+                    title={"Añadir Unificación"}
+                    name={"Unificación de lotes"}
+                    inputs={inputstramite}
+                    processing={processing}
+                    // handleSubmitEmail= {handleSubmitEmail}
+                    handleSubmitAdd={handleSubmitAdd}
+                />
+                <DeleteModal
+                    showDelete={showDelete}
+                    closeDeleteModal={closeDeleteModal}
+                    title={"Borrar unificaciones"}
+                    handleDelete={() => handleDelete(dataToDelete)}
+                    processing={processing}
+                />
+                <ModalEdit
+                    title="Editar unificación de lotes"
+                    showEdit={showEdit}
+                    closeEditModal={closeEditModal}
+                    name={"Unificación de lotes"}
+                    inputs={inputstramite}
+                    processing={processing}
+                    handleSubmitEdit={handleSubmitEdit}
+                />
+                <Box className="mt-3 hidden md:block">
+                    <TableCustom
+                        headers={theaders}
+                        data={Unificacionl}
+                        searchColumns={searchColumns}
+                        columnasdetalles={columnasexportar}
+                        theadersdetalles={theadersexsportar}
+                        onDelete={openDeleteModal}
+                        onEdit={openEditModal}
+                        idKey="id_unificacion"
+                        onSelectChange={handleCheckboxChange}
+                        selectedItems={selectedUnificacionlo}
+                        onSelectAll={handleSelectAll}
                     />
-                </div>
-            </Box>
-            <ModalCreate
-                showCreate={showCreate}
-                closeModalCreate={closeModalCreate}
-                title={"Añadir trabajo vario"}
-                name={"Trabajo Vario"}
-                inputs={inputstramite}
-                processing={processing}
-                //   handleSubmitEmail= {handleSubmitEmail}
-                handleSubmitAdd={handleSubmitAdd}
-            />
-            <DeleteModal
-                showDelete={showDelete}
-                closeDeleteModal={closeDeleteModal}
-                title={"Borrar trabajos varios"}
-                handleDelete={() => handleDelete(dataToDelete)}
-                processing={processing}
-            />
-            <ModalEdit
-                title="Editar trabajo vario"
-                showEdit={showEdit}
-                closeEditModal={closeEditModal}
-                name={"Trabajo Vario"}
-                inputs={inputstramite}
-                processing={processing}
-                handleSubmitEdit={handleSubmitEdit}
-            />
-            <Box className="mt-3 hidden md:block">
-                <TableCustom
-                    headers={theaders}
-                    data={Trabajosv}
-                    searchColumns={searchColumns}
-                    columnasdetalles={columnasexportar}
-                    theadersdetalles={theadersexsportar}
-                    onDelete={openDeleteModal}
-                    onEdit={openEditModal}
-                    idKey="id_trabajov"
-                    onSelectChange={handleCheckboxChange}
-                    selectedItems={selectedTrabajov}
-                    onSelectAll={handleSelectAll}
-                />
-            </Box>
-            <Box className="mt-3  md:hidden">
-                <CardsCustom
-                    headers={theaders}
-                    data={Trabajosv}
-                    searchColumns={searchColumns}
-                    onDelete={openDeleteModal}
-                    onEdit={openEditModal}
-                    idKey="id_trabajov"
-                    onSelectChange={handleCheckboxChange}
-                    selectedItems={selectedTrabajov}
-                    onSelectAll={handleSelectAll}
-                />
-            </Box>
+                </Box>
+                <Box className="mt-3  md:hidden">
+                    <CardsCustom
+                        headers={theaders}
+                        data={Unificacionl}
+                        searchColumns={searchColumns}
+                        onDelete={openDeleteModal}
+                        onEdit={openEditModal}
+                        idKey="id_unificacion"
+                        onSelectChange={handleCheckboxChange}
+                        selectedItems={selectedUnificacionlo}
+                        onSelectAll={handleSelectAll}
+                    />
+                </Box>
             </Tab>
         </Authenticated>
     );
 };
 
-export default Trabajo;
+export default unificacionlote;

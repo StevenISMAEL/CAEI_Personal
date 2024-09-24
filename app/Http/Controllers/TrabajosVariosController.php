@@ -13,10 +13,35 @@ class TrabajosVariosController extends Controller {
     public function index() {
         return Inertia::render("TrabajosV/trabajosvarios", [
             "Trabajosv" => TrabajosVarios::getTrabajosVarios(),
-            "Tramites" => Tramite::getTramites(),
+            "Tramites" => Tramite::getTramitesPorCategoria("CATG-04"),
             "Usuarios" => User::all(),
         ]);
     }
+
+    public function index2(Request $request) {
+
+        return Inertia::render("TrabajosV/trabajosfechas", [
+            "Trabajosv" => TrabajosVarios::getTrabajosVarios(),
+        ]);
+    }
+    
+     
+    public function obtenerDatos(Request $request)
+    {
+         // Obtén los filtros directamente del request
+         $fechaDesde = $request->input('fechaDesde');
+         $fechaHasta = $request->input('fechaHasta');
+         $estadoTramite = $request->input('estado_tramite');
+ 
+         // Llama a tu método para obtener los planos filtrados
+         $trabajosvarios = TrabajosVarios::getTrabajosvFechas($fechaDesde, $fechaHasta, $estadoTramite);
+ 
+        // Retorna los datos filtrados como respuesta JSON
+        return response()->json([
+            'Trabajosv' => $trabajosvarios,
+        ]);
+    }
+
 
     public function store(TrabajosVariosRequest $request) {
         $validatedData = $request->validated();

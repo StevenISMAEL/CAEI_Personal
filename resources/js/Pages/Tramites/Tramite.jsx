@@ -152,6 +152,7 @@ const Tramite = ({ auth, Tramites, TiposTramite, Usuarios, Categorias }) => {
 
         patch(route("tramite.update", { id: editData.id_tramite }), {
             preserveScroll: true,
+            preserveState: true,
             onSuccess: () => {
                 closeEditModal();
                 notify("success", "Trámite actualizado.");

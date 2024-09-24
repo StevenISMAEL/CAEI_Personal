@@ -24,7 +24,7 @@ const ModalCreate = ({
         <Modal show={showCreate} onClose={closeModalCreate}>
             <form onSubmit={handleSubmitAdd} className="p-3 pt-0">
                 <div className="mt-4 border-t border-l border-r rounded-t-lg p-4">
-                    <h4 className="text-md font-medium text-white bg-blue-950 dark:bg-blue-700 text-center mb-2 py-2 rounded-lg">
+                    <h4 className="text-md font-medium text-white bg-gray-900 dark:bg-blue-700 text-center mb-2 py-2 rounded-lg">
                         {nombre1}
                     </h4>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -57,9 +57,8 @@ const ModalCreate = ({
                     </div>
                 </div>
 
-                {/* Sección de Información de Cliente */}
                 <div className="mt-0 border-l border-r p-4 pt-1">
-                <h4 className="text-md font-medium text-white bg-blue-900 text-center mb-2 py-2 rounded-lg">
+                <h4 className="text-md font-medium text-white bg-gray-900 text-center mb-2 py-2 rounded-lg">
                         {nombre2}
                     </h4>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

@@ -8,30 +8,58 @@ use App\Models\Fraccionamiento;
 use App\Models\Tramite;
 use App\Models\User;
 use App\Http\Requests\FraccionamientoRequest;
+use Illuminate\Support\Facades\Log;
 
-class FraccionamientoController extends Controller
-{
+class FraccionamientoController extends Controller {
     public function index() {
         return Inertia::render("Fraccionamiento/fraccionamientosuelo", [
             "Fraccionamientos" => Fraccionamiento::getFraccionamientos(),
-            "Tramites" => Tramite::getTramites(),
+            "Tramites" => Tramite::getTramitesPorCategoria("CATG-02"),
             "Usuarios" => User::all(),
         ]);
     }
+
+
+    public function index2(Request $request)
+    {
+        return Inertia::render("Fraccionamiento/fraccionamientosfecha", [
+            'fraccionamientos' => Fraccionamiento::getFraccionamientos(),
+        ]);
+    }
+    
+    public function obtenerDatos(Request $request)
+    {
+         // Obtén los filtros directamente del request
+         $fechaDesde = $request->input('fechaDesde');
+         $fechaHasta = $request->input('fechaHasta');
+         $estadoTramite = $request->input('estado_tramite');
+ 
+         // Llama a tu método para obtener los fraccionamientos filtrados
+         $fraccionamientos = Fraccionamiento::getFraccionamientosFecha2($fechaDesde, $fechaHasta, $estadoTramite);
+ 
+        // Retorna los datos filtrados como respuesta JSON
+        return response()->json([
+            'fraccionamientos' => $fraccionamientos,
+        ]);
+    }
+    
+
     public function store(FraccionamientoRequest $request) {
         $validatedData = $request->validated();
 
         $fra = Fraccionamiento::create($validatedData);
 
-        $tramiteId = $fra->id_tramite; 
+        $tramiteId = $fra->id_tramite;
         // para actualizar los campos de tramite
         if ($tramiteId) {
             Tramite::updateOrCreate(
-                ["id_tramite" => $tramiteId], 
+                ["id_tramite" => $tramiteId],
                 [
                     "clave_catastral" => $request->input("clave_catastral"),
                     "direccion" => $request->input("direccion"),
-                    "arquitecto_responsable" => $request->input("arquitecto_responsable"),
+                    "arquitecto_responsable" => $request->input(
+                        "arquitecto_responsable"
+                    ),
                     "estado_tramite" => $request->input("estado_tramite"),
                     "fecha_salida" => $request->input("fecha_salida"),
                 ]
@@ -54,10 +82,11 @@ class FraccionamientoController extends Controller
                 [
                     "clave_catastral" => $request->input("clave_catastral"),
                     "direccion" => $request->input("direccion"),
-                    "arquitecto_responsable" => $request->input("arquitecto_responsable"),
+                    "arquitecto_responsable" => $request->input(
+                        "arquitecto_responsable"
+                    ),
                     "estado_tramite" => $request->input("estado_tramite"),
                     "fecha_salida" => $request->input("fecha_salida"),
-
                 ]
             );
         }

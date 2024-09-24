@@ -31,7 +31,7 @@ class UserRoleSeeder extends Seeder {
 
         //Permisos para vendedor
         $permissions = [
-            "manage clients",
+            "manage tramites",
         ];
 
         foreach ($permissions as $permission) {
@@ -49,7 +49,7 @@ class UserRoleSeeder extends Seeder {
 
         $arquitectoRevisor = User::factory()->create([
             "name" => "arquitecto revisor",
-            "username" => "arqui",
+            "username" => "arquitecto",
             "email" => "arquitecto@example.com",
         ]);
         $arquitectoRevisor->assignRole($arquitectorRole);

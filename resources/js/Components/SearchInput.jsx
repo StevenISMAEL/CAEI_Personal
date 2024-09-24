@@ -145,7 +145,7 @@ const SearchDropdown = ({
                                     onClick={() => handleOptionSelect(option)}
                                     className={`px-4 py-2 text-sm cursor-pointer ${
                                         index === focusedIndex
-                                            ? "bg-blue-100 dark:bg-blue-500 text-blue-800 dark:text-gray-600"
+                                            ? "bg-gray-300 dark:bg-gray-500 text-gray-800 dark:text-gray-600"
                                             : "text-gray-700 "
                                     } hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-white`}
                                 >

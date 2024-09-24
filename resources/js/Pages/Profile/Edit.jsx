@@ -18,7 +18,7 @@ export default function Edit({ auth, mustVerifyEmail, status }) {
             }
             roles={auth.user.roles.map((role) => role.name)}
         >
-            <Head title="Profile" />
+            <Head title="Perfil" />
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">

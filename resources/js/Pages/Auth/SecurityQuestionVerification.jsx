@@ -51,7 +51,7 @@ export default function SecurityQuestionVerification({ securityQuestions }) {
                     </label>
                     <select
                         id="security_question_id"
-                        className="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:border-green-600 focus:ring-green-600 sm:text-sm h-12"
+                        className="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:border-blue-600 focus:ring-blue-600 sm:text-sm h-12"
                         value={data.security_question_id}
                         onChange={(e) =>
                             setData("security_question_id", e.target.value)
@@ -89,7 +89,7 @@ export default function SecurityQuestionVerification({ securityQuestions }) {
                 <div className="flex items-center justify-end mt-4">
                     <Link
                         href={route("password.request")}
-                        className="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 dark:focus:ring-offset-gray-800"
+                        className="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800"
                     >
                         Regresar
                     </Link>

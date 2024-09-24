@@ -61,9 +61,94 @@ class Tramite extends Model
                     "estado_ingreso" => $tramite->estado_ingreso,
                     "correo_electronico" => $tramite->correo_electronico,
                     "nombre_tipotramite" => $tramite->tipostramites ? $tramite->tipostramites->nombre : null, 
+                    "created_at" => $tramite->created_at, 
                 ];
             });
     }
+
+    
+    public static function getTramitesFechas(
+            $fechaDesde,
+            $fechaHasta,
+            $estadoTramite
+        ) {
+            $query = self::query();
+        
+            if ($fechaDesde) {
+                $query->where("created_at", ">=", $fechaDesde);
+            }
+            if ($fechaHasta) {
+                $query->where("created_at", "<=", $fechaHasta);
+            }
+            if ($estadoTramite) {
+                // Usa whereHas para filtrar basado en la relación 'tramite'
+                $query->where('estado_tramite', $estadoTramite);
+                
+            }
+            
+            return $query->get()->map(function ($tramite) {
+                return [
+                    "id_tramite" => $tramite->id_tramite, 
+                    "id_usuario" => $tramite->id_usuario,
+                    "nombre_usuario"=> $tramite->usuarios->name,
+                    "id_tipotramite" => $tramite->id_tipotramite,
+                    "id_socio" => $tramite->id_socio,
+                    "tramite" => $tramite->tramite,
+                    "propietario" => $tramite->propietario,
+                    "fecha_ingreso" => $tramite->fecha_ingreso,
+                    "fecha_salida" => $tramite->fecha_salida,
+                    "informe" => $tramite->informe,
+                    "entregado" => $tramite->entregado,
+                    "fecha_entrega" => $tramite->fecha_entrega,
+                    "reasignado" => $tramite->reasignado,
+                    "fecha_reasignacion" => $tramite->fecha_reasignacion,
+                    "arquitecto_responsable" => $tramite->arquitecto_responsable,
+                    "clave_catastral" => $tramite->clave_catastral,
+                    "direccion" => $tramite->direccion,
+                    "estado_tramite" => $tramite->estado_tramite,
+                    "estado_ingreso" => $tramite->estado_ingreso,
+                    "correo_electronico" => $tramite->correo_electronico,
+                    "nombre_tipotramite" => $tramite->tipostramites ? $tramite->tipostramites->nombre : null, 
+                    "created_at" => $tramite->created_at, 
+                ];
+            });
+    }
+    
+    public static function getTramitesPorCategoria($categoriaId) {
+        return self::with("tipostramites", "usuarios")
+            ->whereHas('tipostramites', function ($query) use ($categoriaId) {
+                $query->where('id_categoria', $categoriaId);
+            })
+            ->where('estado_tramite', '!=', 'Aprobado') // Condición para excluir trámites aprobados
+            ->get()
+            ->map(function ($tramite) {
+                return [
+                    "id_tramite" => $tramite->id_tramite, 
+                    "id_usuario" => $tramite->id_usuario,
+                    "nombre_usuario" => $tramite->usuarios->name,
+                    "id_tipotramite" => $tramite->id_tipotramite,
+                    "id_socio" => $tramite->id_socio,
+                    "tramite" => $tramite->tramite,
+                    "propietario" => $tramite->propietario,
+                    "fecha_ingreso" => $tramite->fecha_ingreso,
+                    "fecha_salida" => $tramite->fecha_salida,
+                    "informe" => $tramite->informe,
+                    "entregado" => $tramite->entregado,
+                    "fecha_entrega" => $tramite->fecha_entrega,
+                    "reasignado" => $tramite->reasignado,
+                    "fecha_reasignacion" => $tramite->fecha_reasignacion,
+                    "arquitecto_responsable" => $tramite->arquitecto_responsable,
+                    "clave_catastral" => $tramite->clave_catastral,
+                    "direccion" => $tramite->direccion,
+                    "estado_tramite" => $tramite->estado_tramite,
+                    "estado_ingreso" => $tramite->estado_ingreso,
+                    "correo_electronico" => $tramite->correo_electronico,
+                    "nombre_tipotramite" => $tramite->tipostramites ? $tramite->tipostramites->nombre : null,
+                    "created_at" => $tramite->created_at, 
+                ];
+            });
+    }
+    
     
 
     public function tipostramites() {

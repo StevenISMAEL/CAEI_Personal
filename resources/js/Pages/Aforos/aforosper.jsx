@@ -402,6 +402,7 @@ const Afoross = ({ auth, Tramites, Aforos, Usuarios }) => {
         "Trámite",
         "Arquitecto R",
         "Clave Catastral",
+        "Propietario",
         "Fecha de Ingreso",
         "Fecha de Salida",
         "Estado",

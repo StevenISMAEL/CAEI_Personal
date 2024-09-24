@@ -9,7 +9,7 @@ const AddButton = ({ className = "", disabled, ...props }) => {
         <button
             {...props}
             className={
-                `inline-flex items-center justify-center w-32 gap-2 px-4 py-2 bg-green-500 dark:bg-green-300 border border-transparent rounded-md font-semibold text-md text-white dark:text-gray-800 uppercase tracking-widest hover:bg-green-600 dark:hover:bg-green-400 focus:bg-green-600 dark:focus:bg-green-400 active:bg-green-700 dark:active:bg-green-500 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 dark:focus:ring-offset-green-500 transition ease-in-out duration-150 ${
+                `inline-flex items-center justify-center w-32 gap-2 px-4 py-2 bg-red-500 dark:bg-red-300 border border-transparent rounded-md font-semibold text-md text-white dark:text-gray-800 uppercase tracking-widest hover:bg-red-600 dark:hover:bg-red-400 focus:bg-red-600 dark:focus:bg-red-400 active:bg-red-700 dark:active:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2 dark:focus:ring-offset-red-500 transition ease-in-out duration-150 ${
                     disabled && "opacity-60"
                 } ` + className
             }
@@ -25,7 +25,7 @@ const DeleteButton = ({ className = "", disabled, ...props }) => {
         <button
             {...props}
             className={
-                `inline-flex items-center justify-center w-32 gap-2 px-4 py-2 bg-red-500 dark:bg-red-300 border border-transparent rounded-md font-semibold text-md text-white dark:text-gray-800 uppercase tracking-widest hover:bg-red-600 dark:hover:bg-red-400 focus:bg-red-600 dark:focus:bg-red-400 active:bg-red-700 dark:active:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2 dark:focus:ring-offset-red-500 transition ease-in-out duration-150 ${
+                `inline-flex items-center justify-center w-32 gap-2 px-4 py-2 bg-black dark:bg-gray-100 border border-transparent rounded-md font-semibold text-md text-white dark:text-gray-800 uppercase tracking-widest hover:bg-red-600 dark:hover:bg-red-400 focus:bg-red-600 dark:focus:bg-red-400 active:bg-red-700 dark:active:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2 dark:focus:ring-offset-red-500 transition ease-in-out duration-150 ${
                     disabled && "opacity-60"
                 } ` + className
             }
@@ -41,7 +41,7 @@ const FilterButton = ({ className = "", disabled, ...props }) => {
         <button
             {...props}
             className={
-                `inline-flex items-center justify-center w-32 gap-2 px-4 py-2 bg-green-500 dark:bg-green-300 border border-transparent rounded-md font-semibold text-md text-white dark:text-gray-800 uppercase tracking-widest hover:bg-green-600 dark:hover:bg-green-400 focus:bg-green-600 dark:focus:bg-green-400 active:bg-green-700 dark:active:bg-green-500 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 dark:focus:ring-offset-green-500 transition ease-in-out duration-150 ${
+                `inline-flex items-center justify-center w-32 gap-2 px-4 py-2 bg-red-500 dark:bg-red-300 border border-transparent rounded-md font-semibold text-md text-white dark:text-red-800 uppercase tracking-widest hover:bg-red-600 dark:hover:bg-red-400 focus:bg-red-600 dark:focus:bg-red-400 active:bg-red-700 dark:active:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2 dark:focus:ring-offset-red-500 transition ease-in-out duration-150 ${
                     disabled && "opacity-60"
                 } ` + className
             }

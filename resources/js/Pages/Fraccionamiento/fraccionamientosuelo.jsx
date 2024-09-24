@@ -197,6 +197,7 @@ const fraccionamientosu = ({ auth, Tramites, Fraccionamientos, Usuarios }) => {
 
     const handleTramiteChange = (id) => {
         setSelectedTramiteId(id);
+        
     };
     
     useEffect(() => {
@@ -218,7 +219,6 @@ const fraccionamientosu = ({ auth, Tramites, Fraccionamientos, Usuarios }) => {
                     fecha_salida: tramite.fecha_salida,
                 }));
             }
-            console.log(tramite);
         }
     }, [selectedTramiteId]);
     
@@ -426,7 +426,7 @@ const fraccionamientosu = ({ auth, Tramites, Fraccionamientos, Usuarios }) => {
             roles={auth.user.roles.map((role) => role.name)}
         >
             <Head title="Fraccionamientos" />
-            {/* <Tab tabs={tabs}> */}
+            <Tab tabs={tabs}>
             <Box>
                 <div className="flex flex-wrap items-center justify-center md:justify-between gap-2">
                     <div className="w-full sm:w-auto flex flex-wrap justify-center gap-2">
@@ -457,7 +457,7 @@ const fraccionamientosu = ({ auth, Tramites, Fraccionamientos, Usuarios }) => {
             <DeleteModal
                 showDelete={showDelete}
                 closeDeleteModal={closeDeleteModal}
-                title={"Borrar Fracciionamientos"}
+                title={"Borrar Fraccionamientos"}
                 handleDelete={() => handleDelete(dataToDelete)}
                 processing={processing}
             />
@@ -498,7 +498,7 @@ const fraccionamientosu = ({ auth, Tramites, Fraccionamientos, Usuarios }) => {
                     onSelectAll={handleSelectAll}
                 />
             </Box>
-            {/* </Tab> */}
+            </Tab>
         </Authenticated>
     );
 };

@@ -24,6 +24,31 @@ class TramitesController extends Controller {
         ]);
     }
 
+    public function index2(Request $request) {
+
+        return Inertia::render("Tramites/Tramitefechas", [
+            "Tramites" => Tramite::getTramites(),
+        ]);
+    }
+    
+     
+    public function obtenerDatos(Request $request)
+    {
+         // Obtén los filtros directamente del request
+         $fechaDesde = $request->input('fechaDesde');
+         $fechaHasta = $request->input('fechaHasta');
+         $estadoTramite = $request->input('estado_tramite');
+ 
+         // Llama a tu método para obtener los tramites filtrados
+         $tramites = Tramite::getTramitesFechas($fechaDesde, $fechaHasta, $estadoTramite);
+ 
+        // Retorna los datos filtrados como respuesta JSON
+        return response()->json([
+            'Tramites' => $tramites,
+        ]);
+    }
+
+
     public function store(TramiteRequest $tramiteRequest) {
         Tramite::create($tramiteRequest->validated());
         return to_route("tramite.index");

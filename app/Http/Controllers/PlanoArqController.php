@@ -13,10 +13,37 @@ class PlanoArqController extends Controller {
     public function index() {
         return Inertia::render("Planos/planosarq", [
             "Planos" => PlanoArq::getPlanosArq(),
-            "Tramites" => Tramite::getTramites(),
+            "Tramites" => Tramite::getTramitesPorCategoria("CATG-01"),
             "Usuarios" => User::all(),
         ]);
     }
+
+    public function index2(Request $request) {
+
+        return Inertia::render("Planos/planosfechas", [
+            "Planos" => PlanoArq::getPlanosArq(),
+        ]);
+    }
+    
+     
+    public function obtenerDatos(Request $request)
+    {
+         // Obtén los filtros directamente del request
+         $fechaDesde = $request->input('fechaDesde');
+         $fechaHasta = $request->input('fechaHasta');
+         $estadoTramite = $request->input('estado_tramite');
+ 
+         // Llama a tu método para obtener los planos filtrados
+         $planos = PlanoArq::getPlanosFecha($fechaDesde, $fechaHasta, $estadoTramite);
+ 
+        // Retorna los datos filtrados como respuesta JSON
+        return response()->json([
+            'Planos' => $planos,
+        ]);
+    }
+
+
+
     public function store(PlanoArqRequest $request) {
         $validatedData = $request->validated();
 

@@ -4,4 +4,4 @@ use Illuminate\Support\Facades\Route;
 
 Route::get("/audit", [AuditController::class, "index"])
     ->name("audit.index")
-    ->middleware(["auth", "verified", "role:auditor"]);
+    ->middleware(["auth", "verified", "role:admin"]);

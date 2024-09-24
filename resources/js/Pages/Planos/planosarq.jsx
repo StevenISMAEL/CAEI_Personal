@@ -17,6 +17,8 @@ import { useNotify } from "@/Components/Toast";
 import React, { useEffect } from "react";
 
 const planosarq = ({ auth, Tramites, Planos, Usuarios }) => {
+
+    
     const {
         data,
         setData,
@@ -60,7 +62,6 @@ const planosarq = ({ auth, Tramites, Planos, Usuarios }) => {
     const [dataToDelete, setDataToDelete] = useState(null);
     const [selectedplanoArq, setSelectedPlanoArq] = useState([]);
     const notify = useNotify();
-    //const [selectedestado, setSelectedEstado] = useState("");
 
     const handleChangeEstado = (value) => {
         setData((prevData) => ({
@@ -209,29 +210,29 @@ const planosarq = ({ auth, Tramites, Planos, Usuarios }) => {
     const handleTramiteChange = (id) => {
         setSelectedTramiteId(id);
     };
-    
+  
     useEffect(() => {
-        if (selectedTramiteId) {
-            const tramite = Tramites.find((t) => t.id_tramite === selectedTramiteId);
-            if (tramite) {
-                const user = Usuarios.find((u) => u.id === tramite.id_usuario);
-                setData((prevData) => ({
-                    ...prevData,
-                    estado_tramite: tramite.estado_tramite,
-                    id_tramite: selectedTramiteId,
-                    id_usuario: tramite.id_usuario,
-                    nombre_usuario: user ? user.name : "",
-                    id_tipotramite: tramite.id_tipotramite,
-                    nombre_tipotramite: tramite.nombre_tipotramite,
-                    tramite: tramite.tramite,
-                    propietario: tramite.propietario,
-                    fecha_ingreso: tramite.fecha_ingreso,
-                    fecha_salida: tramite.fecha_salida,
-                }));
-            }
-            console.log(tramite);
+    if (selectedTramiteId) {
+        const tramite = Tramites.find((t) => t.id_tramite === selectedTramiteId);
+        if (tramite) {
+            const user = Usuarios.find((u) => u.id === tramite.id_usuario);
+            const newData = {
+                estado_tramite: tramite.estado_tramite,
+                id_tramite: selectedTramiteId,
+                id_usuario: tramite.id_usuario,
+                nombre_usuario: user ? user.name : "",
+                id_tipotramite: tramite.id_tipotramite,
+                nombre_tipotramite: tramite.nombre_tipotramite,
+                tramite: tramite.tramite,
+                propietario: tramite.propietario,
+                fecha_ingreso: tramite.fecha_ingreso,
+                fecha_salida: tramite.fecha_salida,
+            };
+            setData(newData);
+
         }
-    }, [selectedTramiteId]);
+    }
+}, [selectedTramiteId]);
     
   
 
@@ -251,8 +252,8 @@ const planosarq = ({ auth, Tramites, Planos, Usuarios }) => {
             defaultValue: data.tramite,
         },
         {
-            type: "combobox",
             label: "Estado del Trámite",
+            type: "combobox",
             id: "estado_tramite",
             options: comboboxestado,
             value: data.estado_tramite,
@@ -261,6 +262,7 @@ const planosarq = ({ auth, Tramites, Planos, Usuarios }) => {
                 <InputError message={errors.estado_tramite} className="mt-2" />
             ),
             defaultValue: data.estado_tramite,
+
         },
         {
             label: "Fecha de Ingreso",
@@ -453,7 +455,6 @@ const planosarq = ({ auth, Tramites, Planos, Usuarios }) => {
         "Estado",
         "Arquitecto a cargo",
         "Dirección",
-        "Uso suelo",
         "Área de construcción",
         "Área de construcción 2",
         "Uso suelo",
@@ -472,7 +473,6 @@ const planosarq = ({ auth, Tramites, Planos, Usuarios }) => {
         "estado_tramite",
         "arquitecto_responsable",
         "direccion",
-        "uso_suelo",
         "area_construccion",
         "area_construccion2",
         "uso_suelo",
@@ -510,7 +510,7 @@ const planosarq = ({ auth, Tramites, Planos, Usuarios }) => {
             roles={auth.user.roles.map((role) => role.name)}
         >
             <Head title="Planos AR" />
-            {/* <Tab tabs={tabs}> */}
+            <Tab tabs={tabs}>
             <Box>
                 <div className="flex flex-wrap items-center justify-center md:justify-between gap-2">
                     <div className="w-full sm:w-auto flex flex-wrap justify-center gap-2">
@@ -582,7 +582,7 @@ const planosarq = ({ auth, Tramites, Planos, Usuarios }) => {
                     onSelectAll={handleSelectAll}
                 />
             </Box>
-            {/* </Tab> */}
+            </Tab>
         </Authenticated>
     );
 };

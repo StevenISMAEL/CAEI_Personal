@@ -29,8 +29,8 @@ function NavLink({ children, active = false, ...props }) {
             className={
                 `inline-flex items-center justify-center p-4  border-b-2 rounded-t-lg group ` +
                 (active
-                    ? "text-blue-600 dark:text-blue-500 border-blue-600 dark:border-blue-600 focus:border-blue-700 "
-                    : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-700 focus:text-gray-700 dark:focus:text-gray-300 focus:border-gray-300 dark:focus:border-gray-700 ")
+                    ? "text-red-600 dark:text-neutral-100 border-red-600 dark:border-neutral-100 focus:border-red-700 "
+                    : "border-transparent text-gray-700 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-700 focus:text-gray-700 dark:focus:text-gray-300 focus:border-gray-300 dark:focus:border-gray-700 ")
             }
         >
             {children}

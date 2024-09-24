@@ -4,7 +4,7 @@ import { RiDashboard2Fill } from "react-icons/ri";
 import LinkCustom from "@/Components/LinkCustom";
 import { Link, usePage } from "@inertiajs/react";
 import Dropdown from "@/Components/Dropdown";
-// import ApplicationLogo from "@/Components/ApplicationLogo";
+ import ApplicationLogo from "@/Components/ApplicationLogo";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
 import DarkModeToggle from "@/Components/NightMode";
 import { DarkModeContext } from "@/Components/DarkModeContext";
@@ -20,6 +20,9 @@ import { VscFileSymlinkFile } from "react-icons/vsc";
 import { TbMapStar } from "react-icons/tb";
 import { HiMiniClipboardDocumentList } from "react-icons/hi2";
 import { FaPeopleGroup } from "react-icons/fa6";
+import { AiOutlineAudit } from "react-icons/ai";
+import { TbPuzzle2 } from "react-icons/tb";
+
 const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
     const { env } = usePage().props;
     const { sessionActive } = useSessionChecker(env.SESSION_LIFETIME);
@@ -92,7 +95,7 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
             route: "tramite.index",
             subroute: "/administrar-tramites/",
             icon: <VscFileSymlinkFile />,
-            roles: ["admin"],
+            roles: ["admin", "arquirevisor"],
         },
         {
             title: "Planos Arquitectónicos",
@@ -129,36 +132,35 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
             icon: <FaPeopleGroup />,
             roles: ["admin"],
         },
+        {
+            title: "Unificación Lotes",
+            route: "unificacionlotes.index",
+            subroute: "/administrar-unificaciones/",
+            icon:<TbPuzzle2 />,
+            roles: ["admin"],
+        },
         // {
-        //     title: "Orden de Trabajo",
-        //     route: "orderTecnico.index",
-        //     subroute: "/manage-tecnico/",
-        //     icon: <FcSupport />,
-        //     roles: ["tecnico"],
-        // },
-        // {
-        //     title: "Planes",
-        //     route: "plans.index",
-        //     subroute: "/manage-plans/",
-        //     icon: <TbTableOptions />,
+        //     title: "Perfil",
+        //     route:"profile.edit",
+        //     icon: <TbPuzzle2 />,
         //     roles: ["admin"],
         // },
         // {
         //     title: "Auditoria",
         //     route: "audit.index",
         //     icon: <AiOutlineAudit />,
-        //     roles: ["auditor"],
+        //     roles: ["admin"],
         // },
     ];
 
     const tooltipStyle = {
-        "--rt-color-dark": isDarkMode ? "#7c3aed" : "#22c55e",
+        "--rt-color-dark": isDarkMode ? "#7c3aed" : "#db2a04",
         "--rt-color-white": "#fff",
-        "--rt-color-success": isDarkMode ? "#7c3aed" : "#22c55e",
+        "--rt-color-success": isDarkMode ? "#7c3aed" : "#db2a04",
         "--rt-opacity": "0.8",
         "--rt-transition-show-delay": "0.20s",
         "--rt-transition-closing-delay": "0.20s",
-        "--rt-tooltip-background": isDarkMode ? "#7c3aed" : "#22c55e",
+        "--rt-tooltip-background": isDarkMode ? "#7c3aed" : "#db2a04",
         "--rt-tooltip-color": "#fff",
         "--rt-tooltip-padding": "10px 15px",
         "--rt-tooltip-border-radius": "30px",
@@ -166,7 +168,7 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
     };
 
     return (
-        <div className="flex min-h-screen  bg-gray-100 dark:bg-gray-900">
+        <div className="flex min-h-screen  bg-gray-200 dark:bg-gray-900">
             <SessionExpiredModal
                 show={showSessionModal}
                 closeModal={() => setShowSessionModal(false)}
@@ -174,27 +176,27 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
             <div
                 className={` ${
                     open ? "w-60" : "w-28 "
-                } hidden sm:block min-h-screen bg-blue-200 dark:bg-gray-800 border-e  shadow-md dark:shadow-gray-600 border-gray-100 dark:border-gray-700 relative duration-300`}
+                } hidden sm:block min-h-screen bg-red-500 dark:bg-gray-800 border-e  shadow-md dark:shadow-gray-600 border-gray-100 dark:border-gray-700 relative duration-300`}
             >
                 <MdKeyboardArrowLeft
-                    className={`absolute hover:bg-blue-50 cursor-pointer -right-3 top-9 bg-white dark:bg-gray-800 text-3xl w-7 text-gray-800 dark:text-gray-200 border-2 border-gray-900 dark:border-gray-200 rounded-full dark:hover:bg-gray-900 ${!open && "rotate-180 duration-300"}`}
+                    className={`absolute hover:bg-red-50 cursor-pointer -right-3 top-9 bg-white dark:bg-gray-800 text-3xl w-7 text-gray-800 dark:text-gray-200 border-2 border-gray-900 dark:border-gray-200 rounded-full dark:hover:bg-gray-900 ${!open && "rotate-180 duration-300"}`}
                     onClick={() => setOpen(!open)}
                 />
                 <Link
                     href="/"
-                    className={`flex items-center gap-x-4 py-3 px-4 h-16 ${!open && " justify-center"} cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-500 dark:hover:bg-opacity-5 rounded-sm group`}
+                    className={`flex items-center gap-x-4 py-3 px-4 h-16 ${!open && " justify-center"} cursor-pointer hover:bg-red-400 dark:hover:bg-gray-300 dark:hover:bg-opacity-5 rounded-sm group`}
                 >
-                    {/* <ApplicationLogo
+                    {<ApplicationLogo
                         className={`cursor-pointer duration-500 ${
                             open && "rotate-[360deg]"
                         }`}
-                    /> */}
+                    /> }
                     <h1
-                        className={`text-blue-800 dark:text-gray-200 origin-left text-3xl ${
+                        className={`text-gray-200 dark:text-gray-200 origin-left text-3xl ${
                             !open && "duration-500 hidden"
                         } truncate overflow-hidden whitespace-nowrap font-semibold pb-2`}
                     >
-                        ArquiGest
+                        CAE-I
                     </h1>
                 </Link>
 
@@ -293,11 +295,11 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
                                         href="/"
                                         className={`flex gap-x-4 py-3 px-4 h-16 ${open ? "items-center" : "justify-center"} cursor-pointer`}
                                     >
-                                        {/* <ApplicationLogo
+                                        <ApplicationLogo
                                             className={`cursor-pointer duration-500 ${
                                                 open && "rotate-[360deg]"
                                             }`}
-                                        /> */}
+                                        />
                                     </Link>
                                 </div>
                             </div>
