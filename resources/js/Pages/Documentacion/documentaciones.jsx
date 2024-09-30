@@ -2,20 +2,18 @@ import { useState } from "react";
 import { Head, useForm } from "@inertiajs/react";
 import Header from "@/Components/Header";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
-import Tab from "@/Layouts/TabLayout";
+// import Tab from "@/Layouts/TabLayout";
 import { AddButton, DeleteButton } from "@/Components/CustomButtons";
 import InputError from "@/Components/InputError";
 import ModalCreate from "@/Components/ModalCreate";
-import ModalEdit from "@/Components/ModalEdit";
 import Box from "@/Layouts/Box";
-import ExportData from "@/Components/ExportDataSmall";
-import tabs from "./tabs";
+// import tabs from "./tabs";
 import DeleteModal from "@/Components/DeleteModal";
-import TableCustom from "@/Components/TableCustom";
-import CardsCustom from "@/Components/CardCustom";
+import TableCustom from "@/Components/TableCustomDocuments";
+import CardsCustom from "@/Components/CardsCustomDocuments";
 import { useNotify } from "@/Components/Toast";
 
-const tipoTramite = ({ auth, TipoTramites, Categorias }) => {
+const Documentos = ({ auth, Documentacion, Tramites }) => {
     const {
         data,
         setData,
@@ -24,22 +22,18 @@ const tipoTramite = ({ auth, TipoTramites, Categorias }) => {
         errors,
         reset,
         delete: destroy,
-        patch,
         clearErrors,
     } = useForm({
-        nombre: "",
-        id_categoria: "",
-        id_tipotramite:"",
-        nombrecategoria:"",
+        id_tramite: "",
+        tipo_documento: "",
+        archivo: "",
         ids: [],
     });
 
     const [showCreate, setShowCreate] = useState(false);
     const [showDelete, setShowDelete] = useState(false);
-    const [showEdit, setShowEdit] = useState(false);
-    const [editData, setEditData] = useState(null);
     const [dataToDelete, setDataToDelete] = useState(null);
-    const [selectedtypeprocess, setSelectedtypeprocess] = useState([]);
+    const [selectedDocumentacion, setSelectedDocumentacion] = useState([]);
     const notify = useNotify();
 
     const closeModalCreate = () => {
@@ -60,70 +54,48 @@ const tipoTramite = ({ auth, TipoTramites, Categorias }) => {
         setDataToDelete(id);
     };
 
-    const closeEditModal = () => {
-        clearErrors();
-        setShowEdit(false);
-        setEditData(null);
-        reset();
-    };
 
-    const openEditModal = (tipotramite) => {
-        setEditData(tipotramite);
-        
-        setData({
-            nombre: tipotramite.nombre,
-            id_categoria: tipotramite.id_categoria,
-            id_tipotramite: tipotramite.id_tipotramite,
-            nombrecategoria: tipotramite.nombrecategoria,
-
-        });
-        setShowEdit(true);
-    };
     const handleSubmitAdd = (e) => {
         e.preventDefault();
 
-        post(route("tipotramite.store"), {
+        post(route("documentaciones.store"), {
             preserveScroll: true,
             onSuccess: () => {
                 closeModalCreate();
-                notify("success", "Tipo de trámite agregado.");
+                notify("success", "Documentación agregada.");
             },
             onError: (error) => console.error(Object.values(error).join(", ")),
         });
     };
 
-    const handleSubmitEdit = (e) => {
-        e.preventDefault();
+    const handleFileChange = (e) => {
 
-        patch(route("tipotramite.update", { id: editData.id_tipotramite }), {
-            preserveScroll: true,
-            onSuccess: () => {
-                closeEditModal();
-                notify("success", "Tipo de trámite actualizado.");
-            },
-            onError: (error) => console.error(Object.values(error).join(", ")),
-        });
+        if (e.target.files[0]) {
+            setData("archivo", e.target.files[0]);
+            console.log("Archivo seleccinado entre");
+
+        }
     };
 
     const handleDelete = (id) => {
         if (Array.isArray(id)) {
             data.ids = id;
-            destroy(route("tipotramite.multiple.destroy"), {
+            destroy(route("documentaciones.multiple.destroy"), {
                 preserveScroll: true,
                 onSuccess: () => {
-                    setSelectedtypeprocess([]);
+                    setSelectedDocumentacion([]);
                     closeDeleteModal();
-                    notify("success", "Tipo de trámite eliminados.");
+                    notify("success", "Documentaciones eliminadas.");
                 },
                 onError: (error) =>
                     console.error(Object.values(error).join(", ")),
             });
         } else {
-            destroy(route("tipotramite.destroy", { id }), {
+            destroy(route("documentaciones.destroy", id), {
                 preserveScroll: true,
                 onSuccess: () => {
                     closeDeleteModal();
-                    notify("success", "Tipo de trámite eliminado.");
+                    notify("success", "Documentación eliminada.");
                 },
                 onError: (error) =>
                     console.error(Object.values(error).join(", ")),
@@ -131,39 +103,48 @@ const tipoTramite = ({ auth, TipoTramites, Categorias }) => {
         }
     };
 
+
+
     const inputs = [
-       
         {
-            placeholder: "Categoría",
+            placeholder: "Trámite",
             type: "select",
-            labelKey: "nombre",
-            valueKey: "id_categoria",
-            options: Categorias,
-            onSelect: (id) => setData("id_categoria", id),
+            labelKey: "tramite",
+            valueKey: "id_tramite",
+            options: Tramites,
+            onSelect: (id) => setData("id_tramite", id),
             inputError: (
-                <InputError message={errors.id_categoria} className="mt-2" />
+                <InputError message={errors.id_tramite} className="mt-2" />
             ),
-            defaultValue: data.nombrecategoria,
         },
         {
-            label: "Nombre",
-            id: "nombre",
+            label: "Tipo de documento",
+            id: "tipo_documento",
             type: "text",
-            name: "nombre",
-            value: data.nombre,
-            onChange: (e) => setData("nombre", e.target.value),
+            name: "tipo_documento",
+            value: data.tipo_documento,
+            onChange: (e) => setData("tipo_documento", e.target.value),
             inputError: (
-                <InputError message={errors.nombre} className="mt-2" />
+                <InputError message={errors.tipo_documento} className="mt-2" />
             ),
-            defaultValue: data.nombre,
+        },
+        {
+            label: "Archivo",
+            id: "archivo",
+            type: "file",
+            name: "archivo",
+            onChange: handleFileChange,
+            inputError: (
+                <InputError message={errors.archivo} className="mt-2" />
+            ),
         },
     ];
 
-    const theaders = ["Nombre de la Categoría", "Tipo de trámite"];
-    const searchColumns = ["nombrecategoria", "nombre"];
+    const theaders = ["Tramite", "Tipo de documento", "Archivo"];
+    const searchColumns = ["tramite", "tipo_documento", "archivo"];
 
     const handleCheckboxChange = (id) => {
-        setSelectedtypeprocess((prevSelected) => {
+        setSelectedDocumentacion((prevSelected) => {
             if (prevSelected.includes(id)) {
                 return prevSelected.filter((item) => item !== id);
             } else {
@@ -173,47 +154,54 @@ const tipoTramite = ({ auth, TipoTramites, Categorias }) => {
     };
 
     const handleSelectAll = () => {
-        if (selectedtypeprocess.length === TipoTramites.length) {
-            setSelectedtypeprocess([]);
+        if (selectedDocumentacion.length === Documentacion.length) {
+            setSelectedDocumentacion([]);
         } else {
-            setSelectedtypeprocess(TipoTramites.map((tipotramite) => tipotramite.id_tipotramite));
+            setSelectedDocumentacion(
+                Documentacion.map((documentos) => documentos.id_documento),
+            );
         }
     };
 
     const openDeleteModalForSelected = () => {
         setShowDelete(true);
-        setDataToDelete(selectedtypeprocess);
+        setDataToDelete(selectedDocumentacion);
     };
 
+    const handleViewPdf = (item) => {
+
+        const url = route('documentaciones.showWithFileName', [item.id_documento, item.archivo]);
+        const fileName = item.archivo;
+        
+        const newTab = window.open(url, '_blank');
+        newTab.onload = () => {
+            newTab.document.title = fileName;
+        };
+    };
     return (
         <Authenticated
             user={auth.user}
-            header={<Header subtitle="Administrar Tipos de Trámites" />}
+            header={<Header subtitle="Administrar Documentación" />}
             roles={auth.user.roles.map((role) => role.name)}
         >
-            <Head title="Tipos de Trámites" />
-            <Tab tabs={tabs}>
+            <Head title="Documentación" />
+            {/* <Tab tabs={tabs}> */}
                 <Box>
                     <div className="flex flex-wrap items-center justify-center md:justify-between gap-2">
                         <div className="w-full sm:w-auto flex flex-wrap justify-center gap-2">
                             <AddButton onClick={openCreateModal} />
                             <DeleteButton
-                                disabled={selectedtypeprocess.length === 0}
+                                disabled={selectedDocumentacion.length === 0}
                                 onClick={openDeleteModalForSelected}
                             />
                         </div>
-                        <ExportData
-                            data={TipoTramites}
-                            searchColumns={searchColumns}
-                            headers={theaders}
-                            fileName="Tipos de Trámites"
-                        />
+                        
                     </div>
                 </Box>
                 <ModalCreate
                     showCreate={showCreate}
                     closeModalCreate={closeModalCreate}
-                    title={"Añadir Tipo de Trámites"}
+                    title={"Añadir Documentación"}
                     inputs={inputs}
                     processing={processing}
                     handleSubmitAdd={handleSubmitAdd}
@@ -221,47 +209,40 @@ const tipoTramite = ({ auth, TipoTramites, Categorias }) => {
                 <DeleteModal
                     showDelete={showDelete}
                     closeDeleteModal={closeDeleteModal}
-                    title={"Borrar Tipo de Trámites"}
+                    title={"Borrar Documentación"}
                     handleDelete={() => handleDelete(dataToDelete)}
                     processing={processing}
-                />
-                <ModalEdit
-                    title="Editar Tipo de Trámite"
-                    showEdit={showEdit}
-                    closeEditModal={closeEditModal}
-                    inputs={inputs}
-                    processing={processing}
-                    handleSubmitEdit={handleSubmitEdit}
                 />
                 <Box className="mt-3 hidden md:block">
                     <TableCustom
                         headers={theaders}
-                        data={TipoTramites}
+                        data={Documentacion}
                         searchColumns={searchColumns}
                         onDelete={openDeleteModal}
-                        onEdit={openEditModal}
-                        idKey="id_tipotramite"
+                        idKey="id_documento"
                         onSelectChange={handleCheckboxChange}
-                        selectedItems={selectedtypeprocess}
+                        selectedItems={selectedDocumentacion}
                         onSelectAll={handleSelectAll}
-                    />
+                        onViewPdf={handleViewPdf}
+                        />
                 </Box>
-                <Box className="mt-3  md:hidden">
+                <Box className="mt-3 md:hidden">
                     <CardsCustom
                         headers={theaders}
-                        data={TipoTramites}
+                        data={Documentacion}
                         searchColumns={searchColumns}
                         onDelete={openDeleteModal}
-                        onEdit={openEditModal}
-                        idKey="id_tipotramite"
+                        idKey="id_documento"
                         onSelectChange={handleCheckboxChange}
-                        selectedItems={selectedtypeprocess}
+                        selectedItems={selectedDocumentacion}
                         onSelectAll={handleSelectAll}
+                        onViewPdf={handleViewPdf}
+
                     />
                 </Box>
-            </Tab>
+            {/* </Tab> */}
         </Authenticated>
     );
 };
 
-export default tipoTramite;
+export default Documentos;

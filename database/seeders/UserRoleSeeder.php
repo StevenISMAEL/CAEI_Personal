@@ -14,20 +14,10 @@ class UserRoleSeeder extends Seeder {
      */
     public function run(): void {
         $adminRole = Role::create(["name" => "admin"]);
-        $arquitectorRole = Role::create(["name" => "arquirevisor"]);
+        $arquitectorRole = Role::create(["name" => "arquitectorevisor"]);
         $SecretariaRole = Role::create(["name" => "secretaria"]);
         //$auditorRole = Role::create(["name" => "auditor"]);
 
-        $super = User::factory()->create([
-            "name" => "Super User",
-            "username" => "superuser",
-            "email" => "su@example.com",
-        ]);
-        $super->assignRole(
-            $adminRole,
-            $arquitectorRole,
-            $SecretariaRole
-        );
 
         //Permisos para vendedor
         $permissions = [

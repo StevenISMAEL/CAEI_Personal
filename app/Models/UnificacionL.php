@@ -40,16 +40,36 @@ class UnificacionL extends Model
                     "id_usuario" => $unificacionlotes->tramite->id_usuario,
                     "nombre_usuario" =>
                         $unificacionlotes->tramite->usuarios->name,
-                ];
+                        "created_at" => $unificacionlotes->created_at,
+                        "num_observaciones" => $unificacionlotes->tramite->num_observaciones,
+
+                    ];
             });
     }
 
-    public static function getUnificacionFecha() {
-
-        return self::with("tramite")
-            ->get()
-            ->map(function ($unificacionlotes) {
-                return [
+    public static function getUnificacionFecha(
+        $fechaDesde,
+        $fechaHasta,
+        $estadoTramite
+    ) {
+        $query = self::with('tramite'); // Asegúrate de incluir la relación
+    
+        if ($fechaDesde) {
+            $query->where("created_at", ">=", $fechaDesde);
+        }
+        if ($fechaHasta) {
+            $query->where("created_at", "<=", $fechaHasta);
+        }
+        if ($estadoTramite) {
+            // Usa whereHas para filtrar basado en la relación 'tramite'
+            $query->whereHas('tramite', function ($q) use ($estadoTramite) {
+                $q->where('estado_tramite', $estadoTramite);
+            });
+        }
+        
+    
+        return $query->get()->map(function ($unificacionlotes) {
+            return [
                     "id_unificacion" =>
                         $unificacionlotes->id_unificacion,
                     "id_tramite" => $unificacionlotes->id_tramite,
@@ -68,7 +88,8 @@ class UnificacionL extends Model
                     "id_usuario" => $unificacionlotes->tramite->id_usuario,
                     "nombre_usuario" =>
                         $unificacionlotes->tramite->usuarios->name,
-                        "created_at" => $fraccionamiento->created_at,
+                        "created_at" => $unificacionlotes->created_at,
+                        "num_observaciones" => $unificacionlotes->tramite->num_observaciones,
 
                 ];
             });

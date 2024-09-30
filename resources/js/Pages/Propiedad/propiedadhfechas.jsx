@@ -17,63 +17,58 @@ import CardsCustomOnlyView from "@/Components/AuditCard";
 import { useNotify } from "@/Components/Toast";
 import axios from 'axios'; // Asegúrate de importar axios
 
-const Planos = ({ auth,  Planos }) => {
+const Propiedadhor = ({ auth,  PropiedadHo }) => {
 
-    const [formattedPlanos, setFormattedPlanos] = useState([]);
+    const [formattedPropiedades, setFormattedPropiedades] = useState([]);
     const [showFilter, setShowFilter] = useState(false);
     const [filters, setFilters] = useRemember(
         { fechaDesde: "", fechaHasta: "", estado_tramite: "" }, 
-        "planos-filters",
+        "propiedadh-filters",
     );
 
     useEffect(() => {
         // Si fraccionamientos cambia, actualiza el estado
-        setFormattedPlanos(Planos);
-    }, [Planos]);
+        setFormattedPropiedades(PropiedadHo);
+    }, [PropiedadHo]);
    
 
-    const exportData = formattedPlanos.map((planos) => ({
-        id_tramite: planos.id_tramite,
-        tramite: planos.tramite,
-        arquitecto_responsable: planos.arquitecto_responsable,
-        anteproyecto: planos.anteproyecto,
-        definitivo: planos.definitivo,
-        modificatorio: planos.modificatorio,
-        ampliatorio: planos.ampliatorio,
-        uso_suelo: planos.uso_suelo,
-        propietario: planos.propietario,
-        fecha_ingreso: planos.fecha_ingreso,
-        fecha_salida: planos.fecha_salida,
-        clave_catastral: planos.clave_catastral,
-        direccion: planos.direccion,
-        estado_tramite: planos.estado_tramite,
-        id_usuario: planos.id_usuario,
-        nombre_usuario: planos.nombre_usuario,
-        area_construccion: planos.area_construccion,
-        area_construccion2: planos.area_construccion2,
-        created_at: planos.created_at,
-        num_observaciones: planos.num_observaciones,
+    const exportData = formattedPropiedades.map((propiedad) => ({
+        id_tramite: propiedad.id_tramite,
+        tramite: propiedad.tramite,
+        arquitecto_responsable: propiedad.arquitecto_responsable,
+        definitivo: propiedad.definitivo,
+        modificatorio: propiedad.modificatorio,
+        uso_suelo: propiedad.uso_suelo,
+        propietario: propiedad.propietario,
+        fecha_ingreso: propiedad.fecha_ingreso,
+        fecha_salida: propiedad.fecha_salida,
+        clave_catastral: propiedad.clave_catastral,
+        direccion: propiedad.direccion,
+        estado_tramite: propiedad.estado_tramite,
+        id_usuario: propiedad.id_usuario,
+        area_construccion: propiedad.area_construccion,
+        nombre_usuario: propiedad.nombre_usuario,
+        created_at: propiedad.created_at,
+        num_observaciones: propiedad.num_observaciones,
+
     }));
 
-    const headers = ["Tramite", "Propietario", "Uso de suelo"];
-    const searchColumns = ["tramite", "propietario", "uso_suelo"];
+    const headers = ["Tramite", "Propietario", "Área de construcción"];
+    const searchColumns = ["tramite", "propietario", "area_construccion"];
    
     const theadersexsportar = [
         "Trámite",
         "Arquitecto R",
         "Clave Catastral",
         "Propietario",
-        "Anteproyecto",
         "Definitivo",
         "Modificatorio",
-        "Ampliatorio",
         "Fecha de Ingreso",
         "Fecha de Salida",
         "Estado",
         "Arquitecto a cargo",
         "Dirección",
         "Área de construcción",
-        "Área de construcción 2",
         "Uso suelo",
         "# observaciones",
         "Fecha creación",
@@ -83,17 +78,14 @@ const Planos = ({ auth,  Planos }) => {
         "nombre_usuario",
         "clave_catastral",
         "propietario",
-        "anteproyecto",
         "definitivo",
         "modificatorio",
-        "ampliatorio",
         "fecha_ingreso",
         "fecha_salida",
         "estado_tramite",
         "arquitecto_responsable",
         "direccion",
         "area_construccion",
-        "area_construccion2",
         "uso_suelo",
         "num_observaciones",
         "created_at",
@@ -111,7 +103,7 @@ const Planos = ({ auth,  Planos }) => {
 
     const fetchFilteredData = async (filters) => {
         try {
-            const response = await axios.get('/administrar-planosarq/planosfechas/datos', {
+            const response = await axios.get('/administrar-propiedadh/propiedadhfechas/datos', {
                 params: {
                     fechaDesde: filters.fechaDesde || null,
                     fechaHasta: filters.fechaHasta || null,
@@ -119,8 +111,8 @@ const Planos = ({ auth,  Planos }) => {
                 },
             });
     
-            // Actualiza  los datos filtrados
-            setFormattedPlanos(response.data.Planos); // Asegúrate de acceder correctamente a los datos
+            // Actualiza los datos filtrados
+            setFormattedPropiedades(response.data.PropiedadHo); // Asegúrate de acceder correctamente a los datos
         } catch (error) {
             notify("error", "No se pudo filtrar la información.");
 
@@ -134,11 +126,11 @@ const Planos = ({ auth,  Planos }) => {
 
     return (
         <AuthenticatedLayout
-            header={<Header subtitle="Administrar Planos Arquitectónicos" />}
+            header={<Header subtitle="Administrar Propiedades H" />}
             user={auth.user}
             roles={auth.user.roles.map((role) => role.name)}
         >
-            <Head title="Planos AR" />
+            <Head title="Propiedad Horizontal" />
             <Tab tabs={tabs}>
                 <Box className="mt-3">
                     <div className="flex flex-wrap items-center justify-center md:justify-between gap-2">
@@ -147,7 +139,7 @@ const Planos = ({ auth,  Planos }) => {
                             data={exportData}
                             searchColumns={columnasexportar}
                             headers={theadersexsportar}
-                            fileName="Planos Arquitectónicos"
+                            fileName="Propiedades Horizontales"
                         />
                     </div>
                 </Box>
@@ -155,25 +147,25 @@ const Planos = ({ auth,  Planos }) => {
                 <Box className="mt-3 hidden md:block">
                     <TableCustomViewOnly
                         headers={headers}
-                        data={formattedPlanos}
+                        data={formattedPropiedades}
                         searchColumns={searchColumns}
                         columnasdetalles={columnasexportar}
                         theadersdetalles={theadersexsportar}
-                        idKey="id_planosarq"
+                        idKey="id_propiedadh"
                     />
                 </Box>
                 <Box className="mt-3 md:hidden">
                     <CardsCustomOnlyView
                         headers={headers}
-                        data={formattedPlanos}
+                        data={formattedPropiedades}
                         searchColumns={searchColumns}
                         columnasdetalles={columnasexportar}
                         theadersdetalles={theadersexsportar}
-                        idKey="id_planosarq"
+                        idKey="id_propiedadh"
                     />
                 </Box>
                 <FilterModal
-                    title="Filtrar Planos AR"
+                    title="Filtrar Propiedad H"
                     showFilter={showFilter}
                     closeModalFilter={closeFilterModal}
                     handleApplyFilters={handleApplyFilters}
@@ -285,4 +277,4 @@ const FilterModal = ({
     );
 };
 
-export default Planos;
+export default Propiedadhor;

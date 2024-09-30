@@ -3,7 +3,6 @@ import FloatInputText from "./FloatInputText";
 import SearchDropdown from "./SearchInput";
 import SecondaryButton from "./SecondaryButton";
 import PrimaryButton from "./PrimaryButton";
-import ThirdButton from "./ThirdButton";
 import ComboBox from "./ComboBox";
 import Checkbox from "./checkboxpa"; 
 const ModalEdit = ({
@@ -13,7 +12,6 @@ const ModalEdit = ({
     inputs,
     processing,
     handleSubmitEdit,
-    handleSubmitEmail,
 }) => {
 
 
@@ -60,16 +58,6 @@ const ModalEdit = ({
                         Cancelar
                     </SecondaryButton>
                     <div className="mt-3 md:mt-0 flex flex-col md:flex-row gap-3  md:ml-4 ">
-                        <ThirdButton
-                            className="ms-3"
-                            disabled={processing}
-                            onClick={(e) => {
-                                e.preventDefault();
-                                handleSubmitEmail(e);
-                            }}
-                        >
-                            Enviar Correo
-                        </ThirdButton>
                         <PrimaryButton className="ms-3" disabled={processing}>
                             Actualizar
                         </PrimaryButton>

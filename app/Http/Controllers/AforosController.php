@@ -14,9 +14,39 @@ class AforosController extends Controller
         return Inertia::render("Aforos/aforosper", [
             "Aforos" => Aforos::getAforos(),
             "Tramites" => Tramite::getTramitesPorCategoria("CATG-05"),
-            "Usuarios" => User::all(),
+            "Usuarios" => User::whereHas('roles', function($query) {
+                $query->where('name', 'arquitectorevisor');  })->get(),
         ]);
     }
+
+
+    public function index2(Request $request) {
+
+        return Inertia::render("Aforos/aforosfechas", [
+            "Aforos" => Aforos::getAforos(),
+        ]);
+    }
+    
+     
+    public function obtenerDatos(Request $request)
+    {
+         // Obtén los filtros directamente del request
+         $fechaDesde = $request->input('fechaDesde');
+         $fechaHasta = $request->input('fechaHasta');
+         $estadoTramite = $request->input('estado_tramite');
+ 
+         // Llama a tu método para obtener los aforos filtrados
+         $aforos = Aforos::getPropiedadH($fechaDesde, $fechaHasta, $estadoTramite);
+ 
+        // Retorna los datos filtrados como respuesta JSON
+        return response()->json([
+            'Aforos' => $aforos,
+        ]);
+    }
+
+
+
+
     public function store(AforosRequest $request) {
         $validatedData = $request->validated();
 
@@ -25,17 +55,24 @@ class AforosController extends Controller
         $tramiteId = $aforo->id_tramite; 
         // para actualizar los campos de tramite
         if ($tramiteId) {
-            Tramite::updateOrCreate(
-                ["id_tramite" => $tramiteId], 
-                [
-                    "clave_catastral" => $request->input("clave_catastral"),
-                    "direccion" => $request->input("direccion"),
-                    "arquitecto_responsable" => $request->input("arquitecto_responsable"),
-                    "estado_tramite" => $request->input("estado_tramite"),
-                    "fecha_salida" => $request->input("fecha_salida"),
-                ]
-            );
+            $tramite = Tramite::find($tramiteId);
+
+            if (
+                $tramite->estado_tramite !== "Observación" &&
+                $request->input("estado_tramite") === "Observación"
+            ) {
+                $tramite->num_observaciones += 1;
+            }
+
+            $tramite->update([
+                "clave_catastral" => $request->input("clave_catastral"),
+                "direccion" => $request->input("direccion"),
+                "arquitecto_responsable" => $request->input("arquitecto_responsable"),
+                "estado_tramite" => $request->input("estado_tramite"),
+                "fecha_salida" => $request->input("fecha_salida"),
+            ]);
         }
+
 
         return to_route("aforos.index");
     }
@@ -48,18 +85,24 @@ class AforosController extends Controller
         $tramiteId = $aforo->id_tramite;
         // para actualizar los campos de tramite
         if ($tramiteId) {
-            Tramite::updateOrCreate(
-                ["id_tramite" => $tramiteId],
-                [
-                    "clave_catastral" => $request->input("clave_catastral"),
-                    "direccion" => $request->input("direccion"),
-                    "arquitecto_responsable" => $request->input("arquitecto_responsable"),
-                    "estado_tramite" => $request->input("estado_tramite"),
-                    "fecha_salida" => $request->input("fecha_salida"),
+            $tramite = Tramite::find($tramiteId);
 
-                ]
-            );
+            if (
+                $tramite->estado_tramite !== "Observación" &&
+                $request->input("estado_tramite") === "Observación"
+            ) {
+                $tramite->num_observaciones += 1;
+            }
+
+            $tramite->update([
+                "clave_catastral" => $request->input("clave_catastral"),
+                "direccion" => $request->input("direccion"),
+                "arquitecto_responsable" => $request->input("arquitecto_responsable"),
+                "estado_tramite" => $request->input("estado_tramite"),
+                "fecha_salida" => $request->input("fecha_salida"),
+            ]);
         }
+
 
         return to_route("aforos.index");
     }

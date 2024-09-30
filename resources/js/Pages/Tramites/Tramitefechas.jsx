@@ -65,6 +65,8 @@ const Tramites = ({ auth, Tramites }) => {
         "Fecha de Ingreso",
         "Estado",
         "Fecha salida",
+        "# observaciones",
+        "Fecha creación",
     ];
     const columnasexportar = [
         "estado_ingreso",
@@ -75,6 +77,8 @@ const Tramites = ({ auth, Tramites }) => {
         "fecha_ingreso",
         "estado_tramite",
         "fecha_salida",
+        "num_observaciones",
+        "created_at",
     ];
 
     const openFilterModal = () => setShowFilter(true);

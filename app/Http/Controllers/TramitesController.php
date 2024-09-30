@@ -18,7 +18,8 @@ class TramitesController extends Controller {
         return Inertia::render("Tramites/Tramite", [
             "Tramites" => Tramite::getTramites(),
             "TiposTramite" => TipoTramite::all(),
-            "Usuarios" => User::all(),
+            "Usuarios" => User::whereHas('roles', function($query) {
+                $query->where('name', 'arquitectorevisor');  })->get(),
             "Categorias" => categoria::all(),
 
         ]);
@@ -48,17 +49,33 @@ class TramitesController extends Controller {
         ]);
     }
 
-
     public function store(TramiteRequest $tramiteRequest) {
-        Tramite::create($tramiteRequest->validated());
+        $validatedData = $tramiteRequest->validated();
+        
+        // Inicializa num_observaciones a 0 o 1 según el estado_tramite
+        $validatedData['num_observaciones'] = $validatedData['estado_tramite'] === 'Observación' ? 1 : 0;
+    
+        // Crear el trámite con todos los datos, incluyendo num_observaciones
+        Tramite::create($validatedData);
+    
         return to_route("tramite.index");
     }
+    
 
     public function update(TramiteRequest $tramiteRequest, $id) {
+        // Buscar el trámite existente
         $tramite = Tramite::findOrFail($id);
+        // Verificar si el estado está cambiando de un estado diferente a 'Observación'
+        if ($tramite->estado_tramite !== 'Observación' && $tramiteRequest->estado_tramite === 'Observación') {
+            // Si se cambia a 'observacion', incrementar el número de observaciones
+            $tramite->num_observaciones += 1;
+        }
+    
         $tramite->update($tramiteRequest->validated());
-        return to_route("tramite.index");
+    
+        return to_route('tramite.index');
     }
+    
 
     public function destroy($id) {
         Tramite::find($id)->delete();

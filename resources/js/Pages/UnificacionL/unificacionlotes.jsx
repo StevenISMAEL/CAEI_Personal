@@ -44,6 +44,8 @@ const unificacionlote = ({ auth, Tramites, Unificacionl, Usuarios }) => {
         arquitecto_responsable: "",
         id_tramite: "",
         correo_electronico: "",
+        num_observaciones: "",
+        created_at: "",
         ids: [],
     });
 
@@ -370,6 +372,9 @@ const unificacionlote = ({ auth, Tramites, Unificacionl, Usuarios }) => {
         "Arquitecto a cargo",
         "Dirección",
         "Area aprobada",
+        "# observaciones",
+        "Fecha creación",
+
     ];
     const columnasexportar = [
         "tramite",
@@ -382,6 +387,9 @@ const unificacionlote = ({ auth, Tramites, Unificacionl, Usuarios }) => {
         "arquitecto_responsable",
         "direccion",
         "area_aprobada",
+        "num_observaciones",
+        "created_at",
+
     ];
 
     const handleCheckboxChange = (id) => {

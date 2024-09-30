@@ -17,8 +17,8 @@ import { useNotify } from "@/Components/Toast";
 import React, { useEffect } from "react";
 
 const planosarq = ({ auth, Tramites, Planos, Usuarios }) => {
+console.log(Planos);
 
-    
     const {
         data,
         setData,
@@ -52,6 +52,8 @@ const planosarq = ({ auth, Tramites, Planos, Usuarios }) => {
         arquitecto_responsable: "",
         id_tramite: "",
         correo_electronico: "",
+        created_at: "",
+        num_observaciones: "",
         ids: [],
     });
 
@@ -174,23 +176,6 @@ const planosarq = ({ auth, Tramites, Planos, Usuarios }) => {
     };
 
     
-    const handleSubmitEmail = (e) => {
-        console.log("entrre");
-        e.preventDefault();
-        const detalles = {
-            tramite: data.tramite,
-            propietario: data.propietario,
-            estado: data.estado_tramite,
-            correo_electronico: data.correo_electronico,
-        };
-        console.log(detalles);
-
-        post("/administrar-tramites/tramite/send-email", detalles, {
-
-            preserveScroll: true,
-            onError: (error) => console.error(Object.values(error).join(", ")),
-        });
-    };
 
 
     const transformForCombobox = (arrays) => {
@@ -214,6 +199,7 @@ const planosarq = ({ auth, Tramites, Planos, Usuarios }) => {
     useEffect(() => {
     if (selectedTramiteId) {
         const tramite = Tramites.find((t) => t.id_tramite === selectedTramiteId);
+        
         if (tramite) {
             const user = Usuarios.find((u) => u.id === tramite.id_usuario);
             const newData = {
@@ -229,6 +215,7 @@ const planosarq = ({ auth, Tramites, Planos, Usuarios }) => {
                 fecha_salida: tramite.fecha_salida,
             };
             setData(newData);
+            console.log("tramite",tramite);
 
         }
     }
@@ -421,6 +408,19 @@ const planosarq = ({ auth, Tramites, Planos, Usuarios }) => {
                 />
             ),
         },
+        {
+            placeholder: "Arquitecto Revisor",
+            type: "select",
+            labelKey: "name",
+            valueKey: "id",
+            options: Usuarios,
+            value: data.id_usuario,
+            onSelect: (id) => setData("id_usuario", id),
+            inputError: (
+                <InputError message={errors.id_usuario} className="mt-2" />
+            ),
+            defaultValue: data.nombre_usuario,
+        },
     ];
 
     const theaders = [
@@ -458,7 +458,9 @@ const planosarq = ({ auth, Tramites, Planos, Usuarios }) => {
         "Área de construcción",
         "Área de construcción 2",
         "Uso suelo",
-    ];
+        "# observaciones",
+        "Fecha creación",  
+      ];
     const columnasexportar = [
         "tramite",
         "nombre_usuario",
@@ -476,7 +478,9 @@ const planosarq = ({ auth, Tramites, Planos, Usuarios }) => {
         "area_construccion",
         "area_construccion2",
         "uso_suelo",
-    ];
+        "num_observaciones",
+        "created_at",
+        ];
 
     const handleCheckboxChange = (id) => {
         setSelectedPlanoArq((prevSelected) => {
@@ -535,7 +539,6 @@ const planosarq = ({ auth, Tramites, Planos, Usuarios }) => {
                 name={"Plano Arquitectónico"}
                 inputs={inputstramite}
                 processing={processing}
-                handleSubmitEmail= {handleSubmitEmail}
                 handleSubmitAdd={handleSubmitAdd}
             />
             <DeleteModal

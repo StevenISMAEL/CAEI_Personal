@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create("documentos", function (Blueprint $table) {
-            $table->id("id_documento");;
+            $table->id("id_documento");
             $table->unsignedBigInteger("id_tramite");
-            $table->string("tipo_documento", 200);
+            $table->string("tipo_documento", 50);
             $table->string("archivo", 300);
             $table->timestamps();
             $table

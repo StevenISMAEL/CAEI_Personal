@@ -10,7 +10,7 @@ import DeleteModal from "@/Components/DeleteModal";
 import Modal from "@/Components/Modal";
 import SecondaryButton from "@/Components/SecondaryButton";
 import PrimaryButton from "@/Components/PrimaryButton";
-import ExportData from "@/Components/ExportData";
+import ExportData from "@/Components/ExportDataSmall";
 import { useNotify } from "@/Components/Toast";
 
 const Employee = ({ auth, roles, employees }) => {

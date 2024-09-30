@@ -16,27 +16,62 @@ class PropiedadHorizontalController extends Controller
         return Inertia::render("Propiedad/Phorizontal", [
             "PropiedadHo" => PropiedadHorizontal::getPropiedadesH(),
             "Tramites" => Tramite::getTramitesPorCategoria("CATG-03"),
-            "Usuarios" => User::all(),
+            "Usuarios" => User::whereHas('roles', function($query) {
+                $query->where('name', 'arquitectorevisor');  })->get(),
         ]);
     }
+
+
+    public function index2(Request $request) {
+
+        return Inertia::render("Propiedad/propiedadhfechas", [
+            "PropiedadHo" => PropiedadHorizontal::getPropiedadesH(),
+        ]);
+    }
+    
+     
+    public function obtenerDatos(Request $request)
+    {
+         // Obtén los filtros directamente del request
+         $fechaDesde = $request->input('fechaDesde');
+         $fechaHasta = $request->input('fechaHasta');
+         $estadoTramite = $request->input('estado_tramite');
+ 
+         // Llama a tu método para obtener los datos filtrados
+         $propiedad = PropiedadHorizontal::getPropiedadesFechas($fechaDesde, $fechaHasta, $estadoTramite);
+ 
+        // Retorna los datos filtrados como respuesta JSON
+        return response()->json([
+            'PropiedadHo' => $propiedad,
+        ]);
+    }
+
+
+
     public function store(PropiedadHorizontalRequest $request) {
         $validatedData = $request->validated();
 
         $propiedad = PropiedadHorizontal::create($validatedData);
 
         $tramiteId = $propiedad->id_tramite; 
-        // para actualizar los campos de tramite
         if ($tramiteId) {
-            Tramite::updateOrCreate(
-                ["id_tramite" => $tramiteId], 
-                [
-                    "clave_catastral" => $request->input("clave_catastral"),
-                    "direccion" => $request->input("direccion"),
-                    "arquitecto_responsable" => $request->input("arquitecto_responsable"),
-                    "estado_tramite" => $request->input("estado_tramite"),
-                    "fecha_salida" => $request->input("fecha_salida"),
-                ]
-            );
+            $tramite = Tramite::find($tramiteId);
+
+            if (
+                $tramite->estado_tramite !== "Observación" &&
+                $request->input("estado_tramite") === "Observación"
+            ) {
+                $tramite->num_observaciones += 1;
+            }
+            $tramite->update([
+                "clave_catastral" => $request->input("clave_catastral"),
+                "direccion" => $request->input("direccion"),
+                "arquitecto_responsable" => $request->input(
+                    "arquitecto_responsable"
+                ),
+                "estado_tramite" => $request->input("estado_tramite"),
+                "fecha_salida" => $request->input("fecha_salida"),
+            ]);
         }
 
         return to_route("propiedadh.index");
@@ -48,19 +83,25 @@ class PropiedadHorizontalController extends Controller
         $propiedad->update($request->validated());
 
         $tramiteId = $propiedad->id_tramite;
-        // para actualizar los campos de tramite
         if ($tramiteId) {
-            Tramite::updateOrCreate(
-                ["id_tramite" => $tramiteId],
-                [
-                    "clave_catastral" => $request->input("clave_catastral"),
-                    "direccion" => $request->input("direccion"),
-                    "arquitecto_responsable" => $request->input("arquitecto_responsable"),
-                    "estado_tramite" => $request->input("estado_tramite"),
-                    "fecha_salida" => $request->input("fecha_salida"),
+            $tramite = Tramite::find($tramiteId);
 
-                ]
-            );
+            if (
+                $tramite->estado_tramite !== "Observación" &&
+                $request->input("estado_tramite") === "Observación"
+            ) {
+                $tramite->num_observaciones += 1;
+            }
+
+            $tramite->update([
+                "clave_catastral" => $request->input("clave_catastral"),
+                "direccion" => $request->input("direccion"),
+                "arquitecto_responsable" => $request->input(
+                    "arquitecto_responsable"
+                ),
+                "estado_tramite" => $request->input("estado_tramite"),
+                "fecha_salida" => $request->input("fecha_salida"),
+            ]);
         }
 
         return to_route("propiedadh.index");

@@ -39,6 +39,7 @@ class TrabajosVarios extends Model
                     "id_usuario" => $trabajov->tramite->id_usuario,
                     "nombre_usuario" => $trabajov->tramite->usuarios->name,
                     "created_at" => $trabajov->created_at,
+                    "num_observaciones" => $trabajov->tramite->num_observaciones,
 
                 ];
             });
@@ -81,6 +82,7 @@ class TrabajosVarios extends Model
                 "id_usuario" => $trabajov->tramite->id_usuario,
                 "nombre_usuario" => $trabajov->tramite->usuarios->name,
                 "created_at" => $trabajov->created_at,
+                "num_observaciones" => $trabajov->tramite->num_observaciones,
 
             ];
         });

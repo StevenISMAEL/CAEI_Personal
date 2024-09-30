@@ -23,6 +23,7 @@ const SearchDropdown = ({
             if (
                 dropdownRef.current &&
                 !dropdownRef.current.contains(event.target) &&
+                inputRef.current &&
                 !inputRef.current.contains(event.target)
             ) {
                 setIsDropdownOpen(false);
@@ -65,7 +66,9 @@ const SearchDropdown = ({
         setSearch(option[labelKey]);
         setIsDropdownOpen(false);
         onSelect(option[valueKey]);
-        inputRef.current.blur();
+        if (inputRef.current) {
+            inputRef.current.blur();
+        }
     };
 
     const handleKeyDown = (e) => {
@@ -81,7 +84,7 @@ const SearchDropdown = ({
             case "ArrowDown":
                 e.preventDefault();
                 setFocusedIndex((prev) =>
-                    prev < filteredOptions.length - 1 ? prev + 1 : prev,
+                    prev < filteredOptions.length - 1 ? prev + 1 : prev
                 );
                 break;
             case "ArrowUp":
@@ -89,22 +92,28 @@ const SearchDropdown = ({
                 setFocusedIndex((prev) => (prev > 0 ? prev - 1 : prev));
                 break;
             case "Enter":
-                if (focusedIndex >= 0) {
+                if (focusedIndex >= 0 && filteredOptions[focusedIndex]) {
                     handleOptionSelect(filteredOptions[focusedIndex]);
                 }
                 break;
             case "Escape":
                 setIsDropdownOpen(false);
-                inputRef.current.focus();
+                if (inputRef.current) {
+                    inputRef.current.focus();
+                }
                 break;
             default:
                 break;
         }
     };
 
-    const filteredOptions = options.filter((option) =>
-        option[labelKey].toLowerCase().includes(search.toLowerCase()),
-    );
+    const filteredOptions = options.filter((option) => {
+        if (!option || typeof option[labelKey] !== 'string') {
+            return false;
+        }
+        const searchLower = (typeof search === 'string') ? search.toLowerCase() : '';
+        return option[labelKey].toLowerCase().includes(searchLower);
+    });
 
     return (
         <div className={`relative ${className}`} ref={dropdownRef}>
@@ -146,14 +155,14 @@ const SearchDropdown = ({
                                     className={`px-4 py-2 text-sm cursor-pointer ${
                                         index === focusedIndex
                                             ? "bg-gray-300 dark:bg-gray-500 text-gray-800 dark:text-gray-600"
-                                            : "text-gray-700 "
-                                    } hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-white`}
+                                            : "text-gray-700 dark:text-white"
+                                    } hover:bg-gray-100 dark:hover:bg-gray-600`}
                                 >
                                     {option[labelKey]}
                                 </li>
                             ))
                         ) : (
-                            <li className="px-4 py-2 text-sm text-gray-500">
+                            <li className="px-4 py-2 text-sm text-gray-500 dark:text-gray-400">
                                 No se encontraron resultados.
                             </li>
                         )}

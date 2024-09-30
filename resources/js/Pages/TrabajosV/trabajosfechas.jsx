@@ -44,6 +44,10 @@ const Planos = ({ auth,  Trabajosv }) => {
         direccion: trabajosvarios.direccion,
         estado_tramite: trabajosvarios.estado_tramite,
         id_usuario: trabajosvarios.id_usuario,
+        nombre_usuario: trabajosvarios.nombre_usuario,
+        created_at: trabajosvarios.created_at,
+        num_observaciones: trabajosvarios.num_observaciones,
+
     }));
 
     const headers = ["Tramite", "Propietario", "Uso de suelo"];
@@ -60,6 +64,8 @@ const Planos = ({ auth,  Trabajosv }) => {
         "Arquitecto a cargo",
         "Dirección",
         "Uso suelo",
+        "# observaciones",
+        "Fecha creación",
     ];
     const columnasexportar = [
         "tramite",
@@ -72,6 +78,8 @@ const Planos = ({ auth,  Trabajosv }) => {
         "arquitecto_responsable",
         "direccion",
         "uso_suelo",
+        "num_observaciones",
+        "created_at",
     ];
 
     const openFilterModal = () => setShowFilter(true);
@@ -94,7 +102,7 @@ const Planos = ({ auth,  Trabajosv }) => {
                 },
             });
     
-            // Actualiza los fraccionamientos con los datos filtrados
+            // Actualiza  los datos filtrados
             setFormattedTrabajosva(response.data.Trabajosv); // Asegúrate de acceder correctamente a los datos
         } catch (error) {
             notify("error", "No se pudo filtrar la información.");

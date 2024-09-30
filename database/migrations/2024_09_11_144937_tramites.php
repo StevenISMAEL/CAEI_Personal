@@ -30,6 +30,7 @@ return new class extends Migration
             $table->string("estado_ingreso", 15)->nullable();
             $table->string("estado_tramite", 15)->nullable();
             $table->string("correo_electronico", 200);
+            $table->integer('num_observaciones')->default(0);
             $table->timestamps();
 
             $table

@@ -14,54 +14,61 @@ class PlanoArqController extends Controller {
         return Inertia::render("Planos/planosarq", [
             "Planos" => PlanoArq::getPlanosArq(),
             "Tramites" => Tramite::getTramitesPorCategoria("CATG-01"),
-            "Usuarios" => User::all(),
+            "Usuarios" =>User::whereHas('roles', function($query) {
+                $query->where('name', 'arquitectorevisor');  })->get(),
         ]);
     }
 
     public function index2(Request $request) {
-
         return Inertia::render("Planos/planosfechas", [
             "Planos" => PlanoArq::getPlanosArq(),
         ]);
     }
-    
-     
-    public function obtenerDatos(Request $request)
-    {
-         // Obtén los filtros directamente del request
-         $fechaDesde = $request->input('fechaDesde');
-         $fechaHasta = $request->input('fechaHasta');
-         $estadoTramite = $request->input('estado_tramite');
- 
-         // Llama a tu método para obtener los planos filtrados
-         $planos = PlanoArq::getPlanosFecha($fechaDesde, $fechaHasta, $estadoTramite);
- 
+
+    public function obtenerDatos(Request $request) {
+        // Obtén los filtros directamente del request
+        $fechaDesde = $request->input("fechaDesde");
+        $fechaHasta = $request->input("fechaHasta");
+        $estadoTramite = $request->input("estado_tramite");
+
+        // Llama a tu método para obtener los planos filtrados
+        $planos = PlanoArq::getPlanosFecha(
+            $fechaDesde,
+            $fechaHasta,
+            $estadoTramite
+        );
+
         // Retorna los datos filtrados como respuesta JSON
         return response()->json([
-            'Planos' => $planos,
+            "Planos" => $planos,
         ]);
     }
-
-
 
     public function store(PlanoArqRequest $request) {
         $validatedData = $request->validated();
 
         $plano = PlanoArq::create($validatedData);
+        $tramiteId = $plano->id_tramite;
 
-        $tramiteId = $plano->id_tramite; 
-        // para actualizar los campos de tramite
         if ($tramiteId) {
-            Tramite::updateOrCreate(
-                ["id_tramite" => $tramiteId], 
-                [
-                    "clave_catastral" => $request->input("clave_catastral"),
-                    "direccion" => $request->input("direccion"),
-                    "arquitecto_responsable" => $request->input("arquitecto_responsable"),
-                    "estado_tramite" => $request->input("estado_tramite"),
-                    "fecha_salida" => $request->input("fecha_salida"),
-                ]
-            );
+            $tramite = Tramite::find($tramiteId);
+
+            if (
+                $tramite->estado_tramite !== "Observación" &&
+                $request->input("estado_tramite") === "Observación"
+            ) {
+                $tramite->num_observaciones += 1;
+            }
+
+            $tramite->update([
+                "clave_catastral" => $request->input("clave_catastral"),
+                "direccion" => $request->input("direccion"),
+                "arquitecto_responsable" => $request->input(
+                    "arquitecto_responsable"
+                ),
+                "estado_tramite" => $request->input("estado_tramite"),
+                "fecha_salida" => $request->input("fecha_salida"),
+            ]);
         }
 
         return to_route("planoarq.index");
@@ -73,19 +80,24 @@ class PlanoArqController extends Controller {
         $plano->update($request->validated());
 
         $tramiteId = $plano->id_tramite;
-        // para actualizar los campos de tramite
         if ($tramiteId) {
-            Tramite::updateOrCreate(
-                ["id_tramite" => $tramiteId],
-                [
-                    "clave_catastral" => $request->input("clave_catastral"),
-                    "direccion" => $request->input("direccion"),
-                    "arquitecto_responsable" => $request->input("arquitecto_responsable"),
-                    "estado_tramite" => $request->input("estado_tramite"),
-                    "fecha_salida" => $request->input("fecha_salida"),
+            $tramite = Tramite::find($tramiteId);
 
-                ]
-            );
+            if (
+                $tramite->estado_tramite !== "Observación" &&
+                $request->input("estado_tramite") === "Observación"
+            ) {
+                $tramite->num_observaciones += 1;
+            }
+            $tramite->update([
+                "clave_catastral" => $request->input("clave_catastral"),
+                "direccion" => $request->input("direccion"),
+                "arquitecto_responsable" => $request->input(
+                    "arquitecto_responsable"
+                ),
+                "estado_tramite" => $request->input("estado_tramite"),
+                "fecha_salida" => $request->input("fecha_salida"),
+            ]);
         }
 
         return to_route("planoarq.index");

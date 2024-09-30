@@ -48,6 +48,8 @@ const Afoross = ({ auth, Tramites, Aforos, Usuarios }) => {
         arquitecto_responsable: "",
         id_tramite: "",
         correo_electronico: "",
+        created_at: "",
+        num_observaciones: "",
         ids: [],
     });
 
@@ -208,7 +210,6 @@ const Afoross = ({ auth, Tramites, Aforos, Usuarios }) => {
                     fecha_salida: tramite.fecha_salida,
                 }));
             }
-            console.log(tramite);
         }
     }, [selectedTramiteId]);
     
@@ -240,6 +241,19 @@ const Afoross = ({ auth, Tramites, Aforos, Usuarios }) => {
                 <InputError message={errors.estado_tramite} className="mt-2" />
             ),
             defaultValue: data.estado_tramite,
+        },
+        {
+            placeholder: "Arquitecto Revisor",
+            type: "select",
+            labelKey: "name",
+            valueKey: "id",
+            options: Usuarios,
+            value: data.id_usuario,
+            onSelect: (id) => setData("id_usuario", id),
+            inputError: (
+                <InputError message={errors.id_usuario} className="mt-2" />
+            ),
+            defaultValue: data.nombre_usuario,
         },
         {
             label: "Fecha de Ingreso",
@@ -382,6 +396,7 @@ const Afoross = ({ auth, Tramites, Aforos, Usuarios }) => {
                 />
             ),
         },
+       
     ];
 
     const theaders = [
@@ -413,6 +428,8 @@ const Afoross = ({ auth, Tramites, Aforos, Usuarios }) => {
         "Local comercial",
         "Aforo de personas",
         "Inspección",
+        "# observaciones",
+        "Fecha creación",
     ];
     const columnasexportar = [
         "tramite",
@@ -429,6 +446,8 @@ const Afoross = ({ auth, Tramites, Aforos, Usuarios }) => {
         "local_comercial",
         "aforo_personas",
         "inspeccion",
+        "num_observaciones",
+        "created_at",
     ];
 
     const handleCheckboxChange = (id) => {
@@ -463,7 +482,7 @@ const Afoross = ({ auth, Tramites, Aforos, Usuarios }) => {
             roles={auth.user.roles.map((role) => role.name)}
         >
             <Head title="Aforos" />
-            {/* <Tab tabs={tabs}> */}
+            <Tab tabs={tabs}>
             <Box>
                 <div className="flex flex-wrap items-center justify-center md:justify-between gap-2">
                     <div className="w-full sm:w-auto flex flex-wrap justify-center gap-2">
@@ -535,7 +554,7 @@ const Afoross = ({ auth, Tramites, Aforos, Usuarios }) => {
                     onSelectAll={handleSelectAll}
                 />
             </Box>
-            {/* </Tab> */}
+            </Tab>
         </Authenticated>
     );
 };

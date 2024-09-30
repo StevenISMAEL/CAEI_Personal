@@ -4,7 +4,7 @@ import { RiDashboard2Fill } from "react-icons/ri";
 import LinkCustom from "@/Components/LinkCustom";
 import { Link, usePage } from "@inertiajs/react";
 import Dropdown from "@/Components/Dropdown";
- import ApplicationLogo from "@/Components/ApplicationLogo";
+import ApplicationLogo from "@/Components/ApplicationLogo";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
 import DarkModeToggle from "@/Components/NightMode";
 import { DarkModeContext } from "@/Components/DarkModeContext";
@@ -20,9 +20,8 @@ import { VscFileSymlinkFile } from "react-icons/vsc";
 import { TbMapStar } from "react-icons/tb";
 import { HiMiniClipboardDocumentList } from "react-icons/hi2";
 import { FaPeopleGroup } from "react-icons/fa6";
-import { AiOutlineAudit } from "react-icons/ai";
 import { TbPuzzle2 } from "react-icons/tb";
-
+import { FaFileUpload } from "react-icons/fa";
 const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
     const { env } = usePage().props;
     const { sessionActive } = useSessionChecker(env.SESSION_LIFETIME);
@@ -72,7 +71,7 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
     const currentUrl = window.location.pathname;
     const Menus = [
         {
-            title: "Dashboard",
+            title: "Inicio",
             route: "dashboard",
             icon: <RiDashboard2Fill />,
             roles: ["admin"],
@@ -81,6 +80,13 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
             title: "Empleados",
             route: "employees.index",
             icon: <FaUsersGear />,
+            roles: ["admin"],
+        },
+        {
+            title: "Documentación",
+            route: "documentaciones.index",
+            subroute: "/administrar-documentacion/",
+            icon: <FaFileUpload />,
             roles: ["admin"],
         },
         {
@@ -136,19 +142,13 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
             title: "Unificación Lotes",
             route: "unificacionlotes.index",
             subroute: "/administrar-unificaciones/",
-            icon:<TbPuzzle2 />,
+            icon: <TbPuzzle2 />,
             roles: ["admin"],
         },
         // {
         //     title: "Perfil",
         //     route:"profile.edit",
         //     icon: <TbPuzzle2 />,
-        //     roles: ["admin"],
-        // },
-        // {
-        //     title: "Auditoria",
-        //     route: "audit.index",
-        //     icon: <AiOutlineAudit />,
         //     roles: ["admin"],
         // },
     ];
@@ -186,11 +186,13 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
                     href="/"
                     className={`flex items-center gap-x-4 py-3 px-4 h-16 ${!open && " justify-center"} cursor-pointer hover:bg-red-400 dark:hover:bg-gray-300 dark:hover:bg-opacity-5 rounded-sm group`}
                 >
-                    {<ApplicationLogo
-                        className={`cursor-pointer duration-500 ${
-                            open && "rotate-[360deg]"
-                        }`}
-                    /> }
+                    {
+                        <ApplicationLogo
+                            className={`cursor-pointer duration-500 ${
+                                open && "rotate-[360deg]"
+                            }`}
+                        />
+                    }
                     <h1
                         className={`text-gray-200 dark:text-gray-200 origin-left text-3xl ${
                             !open && "duration-500 hidden"

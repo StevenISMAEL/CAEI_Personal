@@ -208,6 +208,7 @@ const Tramite = ({ auth, Tramites, TiposTramite, Usuarios, Categorias }) => {
         );
         setFilteredTypes(filteredtypes);
         setData("id_tipotramite", "");
+
     };
     const transformForCombobox = (arrays) => {
         return arrays.map((array) => ({
@@ -274,7 +275,7 @@ const Tramite = ({ auth, Tramites, TiposTramite, Usuarios, Categorias }) => {
             labelKey: "nombre",
             valueKey: "id_tipotramite",
             options: filteredTypes,
-            value: data.id_tipotramite,
+            value: data.id_tipotramite||"",
             onSelect: (id) => setData("id_tipotramite", id),
             inputError: (
                 <InputError message={errors.id_tipotramite} className="mt-2" />
@@ -437,6 +438,8 @@ const Tramite = ({ auth, Tramites, TiposTramite, Usuarios, Categorias }) => {
         "Fecha de Ingreso",
         "Estado",
         "Fecha salida",
+        "# observaciones",
+        "Fecha creación",
     ];
     const columnasexportar = [
         "estado_ingreso",
@@ -447,6 +450,9 @@ const Tramite = ({ auth, Tramites, TiposTramite, Usuarios, Categorias }) => {
         "fecha_ingreso",
         "estado_tramite",
         "fecha_salida",
+        "num_observaciones",
+        "created_at",
+
     ];
 
     const handleCheckboxChange = (id) => {

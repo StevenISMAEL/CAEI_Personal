@@ -17,64 +17,61 @@ import CardsCustomOnlyView from "@/Components/AuditCard";
 import { useNotify } from "@/Components/Toast";
 import axios from 'axios'; // Asegúrate de importar axios
 
-const Planos = ({ auth,  Planos }) => {
+const Aforosfec = ({ auth,  Aforos }) => {
 
-    const [formattedPlanos, setFormattedPlanos] = useState([]);
+    const [formattedAforos, setFormattedAforos] = useState([]);
     const [showFilter, setShowFilter] = useState(false);
     const [filters, setFilters] = useRemember(
         { fechaDesde: "", fechaHasta: "", estado_tramite: "" }, 
-        "planos-filters",
+        "aforos-filters",
     );
 
     useEffect(() => {
         // Si fraccionamientos cambia, actualiza el estado
-        setFormattedPlanos(Planos);
-    }, [Planos]);
+        setFormattedAforos(Aforos);
+    }, [Aforos]);
    
 
-    const exportData = formattedPlanos.map((planos) => ({
-        id_tramite: planos.id_tramite,
-        tramite: planos.tramite,
-        arquitecto_responsable: planos.arquitecto_responsable,
-        anteproyecto: planos.anteproyecto,
-        definitivo: planos.definitivo,
-        modificatorio: planos.modificatorio,
-        ampliatorio: planos.ampliatorio,
-        uso_suelo: planos.uso_suelo,
-        propietario: planos.propietario,
-        fecha_ingreso: planos.fecha_ingreso,
-        fecha_salida: planos.fecha_salida,
-        clave_catastral: planos.clave_catastral,
-        direccion: planos.direccion,
-        estado_tramite: planos.estado_tramite,
-        id_usuario: planos.id_usuario,
-        nombre_usuario: planos.nombre_usuario,
-        area_construccion: planos.area_construccion,
-        area_construccion2: planos.area_construccion2,
-        created_at: planos.created_at,
-        num_observaciones: planos.num_observaciones,
+    const exportData = formattedAforos.map((aforo) => ({
+        id_tramite: aforo.id_tramite,
+        tramite: aforo.tramite,
+        arquitecto_responsable: aforo.arquitecto_responsable,
+        uso_suelo: aforo.uso_suelo,
+        propietario: aforo.propietario,
+        fecha_ingreso: aforo.fecha_ingreso,
+        fecha_salida: aforo.fecha_salida,
+        clave_catastral: aforo.clave_catastral,
+        direccion: aforo.direccion,
+        estado_tramite: aforo.estado_tramite,
+        id_usuario: aforo.id_usuario,
+        local_comercial: aforo.local_comercial,
+        area_construccion: aforo.area_construccion,
+        nombre_usuario: aforo.nombre_usuario,
+        aforo_personas: aforo.aforo_personas,
+        inspeccion: aforo.inspeccion,
+        created_at: aforo.created_at,
+        num_observaciones: aforo.num_observaciones,
+
     }));
 
-    const headers = ["Tramite", "Propietario", "Uso de suelo"];
-    const searchColumns = ["tramite", "propietario", "uso_suelo"];
+    const headers = ["Tramite", "Propietario", "Aforo personas"];
+    const searchColumns = ["tramite", "propietario", "aforo_personas"];
    
     const theadersexsportar = [
         "Trámite",
         "Arquitecto R",
         "Clave Catastral",
         "Propietario",
-        "Anteproyecto",
-        "Definitivo",
-        "Modificatorio",
-        "Ampliatorio",
         "Fecha de Ingreso",
         "Fecha de Salida",
         "Estado",
         "Arquitecto a cargo",
         "Dirección",
-        "Área de construcción",
-        "Área de construcción 2",
         "Uso suelo",
+        "Área de construcción",
+        "Local comercial",
+        "Aforo de personas",
+        "Inspección",
         "# observaciones",
         "Fecha creación",
     ];
@@ -83,18 +80,16 @@ const Planos = ({ auth,  Planos }) => {
         "nombre_usuario",
         "clave_catastral",
         "propietario",
-        "anteproyecto",
-        "definitivo",
-        "modificatorio",
-        "ampliatorio",
         "fecha_ingreso",
         "fecha_salida",
         "estado_tramite",
         "arquitecto_responsable",
         "direccion",
-        "area_construccion",
-        "area_construccion2",
         "uso_suelo",
+        "area_construccion",
+        "local_comercial",
+        "aforo_personas",
+        "inspeccion",
         "num_observaciones",
         "created_at",
     ];
@@ -111,7 +106,7 @@ const Planos = ({ auth,  Planos }) => {
 
     const fetchFilteredData = async (filters) => {
         try {
-            const response = await axios.get('/administrar-planosarq/planosfechas/datos', {
+            const response = await axios.get('/administrar-aforos/aforosfechas/datos', {
                 params: {
                     fechaDesde: filters.fechaDesde || null,
                     fechaHasta: filters.fechaHasta || null,
@@ -119,8 +114,8 @@ const Planos = ({ auth,  Planos }) => {
                 },
             });
     
-            // Actualiza  los datos filtrados
-            setFormattedPlanos(response.data.Planos); // Asegúrate de acceder correctamente a los datos
+            // Actualiza   los datos filtrados
+            setFormattedAforos(response.data.Aforos); // Asegúrate de acceder correctamente a los datos
         } catch (error) {
             notify("error", "No se pudo filtrar la información.");
 
@@ -134,11 +129,11 @@ const Planos = ({ auth,  Planos }) => {
 
     return (
         <AuthenticatedLayout
-            header={<Header subtitle="Administrar Planos Arquitectónicos" />}
+            header={<Header subtitle="Administrar aforos" />}
             user={auth.user}
             roles={auth.user.roles.map((role) => role.name)}
         >
-            <Head title="Planos AR" />
+            <Head title="Aforos" />
             <Tab tabs={tabs}>
                 <Box className="mt-3">
                     <div className="flex flex-wrap items-center justify-center md:justify-between gap-2">
@@ -147,7 +142,7 @@ const Planos = ({ auth,  Planos }) => {
                             data={exportData}
                             searchColumns={columnasexportar}
                             headers={theadersexsportar}
-                            fileName="Planos Arquitectónicos"
+                            fileName="Aforos"
                         />
                     </div>
                 </Box>
@@ -155,25 +150,25 @@ const Planos = ({ auth,  Planos }) => {
                 <Box className="mt-3 hidden md:block">
                     <TableCustomViewOnly
                         headers={headers}
-                        data={formattedPlanos}
+                        data={formattedAforos}
                         searchColumns={searchColumns}
                         columnasdetalles={columnasexportar}
                         theadersdetalles={theadersexsportar}
-                        idKey="id_planosarq"
+                        idKey="id_aforo"
                     />
                 </Box>
                 <Box className="mt-3 md:hidden">
                     <CardsCustomOnlyView
                         headers={headers}
-                        data={formattedPlanos}
+                        data={formattedAforos}
                         searchColumns={searchColumns}
                         columnasdetalles={columnasexportar}
                         theadersdetalles={theadersexsportar}
-                        idKey="id_planosarq"
+                        idKey="id_aforo"
                     />
                 </Box>
                 <FilterModal
-                    title="Filtrar Planos AR"
+                    title="Filtrar Aforos"
                     showFilter={showFilter}
                     closeModalFilter={closeFilterModal}
                     handleApplyFilters={handleApplyFilters}
@@ -285,4 +280,4 @@ const FilterModal = ({
     );
 };
 
-export default Planos;
+export default Aforosfec;

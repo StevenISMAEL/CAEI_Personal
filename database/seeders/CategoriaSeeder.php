@@ -14,11 +14,11 @@ class CategoriaSeeder extends Seeder
     public function run(): void
     {
         $categoria = [
-            ["id_categoria" => "CATG-01", "nombre" => "Planos arquitectónicos y urbanísticos "],
-            ["id_categoria" => "CATG-02", "nombre" => "Fraccionamiento de Suelos y Restructuración de Lotes "],
-            ["id_categoria" => "CATG-03", "nombre" => "Declaratorias de propiedad horizontal "],
-            ["id_categoria" => "CATG-04", "nombre" => "Trabajos Varios "],
-            ["id_categoria" => "CATG-05", "nombre" => "Aforos para locales"],
+            ["id_categoria" => "CATG-01", "nombre" => "PLANOS ARQUITECTÓNICOS Y URBANÍSTICOS"],
+            ["id_categoria" => "CATG-02", "nombre" => "FRACCIONAMIENTO DE SUELOS Y RESTRUCTURACIÓN DE LOTES"],
+            ["id_categoria" => "CATG-03", "nombre" => "DECLARATORIAS DE PROPIEDAD HORIZONTAL"],
+            ["id_categoria" => "CATG-04", "nombre" => "TRABAJOS VARIOS"],
+            ["id_categoria" => "CATG-05", "nombre" => "AFOROS PARA LOCALES"],
         ];
         categoria::insert($categoria);
 

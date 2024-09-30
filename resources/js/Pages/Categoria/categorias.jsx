@@ -8,7 +8,7 @@ import InputError from "@/Components/InputError";
 import ModalCreate from "@/Components/ModalCreate";
 import ModalEdit from "@/Components/ModalEdit";
 import Box from "@/Layouts/Box";
-import ExportData from "@/Components/ExportData";
+import ExportData from "@/Components/ExportDataSmall";
 import tabs from "./tabs";
 import DeleteModal from "@/Components/DeleteModal";
 import TableCustom from "@/Components/TableCustom";

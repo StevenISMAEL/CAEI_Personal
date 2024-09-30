@@ -48,7 +48,9 @@ class PlanoArq extends Model {
                     "estado_tramite" => $plano->tramite->estado_tramite,
                     "id_usuario" => $plano->tramite->id_usuario,
                     "nombre_usuario" => $plano->tramite->usuarios->name,
-                   
+                    "created_at" => $plano->created_at,
+                    "num_observaciones" => $plano->tramite->num_observaciones,
+
 
                 ];
             });
@@ -98,7 +100,8 @@ class PlanoArq extends Model {
                 "estado_tramite" => $plano->tramite->estado_tramite,
                 "id_usuario" => $plano->tramite->id_usuario,
                 "nombre_usuario" => $plano->tramite->usuarios->name,
-               
+                "num_observaciones" => $plano->tramite->num_observaciones,
+
 
             ];
         });

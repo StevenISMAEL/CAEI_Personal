@@ -9,6 +9,7 @@ use App\Http\Controllers\TrabajosVariosController;
 use App\Http\Controllers\PropiedadHorizontalController;
 use App\Http\Controllers\AforosController;
 use App\Http\Controllers\UnificacionLController;
+use App\Http\Controllers\DocumentacionController;
 
 use Inertia\Inertia;
 
@@ -146,6 +147,16 @@ Route::prefix("administrar-propiedadh")
             PropiedadHorizontalController::class,
             "destroyMultiple",
         ])->name("propiedadh.multiple.destroy");
+
+        Route::get("/propiedadhfechas", [
+            PropiedadHorizontalController::class,
+            "index2",
+        ])->name("propiedadhfechas.index");
+
+        Route::get("/propiedadhfechas/datos", [
+            PropiedadHorizontalController::class,
+            "obtenerDatos",
+        ])->name("propiedadh.datos");
     });
 
 Route::prefix("administrar-aforos")
@@ -160,6 +171,15 @@ Route::prefix("administrar-aforos")
             AforosController::class,
             "destroyMultiple",
         ])->name("aforos.multiple.destroy");
+
+        Route::get("/aforosfechas", [AforosController::class, "index2"])->name(
+            "aforosfechas.index"
+        );
+
+        Route::get("/aforosfechas/datos", [
+            AforosController::class,
+            "obtenerDatos",
+        ])->name("aforosf.datos");
     });
 
 Route::prefix("administrar-unificaciones")
@@ -173,4 +193,33 @@ Route::prefix("administrar-unificaciones")
             UnificacionLController::class,
             "destroyMultiple",
         ])->name("unificacionlotes.multiple.destroy");
+
+        Route::get("/unificacionesfechas", [
+            UnificacionLController::class,
+            "index2",
+        ])->name("unificacionfechas.index");
+
+        Route::get("/unificacionesfechas/datos", [
+            UnificacionLController::class,
+            "obtenerDatos",
+        ])->name("unificacionf.datos");
+    });
+
+Route::prefix("administrar-documentacion")
+    ->middleware(["auth", "verified", "role:admin"])
+    ->group(function () {
+        Route::resource(
+            "documentaciones",
+            DocumentacionController::class
+        )->except(["create", "show", "edit"]);
+        
+        Route::delete("/documentaciones", [
+            DocumentacionController::class,
+            "destroyMultiple",
+        ])->name("documentaciones.multiple.destroy");
+
+        Route::get("documentaciones/{id}/{nombre}", [
+            DocumentacionController::class,
+            "showWithFileName",
+        ])->name("documentaciones.showWithFileName");
     });

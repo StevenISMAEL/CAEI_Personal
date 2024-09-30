@@ -43,6 +43,8 @@ const Trabajo = ({ auth, Tramites, Trabajosv, Usuarios }) => {
         arquitecto_responsable: "",
         id_tramite: "",
         correo_electronico: "",
+        num_observaciones: "",
+        created_at: "",
         ids: [],
     });
 
@@ -366,6 +368,8 @@ const Trabajo = ({ auth, Tramites, Trabajosv, Usuarios }) => {
         "Arquitecto a cargo",
         "Dirección",
         "Uso suelo",
+        "# observaciones",
+        "Fecha creación",
     ];
     const columnasexportar = [
         "tramite",
@@ -378,6 +382,9 @@ const Trabajo = ({ auth, Tramites, Trabajosv, Usuarios }) => {
         "arquitecto_responsable",
         "direccion",
         "uso_suelo",
+        "num_observaciones",
+        "created_at",
+
     ];
 
     const handleCheckboxChange = (id) => {

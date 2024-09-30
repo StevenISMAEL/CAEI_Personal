@@ -17,7 +17,6 @@ import { useNotify } from "@/Components/Toast";
 import React, { useEffect } from "react";
 
 const Plahorizontal = ({ auth, Tramites, PropiedadHo, Usuarios }) => {
-    console.log(PropiedadHo);
 
     const {
         data,
@@ -50,6 +49,8 @@ const Plahorizontal = ({ auth, Tramites, PropiedadHo, Usuarios }) => {
         arquitecto_responsable: "",
         id_tramite: "",
         correo_electronico: "",
+        created_at: "",
+        num_observaciones: "",
         ids: [],
     });
     const [showCreate, setShowCreate] = useState(false);
@@ -416,8 +417,9 @@ const Plahorizontal = ({ auth, Tramites, PropiedadHo, Usuarios }) => {
         "Dirección",
         "Uso suelo",
         "Área de construcción",
-        "Área de construcción 2",
         "Uso suelo",
+        "# observaciones",
+        "Fecha creación",
     ];
     const columnasexportar = [
         "tramite",
@@ -433,8 +435,9 @@ const Plahorizontal = ({ auth, Tramites, PropiedadHo, Usuarios }) => {
         "direccion",
         "uso_suelo",
         "area_construccion",
-        "area_construccion2",
         "uso_suelo",
+        "num_observaciones",
+        "created_at",
     ];
 
     const handleCheckboxChange = (id) => {
@@ -469,7 +472,7 @@ const Plahorizontal = ({ auth, Tramites, PropiedadHo, Usuarios }) => {
             roles={auth.user.roles.map((role) => role.name)}
         >
             <Head title="Propiedad horizontal" />
-            {/* <Tab tabs={tabs}> */}
+            <Tab tabs={tabs}>
             <Box>
                 <div className="flex flex-wrap items-center justify-center md:justify-between gap-2">
                     <div className="w-full sm:w-auto flex flex-wrap justify-center gap-2">
@@ -494,7 +497,6 @@ const Plahorizontal = ({ auth, Tramites, PropiedadHo, Usuarios }) => {
                 name={"Propiedad Horizontal"}
                 inputs={inputstramite}
                 processing={processing}
-                handleSubmitEmail= {handleSubmitEmail}
                 handleSubmitAdd={handleSubmitAdd}
             />
             <DeleteModal
@@ -541,7 +543,7 @@ const Plahorizontal = ({ auth, Tramites, PropiedadHo, Usuarios }) => {
                     onSelectAll={handleSelectAll}
                 />
             </Box>
-            {/* </Tab> */}
+            </Tab>
         </Authenticated>
     );
 };

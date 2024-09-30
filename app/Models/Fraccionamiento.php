@@ -40,6 +40,7 @@ class Fraccionamiento extends Model {
                     "nombre_usuario" =>
                         $fraccionamiento->tramite->usuarios->name,
                         "created_at" => $fraccionamiento->created_at,
+                        "num_observaciones" => $fraccionamiento->tramite->num_observaciones,
 
                 ];
             });
@@ -82,6 +83,8 @@ class Fraccionamiento extends Model {
                 "estado_tramite" => $fraccionamiento->tramite->estado_tramite,
                 "id_usuario" => $fraccionamiento->tramite->id_usuario,
                 "nombre_usuario" => $fraccionamiento->tramite->usuarios->name,
+                "num_observaciones" => $fraccionamiento->tramite->num_observaciones,
+
             ];
         });
     }

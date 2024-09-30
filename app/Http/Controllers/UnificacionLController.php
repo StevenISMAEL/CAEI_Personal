@@ -15,10 +15,36 @@ class UnificacionLController extends Controller
     public function index() {
         return Inertia::render("UnificacionL/unificacionlotes", [
             "Unificacionl" => UnificacionL::getUnificacionLotes(),
-            "Tramites" => Tramite::getTramites(),
-            "Usuarios" => User::all(),
+            "Tramites" => Tramite::getTramitesUnificacion(),
+            "Usuarios" => User::whereHas('roles', function($query) {
+                $query->where('name', 'arquitectorevisor');  })->get(),
         ]);
     }
+
+    public function index2(Request $request) {
+
+        return Inertia::render("UnificacionL/unificacionfechas", [
+            "Unificacionl" => UnificacionL::getUnificacionLotes(),
+        ]);
+    }
+    
+     
+    public function obtenerDatos(Request $request)
+    {
+         // Obtén los filtros directamente del request
+         $fechaDesde = $request->input('fechaDesde');
+         $fechaHasta = $request->input('fechaHasta');
+         $estadoTramite = $request->input('estado_tramite');
+ 
+         // Llama a tu método para obtener los datos filtrados
+         $unificacion = UnificacionL::getUnificacionFecha($fechaDesde, $fechaHasta, $estadoTramite);
+ 
+        // Retorna los datos filtrados como respuesta JSON
+        return response()->json([
+            'Unificacionl' => $unificacion,
+        ]);
+    }
+
 
     public function store(UnificacionLRequest $request) {
         $validatedData = $request->validated();
@@ -28,16 +54,22 @@ class UnificacionLController extends Controller
         $tramiteId = $unificacionlot->id_tramite; 
         // para actualizar los campos de tramite
         if ($tramiteId) {
-            Tramite::updateOrCreate(
-                ["id_tramite" => $tramiteId], 
-                [
-                    "clave_catastral" => $request->input("clave_catastral"),
-                    "direccion" => $request->input("direccion"),
-                    "arquitecto_responsable" => $request->input("arquitecto_responsable"),
-                    "estado_tramite" => $request->input("estado_tramite"),
-                    "fecha_salida" => $request->input("fecha_salida"),
-                ]
-            );
+            $tramite = Tramite::find($tramiteId);
+
+            if (
+                $tramite->estado_tramite !== "Observación" &&
+                $request->input("estado_tramite") === "Observación"
+            ) {
+                $tramite->num_observaciones += 1;
+            }
+
+            $tramite->update([
+                "clave_catastral" => $request->input("clave_catastral"),
+                "direccion" => $request->input("direccion"),
+                "arquitecto_responsable" => $request->input("arquitecto_responsable"),
+                "estado_tramite" => $request->input("estado_tramite"),
+                "fecha_salida" => $request->input("fecha_salida"),
+            ]);
         }
 
         return to_route("unificacionlotes.index");
@@ -52,19 +84,24 @@ class UnificacionLController extends Controller
         $tramiteId = $unificacionlot->id_tramite;
         // para actualizar los campos de tramite
         if ($tramiteId) {
-            Tramite::updateOrCreate(
-                ["id_tramite" => $tramiteId],
-                [
-                    "clave_catastral" => $request->input("clave_catastral"),
-                    "direccion" => $request->input("direccion"),
-                    "arquitecto_responsable" => $request->input(
-                        "arquitecto_responsable"
-                    ),
-                    "estado_tramite" => $request->input("estado_tramite"),
-                    "fecha_salida" => $request->input("fecha_salida"),
-                ]
-            );
+            $tramite = Tramite::find($tramiteId);
+
+            if (
+                $tramite->estado_tramite !== "Observación" &&
+                $request->input("estado_tramite") === "Observación"
+            ) {
+                $tramite->num_observaciones += 1;
+            }
+
+            $tramite->update([
+                "clave_catastral" => $request->input("clave_catastral"),
+                "direccion" => $request->input("direccion"),
+                "arquitecto_responsable" => $request->input("arquitecto_responsable"),
+                "estado_tramite" => $request->input("estado_tramite"),
+                "fecha_salida" => $request->input("fecha_salida"),
+            ]);
         }
+
 
         return to_route("unificacionlotes.index");
     }

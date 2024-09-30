@@ -70,16 +70,14 @@ const ExportData = ({ data, searchColumns, headers, fileName }) => {
     const exportPDF = useCallback(() => {
         setIsExporting(true);
         try {
-            const doc  = new jsPDF({
-                orientation: 'landscape', // Orientación horizontal
-            });
+            const doc  = new jsPDF();
     
             // Color de fondo en el PDF
             const backgroundColor = [255, 0, 0]; // Rojo en formato RGB
 
             // Añadir fondo antes del logo
             doc.setFillColor(...backgroundColor);
-            doc.rect(115, 5, 60, 20, "F"); // Ajustar tamaño y posición según el logo
+            doc.rect(73, 5, 60, 20, "F"); // Ajustar tamaño y posición según el logo
 
         
             const subtitle = `${fileName} - ${new Date().toLocaleDateString()}`;
@@ -89,7 +87,7 @@ const ExportData = ({ data, searchColumns, headers, fileName }) => {
                 doc.addImage(
                     logoArquitectos,
                     "PNG",
-                    115,
+                    73,
                     5,
                     60,
                     20,
@@ -113,24 +111,24 @@ const ExportData = ({ data, searchColumns, headers, fileName }) => {
                 header: {
                     fillColor: [252, 136, 111],
                     textColor: [55, 65, 81],
-                    fontSize: 6,
+                    fontSize: 12,
                     fontStyle: "bold",
                 },
                 row: {
                     fillColor: [255, 255, 255],
                     textColor: [75, 85, 99],
-                    fontSize: 7,
+                    fontSize: 8,
                 },
                 altRow: {
                     fillColor: [243, 244, 246],
                     textColor: [75, 85, 99],
-                    fontSize: 7,
+                    fontSize: 8,
                 },
             };
 
             const startX = 10;
             let startY = currentY;
-            const colWidth = 280 / searchColumns.length;
+            const colWidth = 190 / searchColumns.length;
 
             const getRowHeight = (row, fontSize) => {
                 return Math.max(

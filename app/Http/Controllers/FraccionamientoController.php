@@ -15,7 +15,8 @@ class FraccionamientoController extends Controller {
         return Inertia::render("Fraccionamiento/fraccionamientosuelo", [
             "Fraccionamientos" => Fraccionamiento::getFraccionamientos(),
             "Tramites" => Tramite::getTramitesPorCategoria("CATG-02"),
-            "Usuarios" => User::all(),
+            "Usuarios" =>User::whereHas('roles', function($query) {
+                $query->where('name', 'arquitectorevisor');  })->get(),
         ]);
     }
 
@@ -50,20 +51,24 @@ class FraccionamientoController extends Controller {
         $fra = Fraccionamiento::create($validatedData);
 
         $tramiteId = $fra->id_tramite;
-        // para actualizar los campos de tramite
         if ($tramiteId) {
-            Tramite::updateOrCreate(
-                ["id_tramite" => $tramiteId],
-                [
-                    "clave_catastral" => $request->input("clave_catastral"),
-                    "direccion" => $request->input("direccion"),
-                    "arquitecto_responsable" => $request->input(
-                        "arquitecto_responsable"
-                    ),
-                    "estado_tramite" => $request->input("estado_tramite"),
-                    "fecha_salida" => $request->input("fecha_salida"),
-                ]
-            );
+            $tramite = Tramite::find($tramiteId);
+
+            if (
+                $tramite->estado_tramite !== "Observación" &&
+                $request->input("estado_tramite") === "Observación"
+            ) {
+                $tramite->num_observaciones += 1;
+            }
+            $tramite->update([
+                "clave_catastral" => $request->input("clave_catastral"),
+                "direccion" => $request->input("direccion"),
+                "arquitecto_responsable" => $request->input(
+                    "arquitecto_responsable"
+                ),
+                "estado_tramite" => $request->input("estado_tramite"),
+                "fecha_salida" => $request->input("fecha_salida"),
+            ]);
         }
 
         return to_route("fraccionamiento.index");
@@ -71,28 +76,27 @@ class FraccionamientoController extends Controller {
 
     public function update(FraccionamientoRequest $request, $id) {
         $fracc = Fraccionamiento::findOrFail($id);
-
+    
         $fracc->update($request->validated());
-
+    
         $tramiteId = $fracc->id_tramite;
-        // para actualizar los campos de tramite
-        if ($tramiteId) {
-            Tramite::updateOrCreate(
-                ["id_tramite" => $tramiteId],
-                [
-                    "clave_catastral" => $request->input("clave_catastral"),
-                    "direccion" => $request->input("direccion"),
-                    "arquitecto_responsable" => $request->input(
-                        "arquitecto_responsable"
-                    ),
-                    "estado_tramite" => $request->input("estado_tramite"),
-                    "fecha_salida" => $request->input("fecha_salida"),
-                ]
-            );
+            if ($tramiteId) {
+            $tramite = Tramite::findOrFail($tramiteId);
+                if ($tramite->estado_tramite !== 'observacion' && $request->input('estado_tramite') === 'observacion') {
+                $tramite->num_observaciones += 1;
+            }
+                $tramite->update([
+                'clave_catastral' => $request->input('clave_catastral'),
+                'direccion' => $request->input('direccion'),
+                'arquitecto_responsable' => $request->input('arquitecto_responsable'),
+                'estado_tramite' => $request->input('estado_tramite'),
+                'fecha_salida' => $request->input('fecha_salida'),
+            ]);
         }
-
-        return to_route("fraccionamiento.index");
+    
+        return to_route('fraccionamiento.index');
     }
+    
 
     public function destroy($id) {
         Fraccionamiento::find($id)->delete();
