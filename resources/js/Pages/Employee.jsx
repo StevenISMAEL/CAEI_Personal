@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useForm, Head } from "@inertiajs/react";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import Header from "@/Components/Header";
 import Box from "@/Layouts/Box";
-import { DeleteButton } from "@/Components/CustomButtons";
+import { AddButton, DeleteButton } from "@/Components/CustomButtons";
 import TableCustom from "@/Components/TableCustom";
 import CardsCustom from "@/Components/CardCustom";
 import DeleteModal from "@/Components/DeleteModal";
@@ -12,6 +12,8 @@ import SecondaryButton from "@/Components/SecondaryButton";
 import PrimaryButton from "@/Components/PrimaryButton";
 import ExportData from "@/Components/ExportDataSmall";
 import { useNotify } from "@/Components/Toast";
+import FloatInputText from "@/Components/FloatInputText";
+import InputError from "@/Components/InputError";
 
 const Employee = ({ auth, roles, employees }) => {
     const notify = useNotify();
@@ -22,14 +24,22 @@ const Employee = ({ auth, roles, employees }) => {
         reset,
         delete: destroy,
         patch,
+        post,
         clearErrors,
+        errors,
     } = useForm({
         role_id: [],
         ids: [],
+        name: "",
+        email: "",
+        username: "",
+        password: "",
+        password_confirmation: "",
     });
 
     const [showDelete, setShowDelete] = useState(false);
     const [showEdit, setShowEdit] = useState(false);
+    const [showAdd, setShowAdd] = useState(false);
     const [editData, setEditData] = useState(null);
     const [dataToDelete, setDataToDelete] = useState(null);
     const [selectedEmployees, setSelectedEmployees] = useState([]);
@@ -50,18 +60,21 @@ const Employee = ({ auth, roles, employees }) => {
         setEditData(null);
         reset();
     };
-
     const openEditModal = (employee) => {
         setEditData(employee);
         setData({
+            name: employee.name,
+            email: employee.email,
+            username: employee.username,
             role_id: employee.roles.map((role) => role.role_id),
         });
+
         setShowEdit(true);
     };
 
     const handleSubmitEdit = (e) => {
         e.preventDefault();
-        patch(route("employees.update", { id: editData.user_id }), {
+        patch(route("usuarios.update", { id: editData.user_id }), {
             preserveScroll: true,
             onSuccess: () => {
                 closeEditModal();
@@ -74,7 +87,7 @@ const Employee = ({ auth, roles, employees }) => {
     const handleDelete = (id) => {
         if (Array.isArray(id)) {
             data.ids = id;
-            destroy(route("employees.destroyMultiple"), {
+            destroy(route("usuarios.destroyMultiple"), {
                 preserveScroll: true,
                 onSuccess: () => {
                     setSelectedEmployees([]);
@@ -84,7 +97,7 @@ const Employee = ({ auth, roles, employees }) => {
                 onError: (error) => console.error(error.message),
             });
         } else {
-            destroy(route("employees.destroy", { id }), {
+            destroy(route("usuarios.destroy", { id }), {
                 preserveScroll: true,
                 onSuccess: () => {
                     closeDeleteModal();
@@ -95,8 +108,8 @@ const Employee = ({ auth, roles, employees }) => {
         }
     };
 
-    const theaders = ["ID", "Empleado", "Roles"];
-    const searchColumns = ["user_id", "user_name", "roles"];
+    const theaders = [ "Usuario", "Roles", "Email"];
+    const searchColumns = ["user_name", "roles", "email"];
 
     const handleCheckboxChange = (id) => {
         setSelectedEmployees((prevSelected) => {
@@ -121,16 +134,39 @@ const Employee = ({ auth, roles, employees }) => {
         setDataToDelete(selectedEmployees);
     };
 
+    const openAddModal = () => {
+        setShowAdd(true);
+    };
+
+    const closeAddModal = () => {
+        clearErrors();
+        setShowAdd(false);
+        reset();
+    };
+
+    const handleSubmitAdd = (e) => {
+        e.preventDefault();
+        post(route("empleados.store"), {
+            preserveScroll: true,
+            onSuccess: () => {
+                closeAddModal();
+                notify("success", "Usuario agregado.");
+            },
+            onError: (error) => console.error(Object.values(error).join(", ")),
+        });
+    };
+
     return (
         <Authenticated
             user={auth.user}
             roles={auth.user.roles.map((role) => role.name)}
-            header={<Header subtitle="Empleados" />}
+            header={<Header subtitle="Usuarios" />}
         >
-            <Head title="Empleados" />
+            <Head title="Usuarios" />
             <Box className="mt-3">
                 <div className="flex flex-wrap items-center justify-center md:justify-between gap-2">
                     <div className="w-full sm:w-auto flex flex-wrap justify-center gap-2">
+                        <AddButton onClick={openAddModal} />
                         <DeleteButton
                             disabled={selectedEmployees.length === 0}
                             onClick={openDeleteModalForSelected}
@@ -140,19 +176,30 @@ const Employee = ({ auth, roles, employees }) => {
                         data={employees}
                         searchColumns={searchColumns}
                         headers={theaders}
-                        fileName="Empleados"
+                        fileName="Usuarios"
                     />
                 </div>
             </Box>
             <ModalEdit
-                title="Editar Roles"
+                title="Editar Empleado"
                 showEdit={showEdit}
                 closeEditModal={closeEditModal}
                 processing={processing}
                 handleSubmitEdit={handleSubmitEdit}
                 roles={roles}
-                initialSelectedRoles={data.role_id}
+                data={data} // Pasa los datos al modal
                 setData={setData}
+                errors={errors}
+            />
+            <ModalAdd
+                showAdd={showAdd}
+                closeAddModal={closeAddModal}
+                processing={processing}
+                roles={roles}
+                handleSubmitAdd={handleSubmitAdd}
+                data={data} // Pasa los datos al modal
+                setData={setData}
+                errors={errors}
             />
             <DeleteModal
                 showDelete={showDelete}
@@ -200,55 +247,182 @@ const ModalEdit = ({
     processing,
     handleSubmitEdit,
     roles,
-    initialSelectedRoles = [],
+    data,
     setData,
+    errors,
 }) => {
-    const [selectedRoles, setSelectedRoles] = useState(initialSelectedRoles);
-
-    useEffect(() => {
-        setSelectedRoles(initialSelectedRoles);
-    }, [initialSelectedRoles]);
-
     const handleRoleChange = (roleId) => {
-        const updatedRoles = selectedRoles.includes(roleId)
-            ? selectedRoles.filter((id) => id !== roleId)
-            : [...selectedRoles, roleId];
+        const updatedRoles = data.role_id.includes(roleId)
+            ? data.role_id.filter((id) => id !== roleId)
+            : [...data.role_id, roleId];
 
-        setSelectedRoles(updatedRoles);
-        setData((prevData) => ({ ...prevData, role_id: updatedRoles }));
+        setData((prevData) => ({
+            ...prevData,
+            role_id: updatedRoles,
+        }));
     };
+
     return (
         <Modal show={showEdit} onClose={closeEditModal}>
             <form onSubmit={handleSubmitEdit} className="p-6">
                 <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
                     {title.toUpperCase()}
                 </h3>
-                <div className="mt-4">
-                    {roles.map((role) => (
-                        <div key={role.id} className="flex items-center mb-2">
-                            <input
-                                type="checkbox"
-                                id={`role-${role.id}`}
-                                checked={selectedRoles.includes(role.id)}
-                                onChange={() => handleRoleChange(role.id)}
-                                className="mr-2 rounded dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800"
-                            />
-                            <label
-                                htmlFor={`role-${role.id}`}
-                                className="text-sm text-gray-700 dark:text-gray-300"
-                            >
-                                {role.name}
-                            </label>
-                        </div>
-                    ))}
-                </div>
+                <FloatInputText
+                    id="name"
+                    type="text"
+                    label="Nombre"
+                    className="mt-1 block w-full"
+                    value={data.name || ""}
+                    readOnly
+                    onChange={(e) => setData("name", e.target.value)}
+                />
+                <InputError message={errors.name} />
+                <FloatInputText
+                    id="email"
+                    type="email"
+                    label="Correo electrónico"
+                    value={data.email || ""}
+                    className="mt-1 block w-full"
+                    onChange={(e) => setData("email", e.target.value)}
+                    defaultValue={data.email || ""}
+                    readOnly
+                />
+                <InputError message={errors.email} />
+                
+
+                <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">
+                    Roles
+                </h4>
+                {roles.map((role) => (
+                    <div key={role.id}>
+                        <input
+                            type="checkbox"
+                            checked={data.role_id.includes(role.id)}
+                            onChange={() => handleRoleChange(role.id)}
+                            className="mr-2 rounded dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800"
+                        />
+                        <label className="text-sm text-gray-700 dark:text-gray-300">
+                            {role.name}
+                        </label>
+                    </div>
+                ))}
                 <div className="mt-6 flex justify-end">
                     <SecondaryButton onClick={closeEditModal}>
                         Cancelar
                     </SecondaryButton>
-
                     <PrimaryButton className="ms-3" disabled={processing}>
                         Actualizar
+                    </PrimaryButton>
+                </div>
+            </form>
+        </Modal>
+    );
+};
+
+const ModalAdd = ({
+    showAdd,
+    closeAddModal,
+    processing,
+    handleSubmitAdd,
+    data,
+    setData,
+    roles,
+    errors,
+}) => {
+    const handleRoleChange = (roleId) => {
+        const updatedRoles = data.role_id.includes(roleId)
+            ? data.role_id.filter((id) => id !== roleId)
+            : [...data.role_id, roleId];
+
+        setData((prevData) => ({
+            ...prevData,
+            role_id: updatedRoles,
+        }));
+    };
+
+    return (
+        <Modal show={showAdd} onClose={closeAddModal}>
+            <form onSubmit={handleSubmitAdd} className="p-6">
+                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                    AGREGAR USUARIO
+                </h3>
+                <FloatInputText
+                    id="name"
+                    type="text"
+                    label="Nombre"
+                    className="mt-1 block w-full"
+                    value={data.name || ""}
+                    onChange={(e) => setData("name", e.target.value)}
+                />
+                <InputError message={errors.name} />
+                <FloatInputText
+                    id="email"
+                    type="email"
+                    label="Email"
+                    value={data.email || ""}
+                    className="mt-1 block w-full"
+                    onChange={(e) => setData("email", e.target.value)}
+                />
+                <InputError message={errors.email} />
+                <FloatInputText
+                    id="username"
+                    type="text"
+                    label="Nombre de usuario"
+                    value={data.username || ""}
+                    className="mt-1 block w-full"
+                    onChange={(e) => setData("username", e.target.value)}
+                />
+                <InputError message={errors.username} />
+
+                <FloatInputText
+                    id="password"
+                    type="password"
+                    label="Contraseña"
+                    value={data.password || ""}
+                    className="mt-1 block w-full"
+                    onChange={(e) => setData("password", e.target.value)}
+                    autoComplete="new-password"
+                />
+                <InputError message={errors.password} className="mt-2" />
+
+                <FloatInputText
+                    id="password_confirmation"
+                    type="password"
+                    label="Confirmar Contraseña"
+                    value={data.password_confirmation || ""}
+                    className="mt-1 block w-full"
+                    onChange={(e) =>
+                        setData("password_confirmation", e.target.value)
+                    }
+                />
+                <InputError
+                    message={errors.password_confirmation}
+                    className="mt-2"
+                />
+
+                <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">
+                    Roles
+                </h4>
+                {roles.map((role) => (
+                    <div key={role.id}>
+                        <input
+                            type="checkbox"
+                            checked={data.role_id.includes(role.id)}
+                            onChange={() => handleRoleChange(role.id)}
+                            className="mr-2 rounded dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800"
+                        />
+                        <label className="text-sm text-gray-700 dark:text-gray-300">
+                            {role.name}
+                        </label>
+                    </div>
+                ))}
+                <div className="mt-6 flex justify-end">
+                    <SecondaryButton onClick={closeAddModal}>
+                        Cancelar
+                    </SecondaryButton>
+                    <PrimaryButton className="ms-3" disabled={processing}>
+                        Agregar
                     </PrimaryButton>
                 </div>
             </form>

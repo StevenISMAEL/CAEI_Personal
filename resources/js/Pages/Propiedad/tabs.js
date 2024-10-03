@@ -4,7 +4,7 @@ import { TbFilterStar } from "react-icons/tb";
 
 const tabs = [
     {
-        name: "Trabajos Varios",
+        name: "Propiedad H",
         route: "propiedadh.index",
         icon: HiOutlineClipboardDocumentList,
     },

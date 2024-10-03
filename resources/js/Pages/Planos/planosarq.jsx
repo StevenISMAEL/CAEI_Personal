@@ -12,12 +12,10 @@ import ExportData from "@/Components/ExportData";
 import tabs from "./tabs";
 import DeleteModal from "@/Components/DeleteModal";
 import TableCustom from "@/Components/TableCustomDetails";
-import CardsCustom from "@/Components/CardCustom";
+import CardsCustom from "@/Components/CardCustomDetails";
 import { useNotify } from "@/Components/Toast";
-import React, { useEffect } from "react";
 
 const planosarq = ({ auth, Tramites, Planos, Usuarios }) => {
-console.log(Planos);
 
     const {
         data,
@@ -190,21 +188,16 @@ console.log(Planos);
         "Negado",
         "Aprobado",
     ]);
-    const [selectedTramiteId, setSelectedTramiteId] = useState(null);
 
     const handleTramiteChange = (id) => {
-        setSelectedTramiteId(id);
-    };
-  
-    useEffect(() => {
-    if (selectedTramiteId) {
-        const tramite = Tramites.find((t) => t.id_tramite === selectedTramiteId);
+        
+        const tramite = Tramites.find((t) => t.id_tramite === id);
         
         if (tramite) {
             const user = Usuarios.find((u) => u.id === tramite.id_usuario);
             const newData = {
                 estado_tramite: tramite.estado_tramite,
-                id_tramite: selectedTramiteId,
+                id_tramite: id,
                 id_usuario: tramite.id_usuario,
                 nombre_usuario: user ? user.name : "",
                 id_tipotramite: tramite.id_tipotramite,
@@ -215,12 +208,10 @@ console.log(Planos);
                 fecha_salida: tramite.fecha_salida,
             };
             setData(newData);
-            console.log("tramite",tramite);
-
         }
-    }
-}, [selectedTramiteId]);
-    
+
+    };
+  
   
 
     const inputstramite = [
@@ -276,30 +267,30 @@ console.log(Planos);
             ),
         },
         {
-            label: "Arquitecto Responsable",
-            id: "arquitecto_responsable",
-            type: "text",
-            name: "arquitecto_responsable",
-            value: data.arquitecto_responsable || "",
-            onChange: (e) => setData("arquitecto_responsable", e.target.value),
+            placeholder: "Arquitecto Revisor",
+            type: "select",
+            labelKey: "name",
+            valueKey: "id",
+            options: Usuarios,
+            onSelect: (id) => setData("id_usuario", id),
+
             inputError: (
-                <InputError
-                    message={errors.arquitecto_responsable}
-                    className="mt-2"
-                />
+                <InputError message={errors.id_usuario} className="mt-2" />
             ),
+            defaultValue: data.nombre_usuario, // Cambiado de nombre_usuario a id_usuario
         },
         {
-            label: "Fecha de salida",
-            id: "fecha_salida",
-            type: "date",
-            name: "fecha_salida",
-            value: data.fecha_salida || "",
-            onChange: (e) => setData("fecha_salida", e.target.value),
+            label: "Propietario",
+            id: "propietario",
+            type: "text",
+            name: "propietario",
+            value: data.propietario || "",
+            onChange: (e) => setData("propietario", e.target.value),
             inputError: (
-                <InputError message={errors.fecha_salida} className="mt-2" />
+                <InputError message={errors.propietario} className="mt-2" />
             ),
-            defaultValue: data.fecha_salida,
+
+            defaultValue: data.propietario,
         },
         {
             label: "Anteproyecto",
@@ -324,17 +315,16 @@ console.log(Planos);
             ),
         },
         {
-            label: "Propietario",
-            id: "propietario",
-            type: "text",
-            name: "propietario",
-            value: data.propietario || "",
-            onChange: (e) => setData("propietario", e.target.value),
+            label: "Fecha de salida",
+            id: "fecha_salida",
+            type: "date",
+            name: "fecha_salida",
+            value: data.fecha_salida || "",
+            onChange: (e) => setData("fecha_salida", e.target.value),
             inputError: (
-                <InputError message={errors.propietario} className="mt-2" />
+                <InputError message={errors.fecha_salida} className="mt-2" />
             ),
-
-            defaultValue: data.propietario,
+            defaultValue: data.fecha_salida,
         },
         {
             label: "Definitivo",
@@ -381,6 +371,20 @@ console.log(Planos);
             ),
         },
         {
+            label: "Arquitecto Responsable",
+            id: "arquitecto_responsable",
+            type: "text",
+            name: "arquitecto_responsable",
+            value: data.arquitecto_responsable || "",
+            onChange: (e) => setData("arquitecto_responsable", e.target.value),
+            inputError: (
+                <InputError
+                    message={errors.arquitecto_responsable}
+                    className="mt-2"
+                />
+            ),
+        },
+        {
             label: "Area contrucción",
             id: "area_construccion",
             type: "text",
@@ -408,38 +412,20 @@ console.log(Planos);
                 />
             ),
         },
-        {
-            placeholder: "Arquitecto Revisor",
-            type: "select",
-            labelKey: "name",
-            valueKey: "id",
-            options: Usuarios,
-            value: data.id_usuario,
-            onSelect: (id) => setData("id_usuario", id),
-            inputError: (
-                <InputError message={errors.id_usuario} className="mt-2" />
-            ),
-            defaultValue: data.nombre_usuario,
-        },
+       
     ];
 
     const theaders = [
         "Trámite",
-        "Arquitecto R",
-        // "Clave Catastral",
         "Propietario",
-        "Fecha de Ingreso",
+        "Área de construcción",
         "Estado",
-        // "Arquitecto a cargo",
     ];
     const searchColumns = [
         "tramite",
-        "nombre_usuario",
-        // "clave_catastral",
         "propietario",
-        "fecha_ingreso",
+        "area_construccion",
         "estado_tramite",
-        // "arquitecto_responsable",
     ];
     const theadersexsportar = [
         "Trámite",
@@ -577,6 +563,8 @@ console.log(Planos);
                     headers={theaders}
                     data={Planos}
                     searchColumns={searchColumns}
+                    columnasexportar = {columnasexportar}
+                    theadersexsportar = {theadersexsportar}
                     onDelete={openDeleteModal}
                     onEdit={openEditModal}
                     idKey="id_planosarq"

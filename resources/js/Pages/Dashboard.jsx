@@ -3,22 +3,32 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import Header from "@/Components/Header";
 import { Head } from "@inertiajs/react";
 import Box from "@/Layouts/Box";
-import Carrusel from "@/Components/Carrusel";
+import {TramitesEstadoChart, PieChart }from "@/Components/CustomChart"; // Asegúrate de que el import esté correcto
 
-export default function Dashboard({ auth }) {
+export default function Dashboard({ auth, tramitesestado,tramitesporcategoria }) {
+
     return (
         <AuthenticatedLayout
             user={auth.user}
-            header={<Header subtitle={"Inicio"} />}
+            header={<Header subtitle={"Dashboard"} />}
+            roles={auth.user.roles.map((role) => role.name)}
         >
-            <Head title="Inicio" />
-            <div className="pt-4">
-                <div className="max-w-5xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <img src="https://piedeplano.com/wp-content/uploads/2020/12/cimg0873.jpg?w=1024" alt="imagen" width="900" height="450" />
+            <Head title="Dashboard" />
+            
+            <Box key="box-3" className="pt-6">
+                {/* Flex container with min-height to ensure centering works well */}
+                <div className="flex flex-col md:flex-row w-full min-h-[500px] p-4"> 
+                    <div className="w-full md:w-1/2 flex justify-center items-center p-4">
+                    <PieChart data={tramitesporcategoria} />
+                    </div>
+
+                    <div className="w-full md:w-1/2 flex justify-center items-center p-4">
+                        <div className="w-full max-w-lg">
+                            <TramitesEstadoChart data={tramitesestado} />
+                        </div>
                     </div>
                 </div>
-            </div>
+            </Box>
         </AuthenticatedLayout>
     );
 }

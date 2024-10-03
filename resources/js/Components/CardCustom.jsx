@@ -10,7 +10,7 @@ import {
 import SecondaryButton from "@/Components/SecondaryButton";
 import { IoIosArrowForward, IoIosArrowBack } from "react-icons/io";
 import Checkbox from "@/Components/Checkbox";
-import Modal from "@/Components/Modal";
+import Modal from "@/Components/ModalTra";
 
 const CardsCustom = ({
     headers,
@@ -226,7 +226,7 @@ const CardsCustom = ({
                                     ))}
                                     <button
                                         onClick={() => handleViewDetails(item)}
-                                        className="mt-2 w-full bg-blue-500 text-white py-1 rounded-md hover:bg-blue-600"
+                                        className="mt-2 w-full bg-violet-500 text-white py-1 rounded-md hover:bg-blue-600"
                                     >
                                         Ver detalles
                                     </button>
@@ -246,7 +246,7 @@ const CardsCustom = ({
                             disabled={currentPage === 1}
                         >
                             <IoIosArrowBack />
-                            Prev
+                            Atras
                         </SecondaryButton>
                         <span>
                             Página {currentPage} de{" "}
@@ -260,7 +260,7 @@ const CardsCustom = ({
                                 filteredData.length
                             }
                         >
-                            Next
+                            Siguiente
                             <IoIosArrowForward />
                         </SecondaryButton>
                     </div>

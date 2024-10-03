@@ -10,11 +10,12 @@ use App\Http\Controllers\PropiedadHorizontalController;
 use App\Http\Controllers\AforosController;
 use App\Http\Controllers\UnificacionLController;
 use App\Http\Controllers\DocumentacionController;
+use App\Http\Controllers\NotificacionesController;
 
 use Inertia\Inertia;
 
 Route::prefix("administrar-tramites")
-    ->middleware(["auth", "verified", "role:admin|arquirevisor"])
+    ->middleware(["auth", "verified", "role:admin|secretaria"])
     ->group(function () {
         Route::resource("tramite", TramitesController::class)->except([
             "create",
@@ -43,7 +44,7 @@ Route::prefix("administrar-tramites")
     });
 
 Route::prefix("administrar-planosarq")
-    ->middleware(["auth", "verified", "role:admin"])
+    ->middleware(["auth", "verified", "role:admin|arquitectorevisor"])
     ->group(function () {
         Route::resource("planoarq", PlanoArqController::class)->except([
             "create",
@@ -67,7 +68,7 @@ Route::prefix("administrar-planosarq")
     });
 
 Route::prefix("administrar-tipotramites")
-    ->middleware(["auth", "verified", "role:admin"])
+    ->middleware(["auth", "verified", "role:admin|arquitectorevisor|secretaria"])
     ->group(function () {
         Route::resource("categoria", CategoriaController::class)->except([
             "create",
@@ -91,7 +92,7 @@ Route::prefix("administrar-tipotramites")
     });
 
 Route::prefix("administrar-fraccionamiento")
-    ->middleware(["auth", "verified", "role:admin"])
+    ->middleware(["auth", "verified", "role:admin|arquitectorevisor"])
     ->group(function () {
         Route::resource(
             "fraccionamiento",
@@ -102,7 +103,6 @@ Route::prefix("administrar-fraccionamiento")
             "destroyMultiple",
         ])->name("fraccionamiento.multiple.destroy");
 
-        // Ruta para listar anulaciones de contratos (index2)
         Route::get("/fraccionamientofecha", [
             FraccionamientoController::class,
             "index2",
@@ -115,7 +115,7 @@ Route::prefix("administrar-fraccionamiento")
     });
 
 Route::prefix("administrar-Trabajov")
-    ->middleware(["auth", "verified", "role:admin"])
+    ->middleware(["auth", "verified", "role:admin|arquitectorevisor"])
     ->group(function () {
         Route::resource("trabajosvar", TrabajosVariosController::class)->except(
             ["create", "show", "edit"]
@@ -137,7 +137,7 @@ Route::prefix("administrar-Trabajov")
     });
 
 Route::prefix("administrar-propiedadh")
-    ->middleware(["auth", "verified", "role:admin"])
+    ->middleware(["auth", "verified", "role:admin|arquitectorevisor"])
     ->group(function () {
         Route::resource(
             "propiedadh",
@@ -160,7 +160,7 @@ Route::prefix("administrar-propiedadh")
     });
 
 Route::prefix("administrar-aforos")
-    ->middleware(["auth", "verified", "role:admin"])
+    ->middleware(["auth", "verified", "role:admin|arquitectorevisor"])
     ->group(function () {
         Route::resource("aforos", AforosController::class)->except([
             "create",
@@ -183,7 +183,7 @@ Route::prefix("administrar-aforos")
     });
 
 Route::prefix("administrar-unificaciones")
-    ->middleware(["auth", "verified", "role:admin"])
+    ->middleware(["auth", "verified", "role:admin|arquitectorevisor"])
     ->group(function () {
         Route::resource(
             "unificacionlotes",
@@ -206,7 +206,7 @@ Route::prefix("administrar-unificaciones")
     });
 
 Route::prefix("administrar-documentacion")
-    ->middleware(["auth", "verified", "role:admin"])
+    ->middleware(["auth", "verified", "role:admin|arquitectorevisor|secretaria"])
     ->group(function () {
         Route::resource(
             "documentaciones",
@@ -223,3 +223,24 @@ Route::prefix("administrar-documentacion")
             "showWithFileName",
         ])->name("documentaciones.showWithFileName");
     });
+
+    
+Route::prefix("administrar-notificaciones")
+->middleware(["auth", "verified", "role:admin|arquitectorevisor|secretaria"])
+->group(function () {
+    Route::resource("notificaciones", NotificacionesController::class)->except([
+        "create",
+        "show",
+        "edit",
+    ]);
+    Route::delete("/notificaciones", [
+        TramitesController::class,
+        "destroyMultiple",
+    ])->name("notificaciones.multiple.destroy");
+
+    Route::post("/notificaciones/send-email", [
+        TramitesController::class,
+        "sendEmail",
+    ]);
+
+});

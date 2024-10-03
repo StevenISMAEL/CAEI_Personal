@@ -39,6 +39,6 @@ class categoria extends Model
       }
  
     public function tipotramites() {
-        return $this->hasMany(ConCanton::class, "id_categoria", "id_categoria");
+        return $this->hasMany(TipoTramite::class, "id_categoria", "id_categoria");
     }
 }

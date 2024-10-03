@@ -72,7 +72,6 @@ const Documentos = ({ auth, Documentacion, Tramites }) => {
 
         if (e.target.files[0]) {
             setData("archivo", e.target.files[0]);
-            console.log("Archivo seleccinado entre");
 
         }
     };
@@ -118,7 +117,7 @@ const Documentos = ({ auth, Documentacion, Tramites }) => {
             ),
         },
         {
-            label: "Tipo de documento",
+            label: "Nombre de documento",
             id: "tipo_documento",
             type: "text",
             name: "tipo_documento",

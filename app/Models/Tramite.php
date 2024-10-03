@@ -119,7 +119,11 @@ class Tramite extends Model {
     public static function getTramitesPorCategoria($categoriaId) {
         return self::with("tipostramites", "usuarios")
             ->whereHas("tipostramites", function ($query) use ($categoriaId) {
-                $query->where("id_categoria", $categoriaId);
+                $query
+                    ->where("id_categoria", $categoriaId)
+                    ->whereRaw("LOWER(nombre) != ?", [
+                        strtolower("Unificación de lotes"),
+                    ]); // Excluir "Unificación de lotes" sin importar mayúsculas/minúsculas
             })
             ->where("estado_tramite", "!=", "Aprobado") // Condición para excluir trámites aprobados
             ->get()
@@ -158,7 +162,9 @@ class Tramite extends Model {
         return self::with("tipostramites", "usuarios")
             ->where("estado_tramite", "!=", "Aprobado") // Excluir trámites aprobados
             ->whereHas("tipostramites", function ($query) {
-                $query->whereRaw('LOWER(REPLACE(nombre, "á", "a")) = ?', ['unificacion de lotes']);
+                $query->whereRaw('LOWER(REPLACE(nombre, "á", "a")) = ?', [
+                    "unificacion de lotes",
+                ]);
             })
             ->get()
             ->map(function ($tramite) {
@@ -176,19 +182,21 @@ class Tramite extends Model {
                     "fecha_entrega" => $tramite->fecha_entrega,
                     "reasignado" => $tramite->reasignado,
                     "fecha_reasignacion" => $tramite->fecha_reasignacion,
-                    "arquitecto_responsable" => $tramite->arquitecto_responsable,
+                    "arquitecto_responsable" =>
+                        $tramite->arquitecto_responsable,
                     "clave_catastral" => $tramite->clave_catastral,
                     "direccion" => $tramite->direccion,
                     "estado_tramite" => $tramite->estado_tramite,
                     "estado_ingreso" => $tramite->estado_ingreso,
                     "correo_electronico" => $tramite->correo_electronico,
                     "num_observaciones" => $tramite->num_observaciones,
-                    "nombre_tipotramite" => $tramite->tipostramites ? $tramite->tipostramites->nombre : null,
+                    "nombre_tipotramite" => $tramite->tipostramites
+                        ? $tramite->tipostramites->nombre
+                        : null,
                     "created_at" => $tramite->created_at,
                 ];
             });
     }
-    
 
     public function tipostramites() {
         return $this->belongsTo(

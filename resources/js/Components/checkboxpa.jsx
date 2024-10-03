@@ -2,7 +2,7 @@ import React from "react";
 
 const Checkbox = ({ id, name, label, checked, onChange }) => {
     return (
-        <div className="flex items-center mt-2 mb-0 ">
+        <div className="flex items-center mt-4 mb-0 ">
             <input
                 type="checkbox"
                 id={id}

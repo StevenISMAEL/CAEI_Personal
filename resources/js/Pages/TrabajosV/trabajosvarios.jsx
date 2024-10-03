@@ -12,7 +12,7 @@ import ExportData from "@/Components/ExportData";
 import tabs from "./tabs";
 import DeleteModal from "@/Components/DeleteModal";
 import TableCustom from "@/Components/TableCustomDetails";
-import CardsCustom from "@/Components/CardCustom";
+import CardsCustom from "@/Components/CardCustomDetails";
 import { useNotify } from "@/Components/Toast";
 
 const Trabajo = ({ auth, Tramites, Trabajosv, Usuarios }) => {
@@ -104,7 +104,6 @@ const Trabajo = ({ auth, Tramites, Trabajosv, Usuarios }) => {
             clave_catastral: trabajov.clave_catastral,
             arquitecto_responsable: trabajov.arquitecto_responsable,
             direccion: trabajov.direccion,
-
         });
         setShowEdit(true);
     };
@@ -121,7 +120,6 @@ const Trabajo = ({ auth, Tramites, Trabajosv, Usuarios }) => {
             onError: (error) => console.error(Object.values(error).join(", ")),
         });
     };
-
 
     const handleSubmitEdit = (e) => {
         e.preventDefault();
@@ -162,26 +160,6 @@ const Trabajo = ({ auth, Tramites, Trabajosv, Usuarios }) => {
         }
     };
 
-    
-    // const handleSubmitEmail = (e) => {
-    //     console.log("entrre");
-    //     e.preventDefault();
-    //     const detalles = {
-    //         tramite: data.tramite,
-    //         propietario: data.propietario,
-    //         estado: data.estado_tramite,
-    //         correo_electronico: data.correo_electronico,
-    //     };
-    //     console.log(detalles);
-
-    //     post("/administrar-tramites/tramite/send-email", detalles, {
-
-    //         preserveScroll: true,
-    //         onError: (error) => console.error(Object.values(error).join(", ")),
-    //     });
-    // };
-
-
     const transformForCombobox = (arrays) => {
         return arrays.map((array) => ({
             value: array,
@@ -194,35 +172,30 @@ const Trabajo = ({ auth, Tramites, Trabajosv, Usuarios }) => {
         "Negado",
         "Aprobado",
     ]);
-    const [selectedTramiteId, setSelectedTramiteId] = useState(null);
-
+   
+    
     const handleTramiteChange = (id) => {
-        setSelectedTramiteId(id);
-    };
-    
-    useEffect(() => {
-        if (selectedTramiteId) {
-            const tramite = Tramites.find((t) => t.id_tramite === selectedTramiteId);
-            if (tramite) {
-                const user = Usuarios.find((u) => u.id === tramite.id_usuario);
-                setData((prevData) => ({
-                    ...prevData,
-                    estado_tramite: tramite.estado_tramite,
-                    id_tramite: selectedTramiteId,
-                    id_usuario: tramite.id_usuario,
-                    nombre_usuario: user ? user.name : "",
-                    id_tipotramite: tramite.id_tipotramite,
-                    nombre_tipotramite: tramite.nombre_tipotramite,
-                    tramite: tramite.tramite,
-                    propietario: tramite.propietario,
-                    fecha_ingreso: tramite.fecha_ingreso,
-                    fecha_salida: tramite.fecha_salida,
-                }));
-            }
-            console.log(tramite);
+        
+        const tramite = Tramites.find((t) => t.id_tramite === id);
+        
+        if (tramite) {
+            const user = Usuarios.find((u) => u.id === tramite.id_usuario);
+            const newData = {
+                estado_tramite: tramite.estado_tramite,
+                id_tramite: id,
+                id_usuario: tramite.id_usuario,
+                nombre_usuario: user ? user.name : "",
+                id_tipotramite: tramite.id_tipotramite,
+                nombre_tipotramite: tramite.nombre_tipotramite,
+                tramite: tramite.tramite,
+                propietario: tramite.propietario,
+                fecha_ingreso: tramite.fecha_ingreso,
+                fecha_salida: tramite.fecha_salida,
+            };
+            setData(newData);
         }
-    }, [selectedTramiteId]);
-    
+
+    };
   
 
     const inputstramite = [
@@ -266,6 +239,32 @@ const Trabajo = ({ auth, Tramites, Trabajosv, Usuarios }) => {
             defaultValue: data.fecha_ingreso,
         },
         {
+            placeholder: "Arquitecto Revisor",
+            type: "select",
+            labelKey: "name",
+            valueKey: "id",
+            options: Usuarios,
+            onSelect: (id) => setData("id_usuario", id),
+
+            inputError: (
+                <InputError message={errors.id_usuario} className="mt-2" />
+            ),
+            defaultValue: data.nombre_usuario, // Cambiado de nombre_usuario a id_usuario
+        },
+        {
+            label: "Propietario",
+            id: "propietario",
+            type: "text",
+            name: "propietario",
+            value: data.propietario || "",
+            onChange: (e) => setData("propietario", e.target.value),
+            inputError: (
+                <InputError message={errors.propietario} className="mt-2" />
+            ),
+
+            defaultValue: data.propietario,
+        },
+        {
             label: "Arquitecto Responsable",
             id: "arquitecto_responsable",
             type: "text",
@@ -303,19 +302,6 @@ const Trabajo = ({ auth, Tramites, Trabajosv, Usuarios }) => {
             ),
         },
         {
-            label: "Propietario",
-            id: "propietario",
-            type: "text",
-            name: "propietario",
-            value: data.propietario || "",
-            onChange: (e) => setData("propietario", e.target.value),
-            inputError: (
-                <InputError message={errors.propietario} className="mt-2" />
-            ),
-
-            defaultValue: data.propietario,
-        },
-        {
             label: "Dirección",
             id: "direccion",
             type: "text",
@@ -342,20 +328,16 @@ const Trabajo = ({ auth, Tramites, Trabajosv, Usuarios }) => {
     const theaders = [
         "Trámite",
         "Arquitecto Resp",
-        // "Clave Catastral",
         "Propietario",
         "Fecha de Ingreso",
-        "Estado",
-        // "Arquitecto a cargo",
+        "Uso suelo",
     ];
     const searchColumns = [
         "tramite",
         "nombre_usuario",
-        // "clave_catastral",
         "propietario",
         "fecha_ingreso",
-        "estado_tramite",
-        // "arquitecto_responsable",
+        "uso_suelo",
     ];
     const theadersexsportar = [
         "Trámite",
@@ -384,7 +366,6 @@ const Trabajo = ({ auth, Tramites, Trabajosv, Usuarios }) => {
         "uso_suelo",
         "num_observaciones",
         "created_at",
-
     ];
 
     const handleCheckboxChange = (id) => {
@@ -420,77 +401,78 @@ const Trabajo = ({ auth, Tramites, Trabajosv, Usuarios }) => {
         >
             <Head title="Trabajos varios" />
             <Tab tabs={tabs}>
-            <Box>
-                <div className="flex flex-wrap items-center justify-center md:justify-between gap-2">
-                    <div className="w-full sm:w-auto flex flex-wrap justify-center gap-2">
-                        <AddButton onClick={openCreateModal} />
-                        <DeleteButton
-                            disabled={selectedTrabajov.length === 0}
-                            onClick={openDeleteModalForSelected}
+                <Box>
+                    <div className="flex flex-wrap items-center justify-center md:justify-between gap-2">
+                        <div className="w-full sm:w-auto flex flex-wrap justify-center gap-2">
+                            <AddButton onClick={openCreateModal} />
+                            <DeleteButton
+                                disabled={selectedTrabajov.length === 0}
+                                onClick={openDeleteModalForSelected}
+                            />
+                        </div>
+                        <ExportData
+                            data={Trabajosv}
+                            searchColumns={columnasexportar}
+                            headers={theadersexsportar}
+                            fileName="Trabajos Varios"
                         />
                     </div>
-                    <ExportData
+                </Box>
+                <ModalCreate
+                    showCreate={showCreate}
+                    closeModalCreate={closeModalCreate}
+                    title={"Añadir trabajo vario"}
+                    name={"Trabajo Vario"}
+                    inputs={inputstramite}
+                    processing={processing}
+                    handleSubmitAdd={handleSubmitAdd}
+                />
+                <DeleteModal
+                    showDelete={showDelete}
+                    closeDeleteModal={closeDeleteModal}
+                    title={"Borrar trabajos varios"}
+                    handleDelete={() => handleDelete(dataToDelete)}
+                    processing={processing}
+                />
+                <ModalEdit
+                    title="Editar trabajo vario"
+                    showEdit={showEdit}
+                    closeEditModal={closeEditModal}
+                    name={"Trabajo Vario"}
+                    inputs={inputstramite}
+                    processing={processing}
+                    handleSubmitEdit={handleSubmitEdit}
+                />
+                <Box className="mt-3 hidden md:block">
+                    <TableCustom
+                        headers={theaders}
                         data={Trabajosv}
-                        searchColumns={columnasexportar}
-                        headers={theadersexsportar}
-                        fileName="Trabajos Varios"
+                        searchColumns={searchColumns}
+                        columnasdetalles={columnasexportar}
+                        theadersdetalles={theadersexsportar}
+                        onDelete={openDeleteModal}
+                        onEdit={openEditModal}
+                        idKey="id_trabajov"
+                        onSelectChange={handleCheckboxChange}
+                        selectedItems={selectedTrabajov}
+                        onSelectAll={handleSelectAll}
                     />
-                </div>
-            </Box>
-            <ModalCreate
-                showCreate={showCreate}
-                closeModalCreate={closeModalCreate}
-                title={"Añadir trabajo vario"}
-                name={"Trabajo Vario"}
-                inputs={inputstramite}
-                processing={processing}
-                //   handleSubmitEmail= {handleSubmitEmail}
-                handleSubmitAdd={handleSubmitAdd}
-            />
-            <DeleteModal
-                showDelete={showDelete}
-                closeDeleteModal={closeDeleteModal}
-                title={"Borrar trabajos varios"}
-                handleDelete={() => handleDelete(dataToDelete)}
-                processing={processing}
-            />
-            <ModalEdit
-                title="Editar trabajo vario"
-                showEdit={showEdit}
-                closeEditModal={closeEditModal}
-                name={"Trabajo Vario"}
-                inputs={inputstramite}
-                processing={processing}
-                handleSubmitEdit={handleSubmitEdit}
-            />
-            <Box className="mt-3 hidden md:block">
-                <TableCustom
-                    headers={theaders}
-                    data={Trabajosv}
-                    searchColumns={searchColumns}
-                    columnasdetalles={columnasexportar}
-                    theadersdetalles={theadersexsportar}
-                    onDelete={openDeleteModal}
-                    onEdit={openEditModal}
-                    idKey="id_trabajov"
-                    onSelectChange={handleCheckboxChange}
-                    selectedItems={selectedTrabajov}
-                    onSelectAll={handleSelectAll}
-                />
-            </Box>
-            <Box className="mt-3  md:hidden">
-                <CardsCustom
-                    headers={theaders}
-                    data={Trabajosv}
-                    searchColumns={searchColumns}
-                    onDelete={openDeleteModal}
-                    onEdit={openEditModal}
-                    idKey="id_trabajov"
-                    onSelectChange={handleCheckboxChange}
-                    selectedItems={selectedTrabajov}
-                    onSelectAll={handleSelectAll}
-                />
-            </Box>
+                </Box>
+                <Box className="mt-3  md:hidden">
+                    <CardsCustom
+                        headers={theaders}
+                        data={Trabajosv}
+                        searchColumns={searchColumns}
+                        columnasexportar={columnasexportar}
+                        theadersexsportar={theadersexsportar}
+                        onDelete={openDeleteModal}
+                        onEdit={openEditModal}
+                        idKey="id_trabajov"
+                        onSelectChange={handleCheckboxChange}
+                        selectedItems={selectedTrabajov}
+                        onSelectAll={handleSelectAll}
+                    />
+                </Box>
             </Tab>
         </Authenticated>
     );

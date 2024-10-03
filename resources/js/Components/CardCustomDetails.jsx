@@ -4,32 +4,39 @@ import { RiArrowUpDownFill } from "react-icons/ri";
 import FloatInputText from "@/Components/FloatInputText";
 import { FaArrowDownShortWide, FaArrowUpShortWide } from "react-icons/fa6";
 import {
-    ViewCircleButton,
+    EditCircleButton,
     DeleteCircleButton,
 } from "@/Components/CustomButtons";
 import SecondaryButton from "@/Components/SecondaryButton";
 import { IoIosArrowForward, IoIosArrowBack } from "react-icons/io";
 import Checkbox from "@/Components/Checkbox";
-import Modal from "@/Components/Modal";
+import Modal from "@/Components/ModalTra";
 
 const CardsCustom = ({
     headers,
     data,
     searchColumns,
     onDelete,
+    columnasexportar,
+    theadersexsportar,
+    onEdit,
     idKey,
     onSelectChange,
     selectedItems,
     onSelectAll,
-    onViewPdf,
-
 }) => {
     const styles =
         "text-blue-600 shadow-sm focus:ring-blue-500 dark:focus:ring-blue-600";
     const [searchValue, setSearchValue] = useState("");
     const [filteredData, setFilteredData] = useState(data);
+    const [sortConfig, setSortConfig] = useState({
+        key: null,
+        direction: "asc",
+    });
     const [itemsPerPage, setItemsPerPage] = useState(5);
     const [currentPage, setCurrentPage] = useState(1);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [modalData, setModalData] = useState(null);
 
     useEffect(() => {
         setFilteredData(data);
@@ -53,8 +60,48 @@ const CardsCustom = ({
         setCurrentPage(1);
     };
 
- 
+    const handleSort = (columnKey) => {
+        let direction = "asc";
+        if (sortConfig.key === columnKey && sortConfig.direction === "asc") {
+            direction = "desc";
+        }
+        setSortConfig({ key: columnKey, direction });
+        const sortedData = [...filteredData].sort((a, b) => {
+            if (
+                columnKey === "roles" &&
+                Array.isArray(a[columnKey]) &&
+                Array.isArray(b[columnKey])
+            ) {
+                const rolesA = a[columnKey]
+                    .map((role) => role.role_name)
+                    .join(", ");
+                const rolesB = b[columnKey]
+                    .map((role) => role.role_name)
+                    .join(", ");
+                return direction === "asc"
+                    ? rolesA.localeCompare(rolesB)
+                    : rolesB.localeCompare(rolesA);
+            }
+            if (a[columnKey] < b[columnKey]) {
+                return direction === "asc" ? -1 : 1;
+            }
+            if (a[columnKey] > b[columnKey]) {
+                return direction === "asc" ? 1 : -1;
+            }
+            return 0;
+        });
+        setFilteredData(sortedData);
+    };
 
+    const renderSortIcon = (columnKey) => {
+        if (sortConfig.key !== columnKey) {
+            return <RiArrowUpDownFill />;
+        }
+        if (sortConfig.direction === "asc") {
+            return <FaArrowUpShortWide />;
+        }
+        return <FaArrowDownShortWide />;
+    };
 
     const handleItemsPerPageChange = (event) => {
         setItemsPerPage(parseInt(event.target.value, 10));
@@ -77,6 +124,17 @@ const CardsCustom = ({
     const endIndex = Math.min(startIndex + itemsPerPage, filteredData.length);
     const currentData = filteredData.slice(startIndex, endIndex);
 
+    const handleViewDetails = (item) => {
+        if (item) {
+            setModalData(item);
+            setIsModalOpen(true);
+        }
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setModalData(null);
+    };
 
     const renderFieldValue = (item, column) => {
         if (column === "roles") {
@@ -149,13 +207,9 @@ const CardsCustom = ({
                                             }
                                         />
                                         <div className="flex gap-2">
-                                        <ViewCircleButton
-                                                    onClick={() =>
-                                                        onViewPdf(item)
-                                                    }
-                                                    className="text-blue-500 hover:text-blue-700"
-                                                />
-                                            
+                                            <EditCircleButton
+                                                onClick={() => onEdit(item)}
+                                            />
                                             <DeleteCircleButton
                                                 onClick={() =>
                                                     onDelete(item[idKey])
@@ -172,7 +226,12 @@ const CardsCustom = ({
                                             {renderFieldValue(item, column)}
                                         </div>
                                     ))}
-                                   
+                                    <button
+                                        onClick={() => handleViewDetails(item)}
+                                        className="mt-2 w-full bg-violet-500 text-white py-1 rounded-md hover:bg-blue-600"
+                                    >
+                                        Ver detalles
+                                    </button>
                                 </div>
                             ))}
                         </div>
@@ -207,7 +266,31 @@ const CardsCustom = ({
                             <IoIosArrowForward />
                         </SecondaryButton>
                     </div>
-                
+                    {isModalOpen && modalData && (
+                        <Modal show={isModalOpen} onClose={closeModal}>
+                            <div className="p-6">
+                                <h2 className="text-2xl font-bold mb-3 dark:text-white">
+                                    Detalles
+                                </h2>
+                                {columnasexportar.map((column, idx) => (
+                                    <div
+                                        key={idx}
+                                        className="mb-2 dark:text-white"
+                                    >
+                                        <strong className="font-bold">
+                                            {theadersexsportar[idx]}:{" "}
+                                        </strong>
+                                        {renderFieldValue(modalData, column)}
+                                    </div>
+                                ))}
+                                <div className="mt-6 flex justify-end">
+                                    <SecondaryButton onClick={closeModal}>
+                                        Cerrar
+                                    </SecondaryButton>
+                                </div>
+                            </div>
+                        </Modal>
+                    )}
                 </>
             ) : (
                 <h2 className="flex items-center gap-2 text-lg font-bold text-gray-500 dark:text-gray-400">

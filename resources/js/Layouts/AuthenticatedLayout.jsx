@@ -22,6 +22,8 @@ import { HiMiniClipboardDocumentList } from "react-icons/hi2";
 import { FaPeopleGroup } from "react-icons/fa6";
 import { TbPuzzle2 } from "react-icons/tb";
 import { FaFileUpload } from "react-icons/fa";
+import { MdNotificationAdd } from "react-icons/md";
+
 const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
     const { env } = usePage().props;
     const { sessionActive } = useSessionChecker(env.SESSION_LIFETIME);
@@ -71,14 +73,14 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
     const currentUrl = window.location.pathname;
     const Menus = [
         {
-            title: "Inicio",
+            title: "Dashboard",
             route: "dashboard",
             icon: <RiDashboard2Fill />,
-            roles: ["admin"],
+            roles: ["admin", "arquitectorevisor", "secretaria"],
         },
         {
-            title: "Empleados",
-            route: "employees.index",
+            title: "Usuarios",
+            route: "usuarios.index",
             icon: <FaUsersGear />,
             roles: ["admin"],
         },
@@ -87,70 +89,71 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
             route: "documentaciones.index",
             subroute: "/administrar-documentacion/",
             icon: <FaFileUpload />,
-            roles: ["admin"],
+            roles: ["admin", "arquitectorevisor", "secretaria"],
+        },
+        {
+            title: "Notificaciones",
+            route: "notificaciones.index",
+            subroute: "/administrar-notificaciones/",
+            icon: <MdNotificationAdd />,
+            roles: ["admin", "arquitectorevisor", "secretaria"],
         },
         {
             title: "Categorías",
             route: "categoria.index",
             subroute: "/administrar-tipotramites/",
             icon: <BiSolidCategory />,
-            roles: ["admin"],
+            roles: ["admin", "arquitectorevisor", "secretaria"],
         },
         {
             title: "Trámites",
             route: "tramite.index",
             subroute: "/administrar-tramites/",
             icon: <VscFileSymlinkFile />,
-            roles: ["admin", "arquirevisor"],
+            roles: ["admin", "secretaria"],
         },
         {
             title: "Planos Arquitectónicos",
             route: "planoarq.index",
             subroute: "/administrar-planosarq/",
             icon: <FaFileContract />,
-            roles: ["admin"],
+            roles: ["admin", "arquitectorevisor"],
         },
         {
             title: "Fraccionamientos",
             route: "fraccionamiento.index",
             subroute: "/administrar-fraccionamiento/",
             icon: <TbMapStar />,
-            roles: ["admin"],
+            roles: ["admin", "arquitectorevisor"],
         },
         {
             title: "Trabajos Varios",
             route: "trabajosvar.index",
             subroute: "/administrar-Trabajov/",
             icon: <HiMiniClipboardDocumentList />,
-            roles: ["admin"],
+            roles: ["admin", "arquitectorevisor"],
         },
         {
             title: "Propiedad Horizontal",
             route: "propiedadh.index",
             subroute: "/administrar-propiedadh/",
             icon: <TbMapShare />,
-            roles: ["admin"],
+            roles: ["admin", "arquitectorevisor"],
         },
         {
             title: "Aforos",
             route: "aforos.index",
             subroute: "/administrar-aforos/",
             icon: <FaPeopleGroup />,
-            roles: ["admin"],
+            roles: ["admin", "arquitectorevisor"],
         },
         {
             title: "Unificación Lotes",
             route: "unificacionlotes.index",
             subroute: "/administrar-unificaciones/",
             icon: <TbPuzzle2 />,
-            roles: ["admin"],
+            roles: ["admin", "arquitectorevisor"],
         },
-        // {
-        //     title: "Perfil",
-        //     route:"profile.edit",
-        //     icon: <TbPuzzle2 />,
-        //     roles: ["admin"],
-        // },
     ];
 
     const tooltipStyle = {
@@ -175,7 +178,7 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
             />
             <div
                 className={` ${
-                    open ? "w-60" : "w-28 "
+                    open ? "w-80" : "w-28 "
                 } hidden sm:block min-h-screen bg-red-500 dark:bg-gray-800 border-e  shadow-md dark:shadow-gray-600 border-gray-100 dark:border-gray-700 relative duration-300`}
             >
                 <MdKeyboardArrowLeft
@@ -186,6 +189,7 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
                     href="/"
                     className={`flex items-center gap-x-4 py-3 px-4 h-16 ${!open && " justify-center"} cursor-pointer hover:bg-red-400 dark:hover:bg-gray-300 dark:hover:bg-opacity-5 rounded-sm group`}
                 >
+                  
                     {
                         <ApplicationLogo
                             className={`cursor-pointer duration-500 ${

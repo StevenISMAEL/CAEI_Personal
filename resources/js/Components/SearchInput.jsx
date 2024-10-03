@@ -17,7 +17,10 @@ const SearchDropdown = ({
     const dropdownRef = useRef(null);
     const inputRef = useRef(null);
     const optionsRefs = useRef([]);
-
+    useEffect(() => {
+        setSearch(defaultValue); // Actualiza el valor en el input cuando cambia el valor por defecto
+    }, [defaultValue]);
+    
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (
@@ -154,7 +157,7 @@ const SearchDropdown = ({
                                     onClick={() => handleOptionSelect(option)}
                                     className={`px-4 py-2 text-sm cursor-pointer ${
                                         index === focusedIndex
-                                            ? "bg-gray-300 dark:bg-gray-500 text-gray-800 dark:text-gray-600"
+                                            ? "bg-gray-300 dark:bg-gray-500 text-gray-800 dark:text-white"
                                             : "text-gray-700 dark:text-white"
                                     } hover:bg-gray-100 dark:hover:bg-gray-600`}
                                 >

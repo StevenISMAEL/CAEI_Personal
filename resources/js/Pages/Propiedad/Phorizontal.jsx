@@ -12,12 +12,10 @@ import ExportData from "@/Components/ExportData";
 import tabs from "./tabs";
 import DeleteModal from "@/Components/DeleteModal";
 import TableCustom from "@/Components/TableCustomDetails";
-import CardsCustom from "@/Components/CardCustom";
+import CardsCustom from "@/Components/CardCustomDetails";
 import { useNotify } from "@/Components/Toast";
-import React, { useEffect } from "react";
 
 const Plahorizontal = ({ auth, Tramites, PropiedadHo, Usuarios }) => {
-
     const {
         data,
         setData,
@@ -75,7 +73,6 @@ const Plahorizontal = ({ auth, Tramites, PropiedadHo, Usuarios }) => {
     };
 
     const openCreateModal = () => {
-        console.log("holaaa",data);
         setShowCreate(true);
     };
 
@@ -98,7 +95,9 @@ const Plahorizontal = ({ auth, Tramites, PropiedadHo, Usuarios }) => {
 
     const openEditModal = (propiedadhori) => {
         setEditData(propiedadhori);
-        const user = Usuarios.find((user) => user.id === propiedadhori.id_usuario);
+        const user = Usuarios.find(
+            (user) => user.id === propiedadhori.id_usuario,
+        );
         setData({
             id_usuario: propiedadhori.id_usuario,
             nombre_usuario: user ? user.name : "",
@@ -171,26 +170,6 @@ const Plahorizontal = ({ auth, Tramites, PropiedadHo, Usuarios }) => {
         }
     };
 
-    
-    const handleSubmitEmail = (e) => {
-        console.log("entrre");
-        e.preventDefault();
-        const detalles = {
-            tramite: data.tramite,
-            propietario: data.propietario,
-            estado: data.estado_tramite,
-            correo_electronico: data.correo_electronico,
-        };
-        console.log(detalles);
-
-        post("/administrar-tramites/tramite/send-email", detalles, {
-
-            preserveScroll: true,
-            onError: (error) => console.error(Object.values(error).join(", ")),
-        });
-    };
-
-
     const transformForCombobox = (arrays) => {
         return arrays.map((array) => ({
             value: array,
@@ -203,35 +182,29 @@ const Plahorizontal = ({ auth, Tramites, PropiedadHo, Usuarios }) => {
         "Negado",
         "Aprobado",
     ]);
-    const [selectedTramiteId, setSelectedTramiteId] = useState(null);
-
+    
     const handleTramiteChange = (id) => {
-        setSelectedTramiteId(id);
-    };
-    
-    useEffect(() => {
-        if (selectedTramiteId) {
-            const tramite = Tramites.find((t) => t.id_tramite === selectedTramiteId);
-            if (tramite) {
-                const user = Usuarios.find((u) => u.id === tramite.id_usuario);
-                setData((prevData) => ({
-                    ...prevData,
-                    estado_tramite: tramite.estado_tramite,
-                    id_tramite: selectedTramiteId,
-                    id_usuario: tramite.id_usuario,
-                    nombre_usuario: user ? user.name : "",
-                    id_tipotramite: tramite.id_tipotramite,
-                    nombre_tipotramite: tramite.nombre_tipotramite,
-                    tramite: tramite.tramite,
-                    propietario: tramite.propietario,
-                    fecha_ingreso: tramite.fecha_ingreso,
-                    fecha_salida: tramite.fecha_salida,
-                }));
-            }
-            console.log(tramite);
+        
+        const tramite = Tramites.find((t) => t.id_tramite === id);
+        
+        if (tramite) {
+            const user = Usuarios.find((u) => u.id === tramite.id_usuario);
+            const newData = {
+                estado_tramite: tramite.estado_tramite,
+                id_tramite: id,
+                id_usuario: tramite.id_usuario,
+                nombre_usuario: user ? user.name : "",
+                id_tipotramite: tramite.id_tipotramite,
+                nombre_tipotramite: tramite.nombre_tipotramite,
+                tramite: tramite.tramite,
+                propietario: tramite.propietario,
+                fecha_ingreso: tramite.fecha_ingreso,
+                fecha_salida: tramite.fecha_salida,
+            };
+            setData(newData);
         }
-    }, [selectedTramiteId]);
-    
+
+    };
   
 
     const inputstramite = [
@@ -286,6 +259,43 @@ const Plahorizontal = ({ auth, Tramites, PropiedadHo, Usuarios }) => {
             ),
         },
         {
+            placeholder: "Arquitecto Revisor",
+            type: "select",
+            labelKey: "name",
+            valueKey: "id",
+            options: Usuarios,
+            onSelect: (id) => setData("id_usuario", id),
+
+            inputError: (
+                <InputError message={errors.id_usuario} className="mt-2" />
+            ),
+            defaultValue: data.nombre_usuario,
+        },
+        {
+            label: "Propietario",
+            id: "propietario",
+            type: "text",
+            name: "propietario",
+            value: data.propietario || "",
+            onChange: (e) => setData("propietario", e.target.value),
+            inputError: (
+                <InputError message={errors.propietario} className="mt-2" />
+            ),
+
+            defaultValue: data.propietario,
+        },
+        {
+            label: "Modificatorio",
+            id: "modificatorio",
+            type: "checkbox",
+            name: "modificatorio",
+            checked: data.modificatorio || false,
+            onChange: (e) => setData("modificatorio", e.target.checked ? 1 : 0),
+            inputError: (
+                <InputError message={errors.modificatorio} className="mt-2" />
+            ),
+        },
+        {
             label: "Arquitecto Responsable",
             id: "arquitecto_responsable",
             type: "text",
@@ -312,17 +322,6 @@ const Plahorizontal = ({ auth, Tramites, PropiedadHo, Usuarios }) => {
             defaultValue: data.fecha_salida,
         },
         {
-            label: "Modificatorio",
-            id: "modificatorio",
-            type: "checkbox",
-            name: "modificatorio",
-            checked: data.modificatorio || false,
-            onChange: (e) => setData("modificatorio", e.target.checked ? 1 : 0),
-            inputError: (
-                <InputError message={errors.modificatorio} className="mt-2" />
-            ),
-        },
-        {
             label: "Clave Catastral",
             id: "clave_catastral",
             type: "text",
@@ -332,19 +331,6 @@ const Plahorizontal = ({ auth, Tramites, PropiedadHo, Usuarios }) => {
             inputError: (
                 <InputError message={errors.clave_catastral} className="mt-2" />
             ),
-        },
-        {
-            label: "Propietario",
-            id: "propietario",
-            type: "text",
-            name: "propietario",
-            value: data.propietario || "",
-            onChange: (e) => setData("propietario", e.target.value),
-            inputError: (
-                <InputError message={errors.propietario} className="mt-2" />
-            ),
-
-            defaultValue: data.propietario,
         },
         {
             label: "Dirección",
@@ -382,26 +368,19 @@ const Plahorizontal = ({ auth, Tramites, PropiedadHo, Usuarios }) => {
                 />
             ),
         },
-       
     ];
 
     const theaders = [
         "Trámite",
-        "Arquitecto R",
-        // "Clave Catastral",
         "Propietario",
         "Fecha de Ingreso",
-        "Estado",
-        // "Arquitecto a cargo",
+        "Uso de suelo",
     ];
     const searchColumns = [
         "tramite",
-        "nombre_usuario",
-        // "clave_catastral",
         "propietario",
         "fecha_ingreso",
-        "estado_tramite",
-        // "arquitecto_responsable",
+        "uso_suelo",
     ];
     const theadersexsportar = [
         "Trámite",
@@ -473,76 +452,78 @@ const Plahorizontal = ({ auth, Tramites, PropiedadHo, Usuarios }) => {
         >
             <Head title="Propiedad horizontal" />
             <Tab tabs={tabs}>
-            <Box>
-                <div className="flex flex-wrap items-center justify-center md:justify-between gap-2">
-                    <div className="w-full sm:w-auto flex flex-wrap justify-center gap-2">
-                        <AddButton onClick={openCreateModal} />
-                        <DeleteButton
-                            disabled={selectedprohorizontal.length === 0}
-                            onClick={openDeleteModalForSelected}
+                <Box>
+                    <div className="flex flex-wrap items-center justify-center md:justify-between gap-2">
+                        <div className="w-full sm:w-auto flex flex-wrap justify-center gap-2">
+                            <AddButton onClick={openCreateModal} />
+                            <DeleteButton
+                                disabled={selectedprohorizontal.length === 0}
+                                onClick={openDeleteModalForSelected}
+                            />
+                        </div>
+                        <ExportData
+                            data={PropiedadHo}
+                            searchColumns={columnasexportar}
+                            headers={theadersexsportar}
+                            fileName="Propiedad Horizontal"
                         />
                     </div>
-                    <ExportData
+                </Box>
+                <ModalCreate
+                    showCreate={showCreate}
+                    closeModalCreate={closeModalCreate}
+                    title={"Añadir Propiedad H"}
+                    name={"Propiedad Horizontal"}
+                    inputs={inputstramite}
+                    processing={processing}
+                    handleSubmitAdd={handleSubmitAdd}
+                />
+                <DeleteModal
+                    showDelete={showDelete}
+                    closeDeleteModal={closeDeleteModal}
+                    title={"Borrar Trámites"}
+                    handleDelete={() => handleDelete(dataToDelete)}
+                    processing={processing}
+                />
+                <ModalEdit
+                    title="Editar PA"
+                    showEdit={showEdit}
+                    closeEditModal={closeEditModal}
+                    name={"Propiedad Horizontal"}
+                    inputs={inputstramite}
+                    processing={processing}
+                    handleSubmitEdit={handleSubmitEdit}
+                />
+                <Box className="mt-3 hidden md:block">
+                    <TableCustom
+                        headers={theaders}
                         data={PropiedadHo}
-                        searchColumns={columnasexportar}
-                            headers={theadersexsportar}
-                        fileName="Propiedad Horizontal"
+                        searchColumns={searchColumns}
+                        columnasdetalles={columnasexportar}
+                        theadersdetalles={theadersexsportar}
+                        onDelete={openDeleteModal}
+                        onEdit={openEditModal}
+                        idKey="id_propiedadh"
+                        onSelectChange={handleCheckboxChange}
+                        selectedItems={selectedprohorizontal}
+                        onSelectAll={handleSelectAll}
                     />
-                </div>
-            </Box>
-            <ModalCreate
-                showCreate={showCreate}
-                closeModalCreate={closeModalCreate}
-                title={"Añadir Propiedad H"}
-                name={"Propiedad Horizontal"}
-                inputs={inputstramite}
-                processing={processing}
-                handleSubmitAdd={handleSubmitAdd}
-            />
-            <DeleteModal
-                showDelete={showDelete}
-                closeDeleteModal={closeDeleteModal}
-                title={"Borrar Trámites"}
-                handleDelete={() => handleDelete(dataToDelete)}
-                processing={processing}
-            />
-            <ModalEdit
-                title="Editar PA"
-                showEdit={showEdit}
-                closeEditModal={closeEditModal}
-                name={"Propiedad Horizontal"}
-                inputs={inputstramite}
-                processing={processing}
-                handleSubmitEdit={handleSubmitEdit}
-            />
-            <Box className="mt-3 hidden md:block">
-                <TableCustom
-                    headers={theaders}
-                    data={PropiedadHo}
-                    searchColumns={searchColumns}
-                    columnasdetalles={columnasexportar}
-                    theadersdetalles={theadersexsportar}
-                    onDelete={openDeleteModal}
-                    onEdit={openEditModal}
-                    idKey="id_propiedadh"
-                    onSelectChange={handleCheckboxChange}
-                    selectedItems={selectedprohorizontal}
-                    onSelectAll={handleSelectAll}
-                />
-            </Box>
-            <Box className="mt-3  md:hidden">
-                <CardsCustom
-                    headers={theaders}
-                    data={PropiedadHo}
-                    searchColumns={searchColumns}
-                    onDelete={openDeleteModal}
-                    onEdit={openEditModal}
-                    idKey="id_propiedadh"
-                    onSelectChange={handleCheckboxChange}
-                    selectedItems={selectedprohorizontal}
-                    onSelectAll={handleSelectAll}
-                />
-            </Box>
+                </Box>
+                <Box className="mt-3  md:hidden">
+                    <CardsCustom
+                        headers={theaders}
+                        theadersexsportar= {theadersexsportar}
+                        columnasexportar = {columnasexportar}
+                        data={PropiedadHo}
+                        searchColumns={searchColumns}
+                        onDelete={openDeleteModal}
+                        onEdit={openEditModal}
+                        idKey="id_propiedadh"
+                        onSelectChange={handleCheckboxChange}
+                        selectedItems={selectedprohorizontal}
+                        onSelectAll={handleSelectAll}
+                    />
+                </Box>
             </Tab>
         </Authenticated>
     );

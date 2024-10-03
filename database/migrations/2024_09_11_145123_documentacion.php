@@ -24,6 +24,20 @@ return new class extends Migration
             ->cascadeOnUpdate()
             ->cascadeOnDelete();
         }); 
+
+        Schema::create("notificaciones", function (Blueprint $table) {
+            $table->id("id_notificacion");
+            $table->unsignedBigInteger("id_tramite");
+            $table->date("fecha_envio");
+            $table->string("estado", 15); 
+
+            $table
+            ->foreign("id_tramite")
+            ->references("id_tramite")
+            ->on("tramites")
+            ->cascadeOnUpdate()
+            ->cascadeOnDelete();
+        }); 
     }
 
     /**
@@ -32,5 +46,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists("documentos");
+        Schema::dropIfExists("notificaciones");
+
     }
 };

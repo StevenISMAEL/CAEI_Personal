@@ -57,7 +57,10 @@ const Combobox = ({
             });
         }
     }, [focusedIndex]);
-
+    useEffect(() => {
+        setTempValue(value);
+    }, [value]);
+    
     const handleOptionSelect = (option) => {
         setTempValue(option.value);
         setIsOpen(false);

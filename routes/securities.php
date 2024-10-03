@@ -3,14 +3,17 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EmployeeController;
 
 Route::group(["middleware" => ["auth", "verified", "role:admin"]], function () {
-    Route::resource("employees", EmployeeController::class)->only([
+    Route::resource("usuarios", EmployeeController::class)->only([
         "index",
         "update",
         "destroy",
+        "store",
     ]);
 
-    Route::delete("/employees", [
+    Route::delete("/usuarios", [
         EmployeeController::class,
         "destroyMultiple",
-    ])->name("employees.destroyMultiple");
+    ])->name("usuarios.destroyMultiple");
+
+
 });

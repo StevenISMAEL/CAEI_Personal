@@ -14,7 +14,6 @@ import DeleteModal from "@/Components/DeleteModal";
 import TableCustom from "@/Components/TableCustomDetails";
 import CardsCustom from "@/Components/CardCustom";
 import { useNotify } from "@/Components/Toast";
-import React, { useEffect } from "react";
 
 const unificacionlote = ({ auth, Tramites, Unificacionl, Usuarios }) => {
     const {
@@ -167,23 +166,6 @@ const unificacionlote = ({ auth, Tramites, Unificacionl, Usuarios }) => {
         }
     };
 
-    // const handleSubmitEmail = (e) => {
-    //     console.log("entrre");
-    //     e.preventDefault();
-    //     const detalles = {
-    //         tramite: data.tramite,
-    //         propietario: data.propietario,
-    //         estado: data.estado_tramite,
-    //         correo_electronico: data.correo_electronico,
-    //     };
-    //     console.log(detalles);
-
-    //     post("/administrar-tramites/tramite/send-email", detalles, {
-
-    //         preserveScroll: true,
-    //         onError: (error) => console.error(Object.values(error).join(", ")),
-    //     });
-    // };
 
     const transformForCombobox = (arrays) => {
         return arrays.map((array) => ({
@@ -197,37 +179,30 @@ const unificacionlote = ({ auth, Tramites, Unificacionl, Usuarios }) => {
         "Negado",
         "Aprobado",
     ]);
-    const [selectedTramiteId, setSelectedTramiteId] = useState(null);
-
+   
     const handleTramiteChange = (id) => {
-        setSelectedTramiteId(id);
+        
+        const tramite = Tramites.find((t) => t.id_tramite === id);
+        
+        if (tramite) {
+            const user = Usuarios.find((u) => u.id === tramite.id_usuario);
+            const newData = {
+                estado_tramite: tramite.estado_tramite,
+                id_tramite: id,
+                id_usuario: tramite.id_usuario,
+                nombre_usuario: user ? user.name : "",
+                id_tipotramite: tramite.id_tipotramite,
+                nombre_tipotramite: tramite.nombre_tipotramite,
+                tramite: tramite.tramite,
+                propietario: tramite.propietario,
+                fecha_ingreso: tramite.fecha_ingreso,
+                fecha_salida: tramite.fecha_salida,
+            };
+            setData(newData);
+        }
 
     };
-
-    useEffect(() => {
-        if (selectedTramiteId) {
-            const tramite = Tramites.find(
-                (t) => t.id_tramite === selectedTramiteId,
-            );
-            if (tramite) {
-                const user = Usuarios.find((u) => u.id === tramite.id_usuario);
-                setData((prevData) => ({
-                    ...prevData,
-                    estado_tramite: tramite.estado_tramite,
-                    id_tramite: selectedTramiteId,
-                    id_usuario: tramite.id_usuario,
-                    nombre_usuario: user ? user.name : "",
-                    id_tipotramite: tramite.id_tipotramite,
-                    nombre_tipotramite: tramite.nombre_tipotramite,
-                    tramite: tramite.tramite,
-                    propietario: tramite.propietario,
-                    fecha_ingreso: tramite.fecha_ingreso,
-                    fecha_salida: tramite.fecha_salida,
-                }));
-            }
-            console.log(tramite);
-        }
-    }, [selectedTramiteId]);
+  
 
     const inputstramite = [
         {
@@ -270,6 +245,32 @@ const unificacionlote = ({ auth, Tramites, Unificacionl, Usuarios }) => {
             defaultValue: data.fecha_ingreso,
         },
         {
+            placeholder: "Arquitecto Revisor",
+            type: "select",
+            labelKey: "name",
+            valueKey: "id",
+            options: Usuarios,
+            value: data.id_usuario,
+            onSelect: (id) => setData("id_usuario", id),
+            inputError: (
+                <InputError message={errors.id_usuario} className="mt-2" />
+            ),
+            defaultValue: data.nombre_usuario,
+        },
+        {
+            label: "Propietario",
+            id: "propietario",
+            type: "text",
+            name: "propietario",
+            value: data.propietario || "",
+            onChange: (e) => setData("propietario", e.target.value),
+            inputError: (
+                <InputError message={errors.propietario} className="mt-2" />
+            ),
+
+            defaultValue: data.propietario,
+        },
+        {
             label: "Arquitecto Responsable",
             id: "arquitecto_responsable",
             type: "text",
@@ -307,19 +308,6 @@ const unificacionlote = ({ auth, Tramites, Unificacionl, Usuarios }) => {
             ),
         },
         {
-            label: "Propietario",
-            id: "propietario",
-            type: "text",
-            name: "propietario",
-            value: data.propietario || "",
-            onChange: (e) => setData("propietario", e.target.value),
-            inputError: (
-                <InputError message={errors.propietario} className="mt-2" />
-            ),
-
-            defaultValue: data.propietario,
-        },
-        {
             label: "Dirección",
             id: "direccion",
             type: "text",
@@ -346,20 +334,16 @@ const unificacionlote = ({ auth, Tramites, Unificacionl, Usuarios }) => {
     const theaders = [
         "Trámite",
         "Arquitecto R",
-        // "Clave Catastral",
         "Propietario",
         "Fecha de Ingreso",
-        "Estado",
-        // "Arquitecto a cargo",
+        "Area aprobada",
     ];
     const searchColumns = [
         "tramite",
         "nombre_usuario",
-        // "clave_catastral",
         "propietario",
         "fecha_ingreso",
-        "estado_tramite",
-        // "arquitecto_responsable",
+        "area_aprobada",
     ];
     const theadersexsportar = [
         "Trámite",
@@ -374,7 +358,6 @@ const unificacionlote = ({ auth, Tramites, Unificacionl, Usuarios }) => {
         "Area aprobada",
         "# observaciones",
         "Fecha creación",
-
     ];
     const columnasexportar = [
         "tramite",
@@ -389,7 +372,6 @@ const unificacionlote = ({ auth, Tramites, Unificacionl, Usuarios }) => {
         "area_aprobada",
         "num_observaciones",
         "created_at",
-
     ];
 
     const handleCheckboxChange = (id) => {
@@ -451,7 +433,6 @@ const unificacionlote = ({ auth, Tramites, Unificacionl, Usuarios }) => {
                     name={"Unificación de lotes"}
                     inputs={inputstramite}
                     processing={processing}
-                    // handleSubmitEmail= {handleSubmitEmail}
                     handleSubmitAdd={handleSubmitAdd}
                 />
                 <DeleteModal
@@ -490,6 +471,8 @@ const unificacionlote = ({ auth, Tramites, Unificacionl, Usuarios }) => {
                         headers={theaders}
                         data={Unificacionl}
                         searchColumns={searchColumns}
+                        columnasexportar={columnasexportar}
+                        theadersexsportar={theadersexsportar}
                         onDelete={openDeleteModal}
                         onEdit={openEditModal}
                         idKey="id_unificacion"

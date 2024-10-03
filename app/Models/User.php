@@ -71,6 +71,8 @@ class User extends Authenticatable implements MustVerifyEmail, Auditable {
                 return [
                     "user_id" => $user->id,
                     "user_name" => $user->name,
+                    "email" => $user->email,
+                    "name" => $user->name,
                     "roles" => $user->roles->map(function ($role) {
                         return [
                             "role_id" => $role->id,

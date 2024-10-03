@@ -12,9 +12,8 @@ import ExportData from "@/Components/ExportData";
 import tabs from "./tabs";
 import DeleteModal from "@/Components/DeleteModal";
 import TableCustom from "@/Components/TableCustomDetails";
-import CardsCustom from "@/Components/CardCustom";
+import CardsCustom from "@/Components/CardCustomDetails";
 import { useNotify } from "@/Components/Toast";
-import React, { useEffect } from "react";
 
 const Afoross = ({ auth, Tramites, Aforos, Usuarios }) => {
     const {
@@ -185,33 +184,30 @@ const Afoross = ({ auth, Tramites, Aforos, Usuarios }) => {
         "Negado",
         "Aprobado",
     ]);
-    const [selectedTramiteId, setSelectedTramiteId] = useState(null);
-
-    const handleTramiteChange = (id) => {
-        setSelectedTramiteId(id);
-    };
     
-    useEffect(() => {
-        if (selectedTramiteId) {
-            const tramite = Tramites.find((t) => t.id_tramite === selectedTramiteId);
-            if (tramite) {
-                const user = Usuarios.find((u) => u.id === tramite.id_usuario);
-                setData((prevData) => ({
-                    ...prevData,
-                    estado_tramite: tramite.estado_tramite,
-                    id_tramite: selectedTramiteId,
-                    id_usuario: tramite.id_usuario,
-                    nombre_usuario: user ? user.name : "",
-                    id_tipotramite: tramite.id_tipotramite,
-                    nombre_tipotramite: tramite.nombre_tipotramite,
-                    tramite: tramite.tramite,
-                    propietario: tramite.propietario,
-                    fecha_ingreso: tramite.fecha_ingreso,
-                    fecha_salida: tramite.fecha_salida,
-                }));
-            }
+    const handleTramiteChange = (id) => {
+        
+        const tramite = Tramites.find((t) => t.id_tramite === id);
+        
+        if (tramite) {
+            const user = Usuarios.find((u) => u.id === tramite.id_usuario);
+            const newData = {
+                estado_tramite: tramite.estado_tramite,
+                id_tramite: id,
+                id_usuario: tramite.id_usuario,
+                nombre_usuario: user ? user.name : "",
+                id_tipotramite: tramite.id_tipotramite,
+                nombre_tipotramite: tramite.nombre_tipotramite,
+                tramite: tramite.tramite,
+                propietario: tramite.propietario,
+                fecha_ingreso: tramite.fecha_ingreso,
+                fecha_salida: tramite.fecha_salida,
+            };
+            setData(newData);
         }
-    }, [selectedTramiteId]);
+
+    };
+  
     
   
 
@@ -269,6 +265,19 @@ const Afoross = ({ auth, Tramites, Aforos, Usuarios }) => {
             defaultValue: data.fecha_ingreso,
         },
         {
+            label: "Propietario",
+            id: "propietario",
+            type: "text",
+            name: "propietario",
+            value: data.propietario || "",
+            onChange: (e) => setData("propietario", e.target.value),
+            inputError: (
+                <InputError message={errors.propietario} className="mt-2" />
+            ),
+
+            defaultValue: data.propietario,
+        },
+        {
             label: "Arquitecto Responsable",
             id: "arquitecto_responsable",
             type: "text",
@@ -304,19 +313,6 @@ const Afoross = ({ auth, Tramites, Aforos, Usuarios }) => {
             inputError: (
                 <InputError message={errors.clave_catastral} className="mt-2" />
             ),
-        },
-        {
-            label: "Propietario",
-            id: "propietario",
-            type: "text",
-            name: "propietario",
-            value: data.propietario || "",
-            onChange: (e) => setData("propietario", e.target.value),
-            inputError: (
-                <InputError message={errors.propietario} className="mt-2" />
-            ),
-
-            defaultValue: data.propietario,
         },
         {
             label: "Dirección",
@@ -404,14 +400,12 @@ const Afoross = ({ auth, Tramites, Aforos, Usuarios }) => {
         "Aforo ",
         "Propietario",
         "Fecha de Ingreso",
-        "Estado",
     ];
     const searchColumns = [
         "tramite",
         "aforo_personas",
         "propietario",
         "fecha_ingreso",
-        "estado_tramite",
     ];
     const theadersexsportar = [
         "Trámite",
@@ -507,7 +501,6 @@ const Afoross = ({ auth, Tramites, Aforos, Usuarios }) => {
                 name={"Aforo"}
                 inputs={inputstramite}
                 processing={processing}
-                // handleSubmitEmail= {handleSubmitEmail}
                 handleSubmitAdd={handleSubmitAdd}
             />
             <DeleteModal
@@ -546,6 +539,8 @@ const Afoross = ({ auth, Tramites, Aforos, Usuarios }) => {
                     headers={theaders}
                     data={Aforos}
                     searchColumns={searchColumns}
+                    columnasexportar = {columnasexportar}
+                    theadersexsportar = {theadersexsportar}
                     onDelete={openDeleteModal}
                     onEdit={openEditModal}
                     idKey="id_aforo"

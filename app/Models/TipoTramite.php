@@ -8,9 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class TipoTramite extends Model {
     use HasFactory;
-    //use \OwenIt\Auditing\Auditable;
-
-    //protected $auditStrict = true;
 
     protected $table = "tipos_tramites";
     protected $primaryKey = "id_tipotramite";
@@ -18,14 +15,6 @@ class TipoTramite extends Model {
     protected $keyType = "string";
     protected $fillable = ["id_tipotramite", "id_categoria", "nombre"];
     public $timestamps = false;
-
-    public function categoria() {
-        return $this->belongsTo(
-            categoria::class,
-            "id_categoria",
-            "id_categoria"
-        );
-    }
 
     // Generar id_categoria único con formato específico
     protected static function booted() {

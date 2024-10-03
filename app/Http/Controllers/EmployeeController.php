@@ -6,6 +6,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Spatie\Permission\Models\Role;
+use Illuminate\Validation\Rules;
+use Illuminate\Support\Facades\Hash;
 
 class EmployeeController extends Controller {
     public function index() {
@@ -14,7 +16,37 @@ class EmployeeController extends Controller {
             "roles" => Role::all(),
         ]);
     }
-
+    public function store(Request $request) {
+        $request->validate([
+            "name" => "required|string|max:255",
+            "email" => "required|string|email|max:255|unique:" . User::class,
+            "username" => [
+                "required",
+                "string",
+                "min:5",
+                "max:50",
+                "unique:" . User::class,
+                "regex:/^[a-zA-Z0-9_-]+$/",
+            ],
+            "password" => ["required", "confirmed", Rules\Password::defaults()],
+            "role_id" => "nullable|array",
+            "role_id.*" => "integer|exists:roles,id",
+        ]);
+    
+        $user = User::create([
+            "name" => $request->name,
+            "email" => $request->email,
+            "username" => $request->username,
+            "password" => Hash::make($request->password),
+        ]);
+    
+        if ($request->role_id) {
+            $user->assignRole($request->role_id);
+        }
+    
+        return to_route("usuarios.index");
+    }
+    
     public function update(Request $request, string $userId) {
         $request->validate([
             "role_id" => "nullable|array",
@@ -28,12 +60,12 @@ class EmployeeController extends Controller {
             ->toArray();
 
         $user->auditRoleChange($newRoles);
-        return to_route("employees.index");
+        return to_route("usuarios.index");
     }
 
     public function destroy(string $userId) {
         User::findOrFail($userId)->delete();
-        return to_route("employees.index");
+        return to_route("usuarios.index");
     }
 
     public function destroyMultiple(Request $request) {
@@ -45,6 +77,6 @@ class EmployeeController extends Controller {
             $user->delete();
         }
 
-        return to_route("employees.index");
+        return to_route("usuarios.index");
     }
 }

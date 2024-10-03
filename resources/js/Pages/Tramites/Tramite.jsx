@@ -12,10 +12,11 @@ import ExportData from "@/Components/ExportData";
 import tabs from "./tabs";
 import DeleteModal from "@/Components/DeleteModal";
 import TableCustom from "@/Components/TableCustomDetails";
-import CardsCustom from "@/Components/CardCustom";
+import CardsCustom from "@/Components/CardCustomDetails";
 import { useNotify } from "@/Components/Toast";
 
 const Tramite = ({ auth, Tramites, TiposTramite, Usuarios, Categorias }) => {
+    
     const {
         data,
         setData,
@@ -71,7 +72,10 @@ const Tramite = ({ auth, Tramites, TiposTramite, Usuarios, Categorias }) => {
     const openCreateModal = () => {
         setData("estado_ingreso", "");
         setData("id_categoria", "");
+        setSelectedEstado("");
+        setSelectedIngreso("");
         setShowCreate(true);
+        reset();
     };
 
     const closeDeleteModal = () => {
@@ -107,7 +111,7 @@ const Tramite = ({ auth, Tramites, TiposTramite, Usuarios, Categorias }) => {
               )
             : null;
 
-            console.log(categoria);
+        console.log(categoria);
         setData({
             id_tramite: tramite.id_tramite,
             id_usuario: tramite.id_usuario,
@@ -208,7 +212,6 @@ const Tramite = ({ auth, Tramites, TiposTramite, Usuarios, Categorias }) => {
         );
         setFilteredTypes(filteredtypes);
         setData("id_tipotramite", "");
-
     };
     const transformForCombobox = (arrays) => {
         return arrays.map((array) => ({
@@ -275,7 +278,7 @@ const Tramite = ({ auth, Tramites, TiposTramite, Usuarios, Categorias }) => {
             labelKey: "nombre",
             valueKey: "id_tipotramite",
             options: filteredTypes,
-            value: data.id_tipotramite||"",
+            value: data.id_tipotramite || "",
             onSelect: (id) => setData("id_tipotramite", id),
             inputError: (
                 <InputError message={errors.id_tipotramite} className="mt-2" />
@@ -419,14 +422,12 @@ const Tramite = ({ auth, Tramites, TiposTramite, Usuarios, Categorias }) => {
         "Trámite",
         "Tipo de Trámite",
         "Propietario",
-        "Fecha de Ingreso",
         "Estado",
     ];
     const searchColumns = [
         "tramite",
         "nombre_tipotramite",
         "propietario",
-        "fecha_ingreso",
         "estado_tramite",
     ];
     const theadersexsportar = [
@@ -452,7 +453,6 @@ const Tramite = ({ auth, Tramites, TiposTramite, Usuarios, Categorias }) => {
         "fecha_salida",
         "num_observaciones",
         "created_at",
-
     ];
 
     const handleCheckboxChange = (id) => {
@@ -554,6 +554,8 @@ const Tramite = ({ auth, Tramites, TiposTramite, Usuarios, Categorias }) => {
                         headers={theaders}
                         data={Tramites}
                         searchColumns={searchColumns}
+                        columnasexportar={columnasexportar}
+                        theadersexsportar={theadersexsportar}
                         onDelete={openDeleteModal}
                         onEdit={openEditModal}
                         idKey="id_tramite"

@@ -11,7 +11,6 @@ use App\Http\Controllers\PlanoArqController;
 
 
 use Laravel\Fortify\Http\Controllers\TwoFactorAuthenticatedSessionController;
-use App\Models\Audit;
 use App\Services\DashboardService;
 use Laravel\Fortify\Http\Controllers\TwoFactorAuthenticationController;
 use Laravel\Fortify\Http\Controllers\ConfirmedTwoFactorAuthenticationController;
@@ -28,13 +27,13 @@ Route::get("/", function () {
 });
 
 Route::get("/dashboard", [DashboardController::class, "index"])
-    ->middleware(["auth", "verified", "role:admin|recepcionista|arquirevisor"])
+    ->middleware(["auth", "verified", "role:admin|secretaria|arquitectorevisor"])
     ->name("dashboard");
 
 Route::middleware([
     "auth",
     "verified",
-    "role:admin|vendedor|tecnico|auditor",
+    "role:admin|secretaria|arquitectorevisor",
 ])->group(function () {
     Route::get("/profile", [ProfileController::class, "edit"])->name(
         "profile.edit"
@@ -157,7 +156,6 @@ Route::group(
 );
 
 require __DIR__ . "/auth.php";
-require __DIR__ . "/audit.php";
 require __DIR__ . "/administrar-tramites.php";
 require __DIR__ . "/securities.php";
 require __DIR__ . "/security_questions.php";
