@@ -4,11 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class UnificacionL extends Model
+
+class UnificacionL extends Model  implements Auditable 
 {
     use HasFactory;
-
+    use \OwenIt\Auditing\Auditable;
+    protected $auditStrict = true;
     
     protected $table = "unificacion_lotes";
     protected $primaryKey = "id_unificacion";

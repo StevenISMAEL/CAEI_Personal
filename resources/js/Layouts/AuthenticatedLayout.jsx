@@ -17,6 +17,7 @@ import { Tooltip } from "react-tooltip";
 import { useNotify } from "@/Components/Toast";
 import { BiSolidCategory } from "react-icons/bi";
 import { VscFileSymlinkFile } from "react-icons/vsc";
+import { AiOutlineAudit } from "react-icons/ai";
 import { TbMapStar } from "react-icons/tb";
 import { HiMiniClipboardDocumentList } from "react-icons/hi2";
 import { FaPeopleGroup } from "react-icons/fa6";
@@ -153,6 +154,12 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
             subroute: "/administrar-unificaciones/",
             icon: <TbPuzzle2 />,
             roles: ["admin", "arquitectorevisor"],
+        },
+        {
+            title: "Auditoria",
+            route: "audit.index",
+            icon: <AiOutlineAudit />,
+            roles: ["admin"],
         },
     ];
 

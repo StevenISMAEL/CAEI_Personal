@@ -18,7 +18,6 @@ const ModalCreate = ({
     nombre2,
     processing,
     handleSubmitAdd,
-    handleSubmitEmail,
 }) => {
     return (
         <Modal show={showCreate} onClose={closeModalCreate}>
@@ -98,13 +97,7 @@ const ModalCreate = ({
                         Cancelar
                     </SecondaryButton>
                     <div className="mt-3 md:mt-0 flex flex-col md:flex-row gap-3  md:ml-4 ">
-                        <ThirdButton
-                            className="ms-3"
-                            disabled={processing}
-                            onClick={handleSubmitEmail}
-                        >
-                            Enviar Correo
-                        </ThirdButton>
+                       
                         <PrimaryButton disabled={processing}>
                             Guardar
                         </PrimaryButton>

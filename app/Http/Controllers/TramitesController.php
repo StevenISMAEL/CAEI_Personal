@@ -13,6 +13,8 @@ use App\Mail\TramiteUpdateNotification; // Asegúrate de que la clase de notific
 use App\Models\categoria;
 use App\Models\Notificaciones;
 use Exception;
+use Illuminate\Support\Facades\Log;
+
 
 class TramitesController extends Controller {
     public function index() {
@@ -107,6 +109,7 @@ class TramitesController extends Controller {
                 "propietario" => "required|string",
                 "tramite" => "required|string",
                 "correo_electronico" => "required|email",
+                "id_tramite" => "required|integer",
             ]);
 
             $detalles = [
@@ -116,6 +119,7 @@ class TramitesController extends Controller {
                 "correo_electronico" => $request->correo_electronico,
             ];
 
+
             Mail::to($request->correo_electronico)->send(
                 new TramiteUpdateNotification($detalles)
             );
@@ -124,8 +128,6 @@ class TramitesController extends Controller {
             "id_tramite" => $request->id_tramite, 
             "fecha_envio" => now(),
             "estado" => $request->estado_tramite,
-            "propietario" => $request->propietario,
-            "correo_electronico" => $request->correo_electronico,
         ]);
             return redirect()
                 ->back()
@@ -134,6 +136,7 @@ class TramitesController extends Controller {
                     "type" => "success", // o 'error' dependiendo del caso
                 ]);
         } catch (Exception $e) {
+
             // Devuelve un mensaje de error
             return redirect()
                 ->back()

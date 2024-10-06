@@ -32,8 +32,7 @@ class EmployeeController extends Controller {
             "role_id" => "nullable|array",
             "role_id.*" => "integer|exists:roles,id",
         ]);
-    
-        $user = User::create([
+        $user = User::factory()->create([
             "name" => $request->name,
             "email" => $request->email,
             "username" => $request->username,

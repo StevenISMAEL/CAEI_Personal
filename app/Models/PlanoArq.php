@@ -4,9 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class PlanoArq extends Model {
+
+class PlanoArq extends Model   implements Auditable {
     use HasFactory;
+    use \OwenIt\Auditing\Auditable;
+    protected $auditStrict = true;
 
     protected $table = "planos_arquitectonicos";
     protected $primaryKey = "id_planosarq";

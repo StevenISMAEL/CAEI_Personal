@@ -11,6 +11,7 @@ use App\Http\Controllers\AforosController;
 use App\Http\Controllers\UnificacionLController;
 use App\Http\Controllers\DocumentacionController;
 use App\Http\Controllers\NotificacionesController;
+use App\Http\Controllers\AuditController;
 
 use Inertia\Inertia;
 
@@ -234,13 +235,13 @@ Route::prefix("administrar-notificaciones")
         "edit",
     ]);
     Route::delete("/notificaciones", [
-        TramitesController::class,
+        NotificacionesController::class,
         "destroyMultiple",
     ])->name("notificaciones.multiple.destroy");
-
-    Route::post("/notificaciones/send-email", [
-        TramitesController::class,
-        "sendEmail",
-    ]);
+ 
 
 });
+
+Route::get("/audit", [AuditController::class, "index"])
+    ->name("audit.index")
+    ->middleware(["auth", "verified", "role:admin"]);

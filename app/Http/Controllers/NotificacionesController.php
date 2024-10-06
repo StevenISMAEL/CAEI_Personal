@@ -44,13 +44,18 @@ class NotificacionesController extends Controller {
             // Si el correo fue enviado correctamente, crea la notificación
             Notificaciones::create($validatedData);
     
-            return to_route("notificaciones.index")->with([
-                "message" => "Notificación enviada y guardada con éxito.",
-                "type" => "success",
+            return redirect()
+            ->back()
+            ->with([
+                "message" => "Correo enviado con éxito.",
+                "type" => "success", // o 'error' dependiendo del caso
             ]);
         } catch (\Exception $e) {
-            return to_route("notificaciones.index")->with([
-                "message" => "Hubo un error al enviar la notificación.",
+            return redirect()
+            ->back()
+            ->with([
+                "message" =>
+                    "Hubo un error al enviar el correo. Por favor, inténtelo de nuevo más tarde.",
                 "type" => "error",
             ]);
         }

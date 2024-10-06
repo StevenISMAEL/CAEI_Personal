@@ -111,7 +111,6 @@ const Tramite = ({ auth, Tramites, TiposTramite, Usuarios, Categorias }) => {
               )
             : null;
 
-        console.log(categoria);
         setData({
             id_tramite: tramite.id_tramite,
             id_usuario: tramite.id_usuario,
@@ -195,10 +194,12 @@ const Tramite = ({ auth, Tramites, TiposTramite, Usuarios, Categorias }) => {
         e.preventDefault();
         const detalles = {
             tramite: data.tramite,
+            id_tramite: data.id_tramite,
             propietario: data.propietario,
             estado: data.estado_tramite,
             correo_electronico: data.correo_electronico,
         };
+        
         post("/administrar-tramites/tramite/send-email", detalles, {
             preserveScroll: true,
             onError: (error) => console.error(Object.values(error).join(", ")),

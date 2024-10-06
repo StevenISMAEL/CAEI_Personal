@@ -11,7 +11,7 @@ body *:not(html):not(style):not(br):not(tr):not(code) {
 
 body {
     -webkit-text-size-adjust: none;
-    background-color: #f3f3ff; /* Violet-200 */
+    background-color: #d3d1d1; /* Violet-200 */
     color: #718096;
     height: 100%;
     line-height: 1.4;
@@ -235,11 +235,11 @@ img {
 
 .button-blue,
 .button-primary {
-    background-color: #48bb78;
-    border-bottom: 8px solid #48bb78;
-    border-left: 18px solid #48bb78;
-    border-right: 18px solid #48bb78;
-    border-top: 8px solid #48bb78;
+    background-color: #f51e1b ;
+    border-bottom: 8px solid #f51e1b ;
+    border-left: 18px solid #f51e1b ;
+    border-right: 18px solid #f51e1b ;
+    border-top: 8px solid #f51e1b ;
 }
 
 .button-green,

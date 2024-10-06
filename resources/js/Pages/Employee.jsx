@@ -78,7 +78,7 @@ const Employee = ({ auth, roles, employees }) => {
             preserveScroll: true,
             onSuccess: () => {
                 closeEditModal();
-                notify("success", "Empleado actualizado.");
+                notify("success", "Usuario actualizado.");
             },
             onError: (error) => console.error(error.message),
         });
@@ -92,7 +92,7 @@ const Employee = ({ auth, roles, employees }) => {
                 onSuccess: () => {
                     setSelectedEmployees([]);
                     closeDeleteModal();
-                    notify("success", "Empleados eliminados.");
+                    notify("success", "Usuarios eliminados.");
                 },
                 onError: (error) => console.error(error.message),
             });
@@ -101,7 +101,7 @@ const Employee = ({ auth, roles, employees }) => {
                 preserveScroll: true,
                 onSuccess: () => {
                     closeDeleteModal();
-                    notify("success", "Empleado eliminado.");
+                    notify("success", "Usuario eliminado.");
                 },
                 onError: (error) => console.error(error),
             });
@@ -146,7 +146,7 @@ const Employee = ({ auth, roles, employees }) => {
 
     const handleSubmitAdd = (e) => {
         e.preventDefault();
-        post(route("empleados.store"), {
+        post(route("usuarios.store"), {
             preserveScroll: true,
             onSuccess: () => {
                 closeAddModal();
@@ -181,7 +181,7 @@ const Employee = ({ auth, roles, employees }) => {
                 </div>
             </Box>
             <ModalEdit
-                title="Editar Empleado"
+                title="Editar Usuario"
                 showEdit={showEdit}
                 closeEditModal={closeEditModal}
                 processing={processing}
@@ -204,7 +204,7 @@ const Employee = ({ auth, roles, employees }) => {
             <DeleteModal
                 showDelete={showDelete}
                 closeDeleteModal={closeDeleteModal}
-                title={"Borrar Empleado"}
+                title={"Borrar Usuario"}
                 handleDelete={() => handleDelete(dataToDelete)}
                 processing={processing}
             />

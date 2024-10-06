@@ -4,11 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class PropiedadHorizontal extends Model
+
+class PropiedadHorizontal extends Model  implements Auditable 
 {
     use HasFactory;
-
+    use \OwenIt\Auditing\Auditable;
+    protected $auditStrict = true;
     
     protected $table = "propiedad_horizontal";
     protected $primaryKey = "id_propiedadh";

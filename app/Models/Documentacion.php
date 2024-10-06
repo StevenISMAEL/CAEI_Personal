@@ -4,11 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class Documentacion extends Model
+class Documentacion extends Model  implements Auditable 
 {
     use HasFactory;
 
+    use \OwenIt\Auditing\Auditable;
+    protected $auditStrict = true;
     
     protected $table = "documentos";
     protected $primaryKey = "id_documento";

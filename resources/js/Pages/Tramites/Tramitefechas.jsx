@@ -108,7 +108,7 @@ const Tramites = ({ auth, Tramites }) => {
             notify("error", "No se pudo filtrar la información.");
         }
     };
-    
+ 
 
     const resetFilters = () => {
         setFilters({ fechaDesde: "", fechaHasta: "", estado_tramite: "" });

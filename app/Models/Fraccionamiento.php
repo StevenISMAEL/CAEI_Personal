@@ -4,9 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Log;
-class Fraccionamiento extends Model {
+use OwenIt\Auditing\Contracts\Auditable;
+
+
+class Fraccionamiento extends Model  implements Auditable  {
     use HasFactory;
+
+    use \OwenIt\Auditing\Auditable;
+    protected $auditStrict = true;
 
     protected $table = "fraccionamientos";
     protected $primaryKey = "id_fraccionamiento";
