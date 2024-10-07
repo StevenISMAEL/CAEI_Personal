@@ -203,6 +203,9 @@ return [
     "attributes" => [
         "login" => "email o usuario",
         "email" => "correo electrónico",
+        "name" => "nombre",
+        "username" => "nombre de usuario",
+        "password" => "contraseña",
         "id_categoria" => "categoría",
         "id_tipotramite" => "tipo de trámite",
         "nombre" => "nombre",
