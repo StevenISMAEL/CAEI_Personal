@@ -44,6 +44,7 @@ const fraccionamientosu = ({ auth, Tramites, Fraccionamientos, Usuarios }) => {
         arquitecto_responsable: "",
         id_tramite: "",
         correo_electronico: "",
+        num_observaciones: "",
         ids: [],
     });
 
@@ -364,6 +365,7 @@ const fraccionamientosu = ({ auth, Tramites, Fraccionamientos, Usuarios }) => {
         "Dirección",
         "Uso suelo",
         "Area aprobada",
+        "# observaciones",
     ];
     const columnasexportar = [
         "tramite",
@@ -377,6 +379,7 @@ const fraccionamientosu = ({ auth, Tramites, Fraccionamientos, Usuarios }) => {
         "direccion",
         "uso_suelo",
         "area_aprobada",
+        "num_observaciones",
     ];
 
     const handleCheckboxChange = (id) => {

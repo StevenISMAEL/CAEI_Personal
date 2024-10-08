@@ -22,6 +22,7 @@ class PlanoArq extends Model   implements Auditable {
         "definitivo",
         "modificatorio",
         "ampliatorio",
+        "actualizacion",
         "uso_suelo",
         "area_construccion",
         "area_construccion2",
@@ -54,6 +55,7 @@ class PlanoArq extends Model   implements Auditable {
                     "nombre_usuario" => $plano->tramite->usuarios->name,
                     "created_at" => $plano->created_at,
                     "num_observaciones" => $plano->tramite->num_observaciones,
+                    "actualizacion" => $plano->actualizacion,
 
 
                 ];
@@ -92,6 +94,7 @@ class PlanoArq extends Model   implements Auditable {
                 "definitivo" => $plano->definitivo,
                 "modificatorio" => $plano->modificatorio,
                 "ampliatorio" => $plano->ampliatorio,
+                "actualizacion" => $plano->actualizacion,
                 "uso_suelo" => $plano->uso_suelo,
                 "area_construccion" => $plano->area_construccion,
                 "area_construccion2" => $plano->area_construccion2,

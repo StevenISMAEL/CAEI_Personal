@@ -52,6 +52,7 @@ const Tramites = ({ auth, Tramites }) => {
             entregado: tramite.entregado,
             fecha_entrega: tramite.fecha_entrega,
             correo_electronico: tramite.correo_electronico,
+            num_observaciones: tramite.num_observaciones,
     }));
 
     const headers = ["Tramite", "Propietario", "Estado de ingreso"];

@@ -20,6 +20,7 @@ class PlanoArqRequest extends FormRequest
             'definitivo' => $this->booleanValue('definitivo'),
             'modificatorio' => $this->booleanValue('modificatorio'),
             'ampliatorio' => $this->booleanValue('ampliatorio'),
+            'actualizacion' => $this->booleanValue('actualizacion'),
         ]);
     }
     private function booleanValue($field)
@@ -44,6 +45,7 @@ class PlanoArqRequest extends FormRequest
                     'definitivo' => 'required|boolean',
                     'modificatorio' => 'required|boolean',
                     'ampliatorio' => 'required|boolean',
+                    'actualizacion' => 'required|boolean',
                     'uso_suelo' => 'required|string|max:20',
                     'area_construccion' => 'required|numeric|min:0',
                     'area_construccion2' => 'nullable|numeric|min:0',
@@ -56,6 +58,7 @@ class PlanoArqRequest extends FormRequest
                     'definitivo' => 'sometimes|required|boolean',
                     'modificatorio' => 'sometimes|required|boolean',
                     'ampliatorio' => 'sometimes|required|boolean',
+                    'actualizacion' => 'sometimes|required|boolean',
                     'uso_suelo' => 'sometimes|required|string|max:20',
                     'area_construccion' => 'sometimes|required|numeric|min:0',
                     'area_construccion2' => 'sometimes|nullable|numeric|min:0',

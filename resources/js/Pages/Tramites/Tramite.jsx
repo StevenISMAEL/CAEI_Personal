@@ -47,6 +47,7 @@ const Tramite = ({ auth, Tramites, TiposTramite, Usuarios, Categorias }) => {
         correo_electronico: "",
         nombre_categoria: "",
         id_categoria: "",
+        num_observaciones: "",
         ids: [],
     });
 

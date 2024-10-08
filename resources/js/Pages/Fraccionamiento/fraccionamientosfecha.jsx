@@ -45,6 +45,7 @@ const Fraccionamientos = ({ auth, fraccionamientos }) => {
         direccion: fraccionamiento.direccion,
         estado_tramite: fraccionamiento.estado_tramite,
         id_usuario: fraccionamiento.id_usuario,
+        num_observaciones: fraccionamiento.num_observaciones,
         nombre_usuario: fraccionamiento.nombre_usuario,
     }));
 
@@ -62,6 +63,7 @@ const Fraccionamientos = ({ auth, fraccionamientos }) => {
         "Dirección",
         "Uso suelo",
         "Area aprobada",
+        "# observaciones",
     ];
     const columnasexportar = [
         "tramite",
@@ -75,6 +77,8 @@ const Fraccionamientos = ({ auth, fraccionamientos }) => {
         "direccion",
         "uso_suelo",
         "area_aprobada",
+        "num_observaciones",
+
     ];
 
     const openFilterModal = () => setShowFilter(true);

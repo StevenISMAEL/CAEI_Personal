@@ -18,6 +18,7 @@ return new class extends Migration
             $table->boolean("definitivo");
             $table->boolean("modificatorio");
             $table->boolean("ampliatorio");
+            $table->boolean("actualizacion");
             $table->string("uso_suelo", 20);
             $table->decimal("area_construccion", total: 8, places: 2);
             $table->decimal("area_construccion2", total: 8, places: 2)->nullable();
