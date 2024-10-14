@@ -42,6 +42,7 @@ const planosarq = ({ auth, Tramites, Planos, Usuarios }) => {
         definitivo: "",
         modificatorio: "",
         ampliatorio: "",
+        actualizacion: "",
         uso_suelo: "",
         area_construccion: "",
         area_construccion2: "",
@@ -117,6 +118,7 @@ const planosarq = ({ auth, Tramites, Planos, Usuarios }) => {
             arquitecto_responsable: planoarqui.arquitecto_responsable,
             clave_catastral: planoarqui.clave_catastral,
             direccion: planoarqui.direccion,
+            actualizacion: planoarqui.actualizacion,
 
         });
         setShowEdit(true);
@@ -399,6 +401,17 @@ const planosarq = ({ auth, Tramites, Planos, Usuarios }) => {
             ),
         },
         {
+            label: "Actulización",
+            id: "actualizacion",
+            type: "checkbox",
+            name: "actualizacion",
+            checked: data.actualizacion || false,
+            onChange: (e) => setData("actualizacion", e.target.checked ? 1 : 0),
+            inputError: (
+                <InputError message={errors.actualizacion} className="mt-2" />
+            ),
+        },
+        {
             label: "Area construcción (opcional)",
             id: "area_construccion",
             type: "text",
@@ -436,6 +449,7 @@ const planosarq = ({ auth, Tramites, Planos, Usuarios }) => {
         "Definitivo",
         "Modificatorio",
         "Ampliatorio",
+        "Actualización",  
         "Fecha de Ingreso",
         "Fecha de Salida",
         "Estado",
@@ -456,6 +470,7 @@ const planosarq = ({ auth, Tramites, Planos, Usuarios }) => {
         "definitivo",
         "modificatorio",
         "ampliatorio",
+        "actualizacion",
         "fecha_ingreso",
         "fecha_salida",
         "estado_tramite",
