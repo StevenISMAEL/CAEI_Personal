@@ -20,6 +20,15 @@
     ```sh
     npm install
     npm run dev
+
+4. En caso de error al hacer la migración ejecutar
+    ```sh
+    BORRAR LA BASE DE DATOS Y EJECUTAR 
+      php artisan config:clear
+    php artisan migrate:fresh
+    php artisan db:seed
+
+   
     
 ## Usuarios del Sistema
 
