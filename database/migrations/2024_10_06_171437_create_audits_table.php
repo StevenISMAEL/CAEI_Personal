@@ -17,26 +17,24 @@ class CreateAuditsTable extends Migration {
         );
         $table = config("audit.drivers.database.table", "audits");
 
-        Schema::connection($connection)->create($table, function (
-            Blueprint $table
-        ) {
-            $morphPrefix = config("audit.user.morph_prefix", "user");
-
+        Schema::create("audits", function (Blueprint $table) {
             $table->bigIncrements("id");
-            $table->string($morphPrefix . "_type")->nullable();
-            $table->unsignedBigInteger($morphPrefix . "_id")->nullable();
+            $table->string("auditable_type");
+            $table->string("auditable_id"); // Configurado como string para manejar claves primarias de tipo string
             $table->string("event");
-            $table->uuidMorphs("auditable");
             $table->text("old_values")->nullable();
             $table->text("new_values")->nullable();
             $table->text("url")->nullable();
             $table->ipAddress("ip_address")->nullable();
             $table->string("user_agent", 1023)->nullable();
             $table->string("tags")->nullable();
+            $table->unsignedBigInteger("user_id")->nullable(); // Asegúrate de que esta columna esté incluida
+            $table->string("user_type")->nullable(); // Opcional, si estás utilizando user_type
             $table->timestamps();
 
-            $table->index([$morphPrefix . "_id", $morphPrefix . "_type"]);
+            $table->index(["auditable_id", "auditable_type"]);
         });
+
     }
 
     /**
