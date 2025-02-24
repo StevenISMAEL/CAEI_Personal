@@ -21,6 +21,7 @@ class Documentacion extends Model  implements Auditable
         "id_tramite",
         "tipo_documento",
         "archivo",
+        "observacion",
 
     ];
     public $timestamps = true;
@@ -37,6 +38,7 @@ class Documentacion extends Model  implements Auditable
                     "archivo" => $documentos->archivo,
                     "tipo_documento" => $documentos->tipo_documento,
                     "id_documento" => $documentos->id_documento,
+                    "observacion" => $documentos->observacion,
                 ];
             });
     }

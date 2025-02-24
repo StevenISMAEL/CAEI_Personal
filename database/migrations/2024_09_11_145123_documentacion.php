@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id("id_documento");
             $table->unsignedBigInteger("id_tramite");
             $table->string("tipo_documento", 50);
+            $table->text("observacion");
             $table->string("archivo", 300);
             $table->timestamps();
             $table

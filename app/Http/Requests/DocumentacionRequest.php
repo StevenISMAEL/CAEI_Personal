@@ -24,6 +24,7 @@ class DocumentacionRequest extends FormRequest {
                     "id_tramite" =>
                         "required|integer|exists:tramites,id_tramite",
                     "tipo_documento" => "required|string|max:50",
+                    "observacion" => "nullable|string",
                     "archivo" => "required|file",
                 ];
 

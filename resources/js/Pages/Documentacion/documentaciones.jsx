@@ -27,12 +27,15 @@ const Documentos = ({ auth, Documentacion, Tramites }) => {
         id_tramite: "",
         tipo_documento: "",
         archivo: "",
+        observacion: "",
         ids: [],
     });
 
     const [showCreate, setShowCreate] = useState(false);
     const [showDelete, setShowDelete] = useState(false);
     const [dataToDelete, setDataToDelete] = useState(null);
+    const [selectTipodocumentacion, setSelectTipodocumentacion] = useState("");
+
     const [selectedDocumentacion, setSelectedDocumentacion] = useState([]);
     const notify = useNotify();
 
@@ -42,7 +45,11 @@ const Documentos = ({ auth, Documentacion, Tramites }) => {
         reset();
     };
 
-    const openCreateModal = () => setShowCreate(true);
+    const openCreateModal = () =>{
+        setData("tipo_documento", "");
+        setSelectTipodocumentacion("");
+        setShowCreate(true);
+    };
 
     const closeDeleteModal = () => {
         setShowDelete(false);
@@ -54,6 +61,22 @@ const Documentos = ({ auth, Documentacion, Tramites }) => {
         setDataToDelete(id);
     };
 
+    const handleChangetipodocumentacion = (value) => {
+        setSelectTipodocumentacion(value); // Actualiza el estado
+        setData("tipo_documento", value);
+    };
+  
+    const transformForCombobox = (arrays) => {
+        return arrays.map((array) => ({
+            value: array,
+            label: `${array}`,
+        }));
+    };
+    const comboboxTipo = transformForCombobox([
+        "Planos arquitectónicos",
+        "CD formato AutoCAD",
+        "Otros",
+    ]);
 
     const handleSubmitAdd = (e) => {
         e.preventDefault();
@@ -69,10 +92,8 @@ const Documentos = ({ auth, Documentacion, Tramites }) => {
     };
 
     const handleFileChange = (e) => {
-
         if (e.target.files[0]) {
             setData("archivo", e.target.files[0]);
-
         }
     };
 
@@ -102,8 +123,6 @@ const Documentos = ({ auth, Documentacion, Tramites }) => {
         }
     };
 
-
-
     const inputs = [
         {
             placeholder: "Trámite",
@@ -117,14 +136,26 @@ const Documentos = ({ auth, Documentacion, Tramites }) => {
             ),
         },
         {
-            label: "Nombre de documento",
             id: "tipo_documento",
-            type: "text",
-            name: "tipo_documento",
-            value: data.tipo_documento,
-            onChange: (e) => setData("tipo_documento", e.target.value),
+            type: "combobox",
+            label: "Tipo de documento",
+            options: comboboxTipo,
+            value: selectTipodocumentacion,
+            onChange: handleChangetipodocumentacion,
             inputError: (
                 <InputError message={errors.tipo_documento} className="mt-2" />
+            ),
+            defaultValue: data.tipo_documento,
+        },
+        {
+            label: "Observación",
+            id: "observacion",
+            type: "text",
+            name: "observacion",
+            value: data.observacion,
+            onChange: (e) => setData("observacion", e.target.value),
+            inputError: (
+                <InputError message={errors.observacion} className="mt-2" />
             ),
         },
         {
@@ -168,11 +199,13 @@ const Documentos = ({ auth, Documentacion, Tramites }) => {
     };
 
     const handleViewPdf = (item) => {
-
-        const url = route('documentaciones.showWithFileName', [item.id_documento, item.archivo]);
+        const url = route("documentaciones.showWithFileName", [
+            item.id_documento,
+            item.archivo,
+        ]);
         const fileName = item.archivo;
-        
-        const newTab = window.open(url, '_blank');
+
+        const newTab = window.open(url, "_blank");
         newTab.onload = () => {
             newTab.document.title = fileName;
         };
@@ -185,60 +218,58 @@ const Documentos = ({ auth, Documentacion, Tramites }) => {
         >
             <Head title="Documentación" />
             {/* <Tab tabs={tabs}> */}
-                <Box>
-                    <div className="flex flex-wrap items-center justify-center md:justify-between gap-2">
-                        <div className="w-full sm:w-auto flex flex-wrap justify-center gap-2">
-                            <AddButton onClick={openCreateModal} />
-                            <DeleteButton
-                                disabled={selectedDocumentacion.length === 0}
-                                onClick={openDeleteModalForSelected}
-                            />
-                        </div>
-                        
-                    </div>
-                </Box>
-                <ModalCreate
-                    showCreate={showCreate}
-                    closeModalCreate={closeModalCreate}
-                    title={"Añadir Documentación"}
-                    inputs={inputs}
-                    processing={processing}
-                    handleSubmitAdd={handleSubmitAdd}
-                />
-                <DeleteModal
-                    showDelete={showDelete}
-                    closeDeleteModal={closeDeleteModal}
-                    title={"Borrar Documentación"}
-                    handleDelete={() => handleDelete(dataToDelete)}
-                    processing={processing}
-                />
-                <Box className="mt-3 hidden md:block">
-                    <TableCustom
-                        headers={theaders}
-                        data={Documentacion}
-                        searchColumns={searchColumns}
-                        onDelete={openDeleteModal}
-                        idKey="id_documento"
-                        onSelectChange={handleCheckboxChange}
-                        selectedItems={selectedDocumentacion}
-                        onSelectAll={handleSelectAll}
-                        onViewPdf={handleViewPdf}
+            <Box>
+                <div className="flex flex-wrap items-center justify-center md:justify-between gap-2">
+                    <div className="w-full sm:w-auto flex flex-wrap justify-center gap-2">
+                        <AddButton onClick={openCreateModal} />
+                        <DeleteButton
+                            disabled={selectedDocumentacion.length === 0}
+                            onClick={openDeleteModalForSelected}
                         />
-                </Box>
-                <Box className="mt-3 md:hidden">
-                    <CardsCustom
-                        headers={theaders}
-                        data={Documentacion}
-                        searchColumns={searchColumns}
-                        onDelete={openDeleteModal}
-                        idKey="id_documento"
-                        onSelectChange={handleCheckboxChange}
-                        selectedItems={selectedDocumentacion}
-                        onSelectAll={handleSelectAll}
-                        onViewPdf={handleViewPdf}
-
-                    />
-                </Box>
+                    </div>
+                </div>
+            </Box>
+            <ModalCreate
+                showCreate={showCreate}
+                closeModalCreate={closeModalCreate}
+                title={"Añadir Documentación"}
+                inputs={inputs}
+                processing={processing}
+                handleSubmitAdd={handleSubmitAdd}
+            />
+            <DeleteModal
+                showDelete={showDelete}
+                closeDeleteModal={closeDeleteModal}
+                title={"Borrar Documentación"}
+                handleDelete={() => handleDelete(dataToDelete)}
+                processing={processing}
+            />
+            <Box className="mt-3 hidden md:block">
+                <TableCustom
+                    headers={theaders}
+                    data={Documentacion}
+                    searchColumns={searchColumns}
+                    onDelete={openDeleteModal}
+                    idKey="id_documento"
+                    onSelectChange={handleCheckboxChange}
+                    selectedItems={selectedDocumentacion}
+                    onSelectAll={handleSelectAll}
+                    onViewPdf={handleViewPdf}
+                />
+            </Box>
+            <Box className="mt-3 md:hidden">
+                <CardsCustom
+                    headers={theaders}
+                    data={Documentacion}
+                    searchColumns={searchColumns}
+                    onDelete={openDeleteModal}
+                    idKey="id_documento"
+                    onSelectChange={handleCheckboxChange}
+                    selectedItems={selectedDocumentacion}
+                    onSelectAll={handleSelectAll}
+                    onViewPdf={handleViewPdf}
+                />
+            </Box>
             {/* </Tab> */}
         </Authenticated>
     );
