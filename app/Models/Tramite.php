@@ -165,9 +165,8 @@ class Tramite extends Model  implements Auditable  {
         return self::with("tipostramites", "usuarios")
             ->where("estado_tramite", "!=", "Aprobado") // Excluir trámites aprobados
             ->whereHas("tipostramites", function ($query) {
-                $query->whereRaw('LOWER(REPLACE(nombre, "á", "a")) = ?', [
-                    "unificacion de lotes",
-                ]);
+                $query->whereRaw("LOWER(REPLACE(nombre, 'á', 'a')) = ?", ['unificacion de lotes']);
+
             })
             ->get()
             ->map(function ($tramite) {
