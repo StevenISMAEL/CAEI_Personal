@@ -11,6 +11,9 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
+//Este archivo gestiona autenticación de usuarios: registro, inicio de sesión, verificación de correo y recuperación de contraseña.
+
+/* rutas para los usuarios no autentificados */
 Route::middleware("guest")->group(function () {
     Route::get("register", [RegisteredUserController::class, "create"])->name(
         "register"
@@ -46,6 +49,7 @@ Route::middleware("guest")->group(function () {
     ])->name("password.store");
 });
 
+/* rutas para los usuarios autentificados */
 Route::middleware("auth")->group(function () {
     Route::get("verify-email", EmailVerificationPromptController::class)->name(
         "verification.notice"

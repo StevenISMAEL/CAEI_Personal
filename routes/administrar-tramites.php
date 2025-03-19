@@ -15,6 +15,7 @@ use App\Http\Controllers\AuditController;
 
 use Inertia\Inertia;
 
+//define la administracion de Gestionar trámites, planos, aforos, etc.
 Route::prefix("administrar-tramites")
     ->middleware(["auth", "verified", "role:admin|secretaria"])
     ->group(function () {
@@ -158,7 +159,12 @@ Route::prefix("administrar-propiedadh")
             PropiedadHorizontalController::class,
             "obtenerDatos",
         ])->name("propiedadh.datos");
-    });
+});
+
+
+
+
+
 
 Route::prefix("administrar-aforos")
     ->middleware(["auth", "verified", "role:admin|arquitectorevisor"])

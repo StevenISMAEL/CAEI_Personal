@@ -22,18 +22,22 @@ const Tramites = ({ auth, Tramites }) => {
         [],
     );
     const [showFilter, setShowFilter] = useState(false);
+
     const [filters, setFilters] = useRemember(
         { fechaDesde: "", fechaHasta: "", estado_tramite: "" }, 
-        "Tramites-filters",
+        "Tramites-filters", //nombre por el cual inertia reconoce para navegar
     );
+
+    //use state no se guarda, useRemember se guarda en sesion
     useEffect(() => {
         setFormattedTramites(Tramites);
     }, [Tramites]);
 
 
 
+    //prepara los datos para exportar. Al usar .map lo que realiza es la selección de los datos importantes, es decir sin el nombre de la columna. "id_tramite: '1' lo que regresa es solo "1"; 
     const exportData = formattedTramites.map((tramite) => ({
-        id_tramite: tramite.id_tramite,
+            id_tramite: tramite.id_tramite, //clave primaria
             id_usuario: tramite.id_usuario,
             nombre_usuario:tramite.nombre_usuario,
             id_tipotramite: tramite.id_tipotramite,
@@ -55,8 +59,11 @@ const Tramites = ({ auth, Tramites }) => {
             num_observaciones: tramite.num_observaciones,
     }));
 
+    //labels de las columnas del btn filtrar trámites
     const headers = ["Tramite", "Propietario", "Estado de ingreso"];
     const searchColumns = ["tramite", "propietario", "estado_ingreso"];
+
+    //labels de las columnas a exportar
     const theadersexsportar = [
         "Estado",
         "Trámite",
@@ -69,6 +76,7 @@ const Tramites = ({ auth, Tramites }) => {
         "# observaciones",
         "Fecha creación",
     ];
+    //columnas de la bdd a exportar
     const columnasexportar = [
         "estado_ingreso",
         "tramite",
@@ -82,6 +90,7 @@ const Tramites = ({ auth, Tramites }) => {
         "created_at",
     ];
 
+    //funciones para abrir y cerrar el modal de filtrar trámites
     const openFilterModal = () => setShowFilter(true);
     const closeFilterModal = () => setShowFilter(false);
     const notify = useNotify();
@@ -115,6 +124,8 @@ const Tramites = ({ auth, Tramites }) => {
         setFilters({ fechaDesde: "", fechaHasta: "", estado_tramite: "" });
     };
 
+
+    //muestar la página en concreto
     return (
         <AuthenticatedLayout
             header={<Header subtitle="Administrar Trámites" />}

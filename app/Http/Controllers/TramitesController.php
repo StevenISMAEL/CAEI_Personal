@@ -58,7 +58,7 @@ class TramitesController extends Controller {
 
         // Inicializa num_observaciones a 0 o 1 según el estado_tramite
         $validatedData["num_observaciones"] =
-            $validatedData["estado_tramite"] === "Observación" ? 1 : 0;
+        $validatedData["estado_tramite"] === "Observación" ? 1 : 0;
 
         // Crear el trámite con todos los datos, incluyendo num_observaciones
         Tramite::create($validatedData);

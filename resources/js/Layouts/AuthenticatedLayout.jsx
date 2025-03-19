@@ -24,22 +24,29 @@ import { FaPeopleGroup } from "react-icons/fa6";
 import { TbPuzzle2 } from "react-icons/tb";
 import { FaFileUpload } from "react-icons/fa";
 import { MdNotificationAdd } from "react-icons/md";
+import { MdExpandLess, MdExpandMore } from "react-icons/md";
+import ButtonCustom from "@/Components/ButtonCustom";
 
 const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
-    const { env } = usePage().props;
-    const { sessionActive } = useSessionChecker(env.SESSION_LIFETIME);
-    const [showSessionModal, setShowSessionModal] = useState(false);
+    const { env } = usePage().props; //contiene variables de entorno como el tiempo de sesion de la pagina
+    const { sessionActive } = useSessionChecker(env.SESSION_LIFETIME); //verifica si la sesion esta activa
+    const [showSessionModal, setShowSessionModal] = useState(false); //muestra el modal de sesion expirada
 
-    const { flash } = usePage().props;
-    const notify = useNotify();
-    const [message, setMessage] = useState(flash.message);
-    const [messageType, setMessageType] = useState(flash.type);
+    const { flash } = usePage().props; //contiene los mensajes flash
+    const notify = useNotify(); //  funcion para mostrar notificaciones
+    const [message, setMessage] = useState(flash.message); //mensaje de notificacion
+    const [messageType, setMessageType] = useState(flash.type); //tipo de notificacion
 
+    const [showProjects, setShowProjects] = useState(false);  // Estado para controlar la visibilidad de las opciones de "Proyectos"
+
+
+
+    /*si el mensaje es True correspondería a mostrar la notificación/mensaje*/
     useEffect(() => {
         if (message) {
-            notify(messageType, message, { autoClose: 5000 });
-            setMessage(null);
-            setMessageType(null);
+            notify(messageType, message, { autoClose: 5000 }); //muestra la notificacion
+            setMessage(null); //limpia el mensaje
+            setMessageType(null); //limpia el tipo de mensaje
         }
     }, [message, messageType]);
 
@@ -50,12 +57,14 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
         }
     }, [flash]);
 
+    /*si la sesion no esta activa muestra el modal de sesion expirada*/
     useEffect(() => {
         if (!sessionActive) {
             setShowSessionModal(true);
         }
     }, [sessionActive]);
 
+    /*funcion para obtener el estado del sidebar*/
     const getSidebarStatus = () => {
         const value = localStorage.getItem("open");
         return value === "true" || value === null;
@@ -71,7 +80,24 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
 
+
     const currentUrl = window.location.pathname;
+
+    // Nuevo efecto para mantener el menú abierto
+    useEffect(() => {
+        const proyectosMenu = Menus.find(menu => menu.title === "Proyectos");
+        if (proyectosMenu?.children) {
+            const isChildActive = proyectosMenu.children.some(child => 
+                route().current(child.route)
+            );
+            
+            if (isChildActive && !showProjects) {
+                setShowProjects(true);
+            }
+        }
+    }, [currentUrl]);
+
+
     const Menus = [
         {
             title: "Dashboard",
@@ -113,50 +139,59 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
             icon: <VscFileSymlinkFile />,
             roles: ["admin", "secretaria"],
         },
+
         {
-            title: "Planos Arquitectónicos",
-            route: "planoarq.index",
-            subroute: "/administrar-planosarq/",
-            icon: <FaFileContract />,
-            roles: ["admin", "arquitectorevisor"],
-        },
-        {
-            title: "Fraccionamientos",
-            route: "fraccionamiento.index",
-            subroute: "/administrar-fraccionamiento/",
-            icon: <TbMapStar />,
-            roles: ["admin", "arquitectorevisor"],
-        },
-        {
-            title: "Trabajos Varios",
-            route: "trabajosvar.index",
-            subroute: "/administrar-Trabajov/",
-            icon: <HiMiniClipboardDocumentList />,
-            roles: ["admin", "arquitectorevisor"],
-        },
-        {
-            title: "Propiedad Horizontal",
-            route: "propiedadh.index",
-            subroute: "/administrar-propiedadh/",
+            title: "Proyectos",
             icon: <TbMapShare />,
             roles: ["admin", "arquitectorevisor"],
-        },
-        {
-            title: "Aforos",
-            route: "aforos.index",
-            subroute: "/administrar-aforos/",
-            icon: <FaPeopleGroup />,
-            roles: ["admin", "arquitectorevisor"],
-        },
-        {
-            title: "Unificación Lotes",
-            route: "unificacionlotes.index",
-            subroute: "/administrar-unificaciones/",
-            icon: <TbPuzzle2 />,
-            roles: ["admin", "arquitectorevisor"],
+            children: [
+                {
+                    title: "Planos Arquitectónicos",
+                    route: "planoarq.index",
+                    subroute: "/administrar-planos-arquitectonicos/",
+                    icon: <FaFileContract />,
+                },
+                {
+                    title: "Fraccionamientos",
+                    route: "fraccionamiento.index",
+                    subroute: "/administrar-fraccionamientos/",
+                    icon: <TbMapStar />,
+                },
+                {
+                    title: "Trabajos Varios",
+                    route: "trabajosvar.index",
+                    subroute: "/administrar-trabajos-varios/",  
+                    icon: <HiMiniClipboardDocumentList />,
+                },
+                {
+                    title: "Propiedad Horizontal",
+                    route: "propiedadh.index",
+                    subroute: "/administrar-propiedad-horizontal/",
+                    icon: <TbMapShare />,
+                },
+                {
+                    title: "Aforos",
+                    route: "aforos.index",
+                    subroute: "/administrar-aforos/",
+                    icon: <FaPeopleGroup />,
+                },
+                {
+                    title: "Unificación de Lotes",
+                    route: "unificacionlotes.index",
+                    subroute: "/administrar-unificacion-lotes/",
+                    icon: <TbPuzzle2 />,
+                },
+
+            ],
         },
         {
             title: "Auditoria",
+            route: "audit.index",
+            icon: <AiOutlineAudit />,
+            roles: ["admin"],
+        },
+        {
+            title: "Busqueda",
             route: "audit.index",
             icon: <AiOutlineAudit />,
             roles: ["admin"],
@@ -177,37 +212,28 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
         "--rt-tooltip-font-size": "12px",
     };
 
+
     return (
-        <div className="flex min-h-screen  bg-gray-200 dark:bg-gray-900">
+        <div className="flex min-h-screen bg-gray-200 dark:bg-gray-900">
             <SessionExpiredModal
                 show={showSessionModal}
                 closeModal={() => setShowSessionModal(false)}
             />
-            <div
-                className={` ${
-                    open ? "w-80" : "w-28 "
-                } hidden sm:block min-h-screen bg-red-500 dark:bg-gray-800 border-e  shadow-md dark:shadow-gray-600 border-gray-100 dark:border-gray-700 relative duration-300`}
+            <div className={`${open ? "w-80" : "w-28"} hidden sm:block min-h-screen bg-red-500 dark:bg-gray-800 border-e shadow-md dark:shadow-gray-600 border-gray-100 dark:border-gray-700 relative duration-300`}
             >
                 <MdKeyboardArrowLeft
-                    className={`absolute hover:bg-red-50 cursor-pointer -right-3 top-9 bg-white dark:bg-gray-800 text-3xl w-7 text-gray-800 dark:text-gray-200 border-2 border-gray-900 dark:border-gray-200 rounded-full dark:hover:bg-gray-900 ${!open && "rotate-180 duration-300"}`}
+                    className={`absolute hover:bg-red-50 cursor-pointer -right-3 top-9 bg-white dark:bg-gray-800 text-3xl w-7 rounded-full ${!open && "rotate-180"}`}
                     onClick={() => setOpen(!open)}
                 />
                 <Link
                     href="/"
-                    className={`flex items-center gap-x-4 py-3 px-4 h-16 ${!open && " justify-center"} cursor-pointer hover:bg-red-400 dark:hover:bg-gray-300 dark:hover:bg-opacity-5 rounded-sm group`}
+                    className={`flex items-center gap-x-4 py-3 px-4 h-16 ${!open && "justify-center"} cursor-pointer hover:bg-red-400 dark:hover:bg-gray-300 dark:hover:bg-opacity-5 rounded-sm group`}
                 >
-                  
-                    {
-                        <ApplicationLogo
-                            className={`cursor-pointer duration-500 ${
-                                open && "rotate-[360deg]"
-                            }`}
-                        />
-                    }
+                    <ApplicationLogo
+                        className={`cursor-pointer duration-500 ${open && "rotate-[360deg]"}`}
+                    />
                     <h1
-                        className={`text-gray-200 dark:text-gray-200 origin-left text-3xl ${
-                            !open && "duration-500 hidden"
-                        } truncate overflow-hidden whitespace-nowrap font-semibold pb-2`}
+                        className={`text-white dark:text-white origin-left text-3xl ${!open && "duration-500 hidden"} truncate overflow-hidden whitespace-nowrap font-semibold pb-2`}
                     >
                         CAE-I
                     </h1>
@@ -215,31 +241,80 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
 
                 <ul className="pt-2">
                     {Menus.filter((item) =>
-                        item.roles.some((role) => roles.includes(role)),
+                        item.roles.some((role) => roles.includes(role))
                     ).map((Menu, index) => (
                         <li key={index} className="px-1">
-                            <LinkCustom
-                                href={route(Menu.route)}
-                                active={
-                                    Menu.subroute
-                                        ? Menu.subroute + route().current() ===
-                                          currentUrl + ".index"
-                                        : route().current(Menu.route)
-                                }
-                                className={`${!open && "justify-center"}`}
-                                data-tooltip-id={`tooltip-${index}`}
-                                data-tooltip-content={Menu.title}
-                                data-tooltip-place="right"
-                            >
-                                <span className="text-xl">{Menu.icon}</span>
-                                <span
-                                    className={`text-lg truncate overflow-hidden whitespace-nowrap ${
-                                        !open && "duration-500 hidden"
-                                    }`}
+                            {Menu.children ? (
+                                <>
+
+                                    <ButtonCustom
+                                        active={showProjects}
+                                        onClick={() => {
+                                            if (!open) {
+                                                setOpen(true);
+                                                setTimeout(() => setShowProjects(true), 300);
+                                            } else {
+                                                setShowProjects(!showProjects);
+                                            }
+                                        }}
+                                        className={`w-full ${!open && "justify-center"}`}
+                                        data-tooltip-id={`tooltip-${index}`}
+                                        data-tooltip-content={Menu.title}
+                                        data-tooltip-place="right"
+                                    >
+                                        <span className="text-xl">{Menu.icon}</span>
+                                        {open && (
+                                            <span className="flex justify-between w-full items-center">
+                                                <span>{Menu.title}</span>
+                                                {showProjects ? <MdExpandLess /> : <MdExpandMore />}
+                                            </span>
+                                        )}
+                                    </ButtonCustom>
+
+                                    {!open && (
+                                        <Tooltip
+                                            id={`tooltip-${index}`}
+                                            style={tooltipStyle}
+                                        />
+                                    )}
+                                    {open && showProjects && ( // Solo muestra si la barra está abierta
+                                        <ul className="ml-8">
+                                            {Menu.children.map((subItem, subIndex) => (
+                                                <li key={subIndex}>
+                                                    <LinkCustom
+                                                        href={route(subItem.route)}
+                                                        active={route().current(subItem.route)}
+                                                        className="flex items-center p-2 hover:bg-red-400 rounded-sm gap-2"
+                                                    >
+                                                        <span className="text-xl">{subItem.icon}</span>
+                                                        <span>{subItem.title}</span>
+                                                    </LinkCustom>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
+                                </>
+                            ) : (
+                                <LinkCustom
+                                    href={route(Menu.route)}
+                                    active={
+                                        Menu.subroute
+                                            ? currentUrl.includes(Menu.subroute)
+                                            : route().current(Menu.route)
+                                    }
+                                    className={`${!open && "justify-center"}`}
+                                    data-tooltip-id={`tooltip-${index}`}
+                                    data-tooltip-content={Menu.title}
+                                    data-tooltip-place="right"
                                 >
-                                    {Menu.title}
-                                </span>
-                            </LinkCustom>
+                                    <span className="text-xl">{Menu.icon}</span>
+                                    <span
+                                        className={`text-lg truncate overflow-hidden whitespace-nowrap ${!open && "duration-500 hidden"}`}
+                                    >
+                                        {Menu.title}
+                                    </span>
+                                </LinkCustom>
+                            )}
                             {!open && (
                                 <Tooltip
                                     id={`tooltip-${index}`}
@@ -250,186 +325,33 @@ const Authenticated = ({ user, header, children, roles = ["admin"] }) => {
                     ))}
                 </ul>
             </div>
+
+            {/* Main Content */}
             <div className="flex flex-col w-full">
-                <nav className="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 w-full ">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <div className="flex justify-between sm:justify-end h-16">
-                            <div className="-me-2 flex items-center sm:hidden">
-                                <button
-                                    onClick={() =>
-                                        setShowingNavigationDropdown(
-                                            (previousState) => {
-                                                setOpen(!open);
-                                                return !previousState;
-                                            },
-                                        )
-                                    }
-                                    className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 focus:text-gray-500 dark:focus:text-gray-400 transition duration-150 ease-in-out"
-                                >
-                                    <svg
-                                        className="h-6 w-6"
-                                        stroke="currentColor"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path
-                                            className={
-                                                !showingNavigationDropdown
-                                                    ? "inline-flex"
-                                                    : "hidden"
-                                            }
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth="2"
-                                            d="M4 6h16M4 12h16M4 18h16"
-                                        />
-                                        <path
-                                            className={
-                                                showingNavigationDropdown
-                                                    ? "inline-flex"
-                                                    : "hidden"
-                                            }
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth="2"
-                                            d="M6 18L18 6M6 6l12 12"
-                                        />
-                                    </svg>
+                <nav className="bg-white dark:bg-gray-800 border-b w-full">
+                    <div className="flex justify-between h-16 px-4">
+                        <DarkModeToggle isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
+                        <Dropdown>
+                            <Dropdown.Trigger>
+                                <button className="inline-flex items-center px-3 py-2 text-gray-500 dark:text-gray-400">
+                                    {user.name} <MdKeyboardArrowLeft className="ml-2" />
                                 </button>
-                            </div>
-
-                            <div className="flex sm:hidden">
-                                <DarkModeToggle
-                                    isDarkMode={isDarkMode}
-                                    toggleDarkMode={toggleDarkMode}
-                                />
-                                <div className="shrink-0 flex items-center">
-                                    <Link
-                                        href="/"
-                                        className={`flex gap-x-4 py-3 px-4 h-16 ${open ? "items-center" : "justify-center"} cursor-pointer`}
-                                    >
-                                        <ApplicationLogo
-                                            className={`cursor-pointer duration-500 ${
-                                                open && "rotate-[360deg]"
-                                            }`}
-                                        />
-                                    </Link>
-                                </div>
-                            </div>
-
-                            <div className="hidden sm:flex sm:items-center sm:ms-6">
-                                <DarkModeToggle
-                                    isDarkMode={isDarkMode}
-                                    toggleDarkMode={toggleDarkMode}
-                                />
-                                <div className="ms-3 relative">
-                                    <Dropdown>
-                                        <Dropdown.Trigger>
-                                            <span className="inline-flex rounded-md">
-                                                <button
-                                                    type="button"
-                                                    className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150"
-                                                >
-                                                    {user.name}
-
-                                                    <svg
-                                                        className="ms-2 -me-0.5 h-4 w-4"
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                        viewBox="0 0 20 20"
-                                                        fill="currentColor"
-                                                    >
-                                                        <path
-                                                            fillRule="evenodd"
-                                                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                            clipRule="evenodd"
-                                                        />
-                                                    </svg>
-                                                </button>
-                                            </span>
-                                        </Dropdown.Trigger>
-
-                                        <Dropdown.Content width="36">
-                                            <Dropdown.Link
-                                                href={route("profile.edit")}
-                                            >
-                                                Perfil
-                                            </Dropdown.Link>
-                                            <Dropdown.Link
-                                                href={route("logout")}
-                                                method="post"
-                                                as="button"
-                                            >
-                                                Cerrar Sesión
-                                            </Dropdown.Link>
-                                        </Dropdown.Content>
-                                    </Dropdown>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div
-                        className={
-                            (showingNavigationDropdown ? "block" : "hidden") +
-                            " sm:hidden"
-                        }
-                    >
-                        <ul className="pt-2 pb-3 space-y-1">
-                            {Menus.filter((item) =>
-                                item.roles.some((role) => roles.includes(role)),
-                            ).map((Menu, index) => (
-                                <li key={index}>
-                                    <ResponsiveNavLink
-                                        href={route(Menu.route)}
-                                        active={
-                                            Menu.subroute
-                                                ? Menu.subroute +
-                                                      route().current() ===
-                                                  currentUrl + ".index"
-                                                : route().current(Menu.route)
-                                        }
-                                    >
-                                        {Menu.title}
-                                    </ResponsiveNavLink>
-                                </li>
-                            ))}
-                        </ul>
-
-                        <div className="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
-                            <div className="px-4">
-                                <div className="font-medium text-base text-gray-800 dark:text-gray-200">
-                                    {user.name}
-                                </div>
-                                <div className="font-medium text-sm text-gray-500">
-                                    {user.email}
-                                </div>
-                            </div>
-
-                            <div className="mt-3 space-y-1">
-                                <ResponsiveNavLink href={route("profile.edit")}>
-                                    Perfil
-                                </ResponsiveNavLink>
-                                <ResponsiveNavLink
-                                    method="post"
-                                    href={route("logout")}
-                                    as="button"
-                                >
+                            </Dropdown.Trigger>
+                            <Dropdown.Content>
+                                <Dropdown.Link href={route("profile.edit")}>Perfil</Dropdown.Link>
+                                <Dropdown.Link href={route("logout")} method="post" as="button">
                                     Cerrar Sesión
-                                </ResponsiveNavLink>
-                            </div>
-                        </div>
+                                </Dropdown.Link>
+                            </Dropdown.Content>
+                        </Dropdown>
                     </div>
                 </nav>
-                {header && (
-                    <header className="bg-white dark:bg-gray-800 shadow">
-                        <div className="max-w-8xl mx-auto py-6 px-5 sm:px-10 lg:px-14">
-                            {header}
-                        </div>
-                    </header>
-                )}
+
+                {header && <header className="bg-white shadow"><div className="py-6 px-5">{header}</div></header>}
                 <main className="flex-grow py-3 px-5">{children}</main>
             </div>
         </div>
     );
 };
+
 export default Authenticated;

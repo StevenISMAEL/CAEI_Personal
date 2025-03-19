@@ -27,7 +27,9 @@ const Tramite = ({ auth, Tramites, TiposTramite, Usuarios, Categorias }) => {
         delete: destroy,
         patch,
         clearErrors,
-    } = useForm({
+
+    } = useForm({ //campos a ocupar por ejemplo con el data de arriba, "tramite: data.tramite".           
+
         id_usuario: "",
         id_tramite: "",
         nombre_usuario: "",
@@ -112,7 +114,7 @@ const Tramite = ({ auth, Tramites, TiposTramite, Usuarios, Categorias }) => {
               )
             : null;
 
-        setData({
+        setData({ //se almacena de manera local, es decir que prepara los datos a editar sin mandar al controller
             id_tramite: tramite.id_tramite,
             id_usuario: tramite.id_usuario,
             nombre_usuario: user ? user.name : "",
@@ -138,12 +140,14 @@ const Tramite = ({ auth, Tramites, TiposTramite, Usuarios, Categorias }) => {
         setSelectedIngreso(tramite.estado_ingreso); // Actualiza el estado
     };
 
+
+
     const handleSubmitAdd = (e) => {
-        e.preventDefault();
+        e.preventDefault(); //"e" es un disparador de cuando se precione un boton enviar y evita que se recrgue la página cuando se envia
 
         post(route("tramite.store"), {
             preserveScroll: true,
-            onSuccess: () => {
+            onSuccess: () => { //si el backend responde correctamente se cierra el modal y se muestra un mensaje de éxito
                 closeModalCreate();
                 notify("success", "Trámite agregado.");
             },
@@ -207,6 +211,7 @@ const Tramite = ({ auth, Tramites, TiposTramite, Usuarios, Categorias }) => {
         });
     };
 
+    //estos falta revisar.
     const handleCategoryChange = (id) => {
         setSelectedCategory(id);
         const filteredtypes = TiposTramite.filter(
@@ -237,6 +242,10 @@ const Tramite = ({ auth, Tramites, TiposTramite, Usuarios, Categorias }) => {
         "Aprobado",
     ]);
 
+        //estos falta revisar.
+
+
+    //información de la tabla Maestro
     const inputstramite = [
         {
             placeholder: "Categoria",
@@ -263,8 +272,10 @@ const Tramite = ({ auth, Tramites, TiposTramite, Usuarios, Categorias }) => {
             ),
             defaultValue: data.estado_ingreso,
         },
+
+        //modificar, verificar si el código de trámite puede ser autocompletado.
         {
-            label: "Trámite",
+            label: "Código de Trámite",         
             id: "tramite",
             type: "text",
             name: "tramite",
@@ -359,6 +370,8 @@ const Tramite = ({ auth, Tramites, TiposTramite, Usuarios, Categorias }) => {
             defaultValue: data.estado_tramite,
         },
     ];
+
+    //información de la tabla Detalles
     const inputsclaves = [
         {
             label: "informe",
@@ -457,6 +470,7 @@ const Tramite = ({ auth, Tramites, TiposTramite, Usuarios, Categorias }) => {
         "created_at",
     ];
 
+    //para el chekcbox de seleccionar trámites.
     const handleCheckboxChange = (id) => {
         setSelectedTramites((prevSelected) => {
             if (prevSelected.includes(id)) {
@@ -480,6 +494,9 @@ const Tramite = ({ auth, Tramites, TiposTramite, Usuarios, Categorias }) => {
         setDataToDelete(selectedTramites);
     };
 
+
+
+    //mostrar en pantalla
     return (
         <Authenticated
             user={auth.user}
